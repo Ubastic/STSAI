@@ -344,6 +344,7 @@ public class DefaultMod implements
         ConsoleCommand.addCommand("dmg", CalculateDamageCommand.class);
         ConsoleCommand.addCommand("fightai", FightAICommand.class);
         ConsoleCommand.addCommand("mattack", MonsterAttackCommand.class);
+        ConsoleCommand.addCommand("mapinfo", MapInfoCommand.class);
 
         UseAIItem item = new UseAIItem();
         BaseMod.addTopPanelItem(item);

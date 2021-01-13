@@ -2,6 +2,7 @@ package SlayTheSpireAIMod.items;
 
 import SlayTheSpireAIMod.AIs.CardSelectAI;
 import SlayTheSpireAIMod.AIs.CombatRewardAI;
+import SlayTheSpireAIMod.AIs.MapAI;
 import SlayTheSpireAIMod.AIs.RestSiteAI;
 import SlayTheSpireAIMod.actions.FightAIAction;
 import SlayTheSpireAIMod.communicationmod.ChoiceScreenUtils;
@@ -49,6 +50,7 @@ public class UseAIItem extends TopPanelItem {
                     CombatRewardAI.execute();
                     break;
                 case MAP:
+                    MapAI.execute();
                     break;
                 case BOSS_REWARD:
                     break;

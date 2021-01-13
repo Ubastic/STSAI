@@ -1,6 +1,7 @@
 SlayTheSpireAIMod\communicationmod\patches\InputActionPatch$JustPressedPatch.class
 SlayTheSpireAIMod\cards\DefaultUncommonSkill.class
 SlayTheSpireAIMod\communicationmod\patches\ShopScreenPatch$PurgeCardPatch.class
+SlayTheSpireAIMod\util\MapUtils.class
 SlayTheSpireAIMod\communicationmod\ChoiceScreenUtils$1.class
 SlayTheSpireAIMod\communicationmod\patches\MerchantPatch$MerchantUpdatePatch.class
 SlayTheSpireAIMod\communicationmod\patches\GameActionManagerTopPatch.class
@@ -132,9 +133,11 @@ SlayTheSpireAIMod\DefaultMod.class
 SlayTheSpireAIMod\communicationmod\patches\GenericEventDialogPatch.class
 SlayTheSpireAIMod\communicationmod\patches\MapRoomNodeHoverPatch$Locator.class
 SlayTheSpireAIMod\commands\MonsterAttackCommand.class
+SlayTheSpireAIMod\AIs\MapAI$Path$startType.class
 SlayTheSpireAIMod\communicationmod\patches\ShopScreenPatch$HoverCardPatch$Locator.class
 SlayTheSpireAIMod\AIs\CombatAIs\SentriesCAI.class
 SlayTheSpireAIMod\AIs\CombatAIs\GremlinNobCAI.class
+SlayTheSpireAIMod\AIs\MapAI$Path.class
 SlayTheSpireAIMod\communicationmod\patches\InputActionPatch$PressedPatch.class
 SlayTheSpireAIMod\communicationmod\patches\CampfireTokeEffectPatch$LocatorBefore.class
 SlayTheSpireAIMod\communicationmod\patches\GridCardSelectScreenUpdatePatch.class
