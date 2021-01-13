@@ -1,0 +1,53 @@
+{
+  "SlayTheSpireAIMod:DefaultCommonAttack": {
+    "NAME": "Strike",
+    "DESCRIPTION": "Deal !D! damage. NL [#0000ff]This[] [#ff0000]Is[] [#ffff00]How[] [#88888]color[] [#ff00ff]works.[]"
+  },
+  "SlayTheSpireAIMod:DefaultCommonSkill": {
+    "NAME": "Defend",
+    "DESCRIPTION": "Gain !B! Block. NL slaythespireaimod:Multiword_Keyword."
+  },
+  "SlayTheSpireAIMod:DefaultCommonPower": {
+    "NAME": "Hold Place",
+    "DESCRIPTION": "Gain !M! slaythespireaimod:Keyword.",
+    "UPGRADE_DESCRIPTION": "Gain !M! slaythespireaimod:Keywords."
+  },
+  "SlayTheSpireAIMod:DefaultUncommonAttack": {
+    "NAME": "Big slap",
+    "DESCRIPTION": "Deal !D! damage."
+  },
+  "SlayTheSpireAIMod:DefaultUncommonSkill": {
+    "NAME": "A Better Defend",
+    "DESCRIPTION": "Gain !B! Plated Armor. Affected by Dexterity."
+  },
+  "SlayTheSpireAIMod:DefaultUncommonPower": {
+    "NAME": "Weirdness",
+    "DESCRIPTION": "Gain X slaythespireaimod:Keywords.",
+    "UPGRADE_DESCRIPTION": "Gain X +1 slaythespireaimod:Keywords."
+  },
+  "SlayTheSpireAIMod:DefaultRareAttack": {
+    "NAME": "TOUCH",
+    "DESCRIPTION": "Deal !D! damage."
+  },
+  "SlayTheSpireAIMod:DefaultRareSkill": {
+    "NAME": "For Each Loop x2",
+    "DESCRIPTION": "Apply !M! Vulnerable to all enemies, 2 times.",
+    "UPGRADE_DESCRIPTION": "Apply !M! Vulnerable to all enemies, 3 times."
+  },
+  "SlayTheSpireAIMod:DefaultRarePower": {
+    "NAME": "In-Progress Form",
+    "DESCRIPTION": "At the start of your turn, play a TOUCH."
+  },
+  "SlayTheSpireAIMod:DefaultAttackWithVariable": {
+    "NAME": "Special Strike",
+    "DESCRIPTION": "Deal !D! damage [E] times. NL (Deal !SlayTheSpireAIMod:ENERGY_DAMAGE! damage total.)"
+  },
+  "SlayTheSpireAIMod:DefaultSecondMagicNumberSkill": {
+    "NAME": "Cool 2 Number Card",
+    "DESCRIPTION": "Apply !M! Vulnerable and !SlayTheSpireAIMod:SecondMagic! poison to an enemy."
+  },
+  "SlayTheSpireAIMod:OrbSkill": {
+    "NAME": "Get Orb",
+    "DESCRIPTION": "Channel 1 Default Orb."
+  }
+}
