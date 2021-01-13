@@ -49,7 +49,7 @@ import java.util.Properties;
 // Please don't just mass replace "theDefault" with "yourMod" everywhere.
 // It'll be a bigger pain for you. You only need to replace it in 4 places.
 // I comment those places below, under the place where you set your ID.
-//note
+//note s
 //TODO: FIRST THINGS FIRST: RENAME YOUR PACKAGE AND ID NAMES FIRST-THING!!!
 // Right click the package (Open the project pane on the left. Folder with black dot on it. The name's at the very top) -> Refactor -> Rename, and name it whatever you wanna call your mod.
 // Scroll down in this file. Change the ID from "theDefault:" to "yourModName:" or whatever your heart desires (don't use spaces). Dw, you'll see it.
