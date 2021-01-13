@@ -2,12 +2,10 @@ package SlayTheSpireAIMod.AIs.CombatAIs;
 
 import SlayTheSpireAIMod.util.Move;
 
-/** AI versus encounter "Gremlin Nob". */
-public class GremlinNobAI extends AbstractAI{
-
+public class SentriesCAI extends AbstractCAI {
     @Override
     public String getCombat() {
-        return "Gremlin Nob";
+        return "3 Sentries";
     }
 
     @Override

@@ -1,6 +1,6 @@
 package SlayTheSpireAIMod.util;
 
-import SlayTheSpireAIMod.AIs.CombatAIs.AbstractAI;
+import SlayTheSpireAIMod.AIs.CombatAIs.AbstractCAI;
 import basemod.ReflectionHacks;
 import com.megacrit.cardcrawl.cards.AbstractCard;
 import com.megacrit.cardcrawl.cards.DamageInfo;
@@ -19,7 +19,7 @@ public class CombatUtils {
      * @return Move Return the determined best next move.  */
     public static Move pickMove() {
         String combat = AbstractDungeon.lastCombatMetricKey;
-        return AbstractAI.pickMove(combat);
+        return AbstractCAI.pickMove(combat);
     }
 
     /** @return Return the Move for playing the leftmost card possible at the leftmost monster. */

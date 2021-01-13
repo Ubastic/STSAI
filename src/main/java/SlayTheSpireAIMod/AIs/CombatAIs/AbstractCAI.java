@@ -9,7 +9,7 @@ import com.megacrit.cardcrawl.monsters.AbstractMonster;
 import java.util.ArrayList;
 
 /** Class which evaluates Moves to execute when in combat, based on the specific combat. */
-public abstract class AbstractAI {
+public abstract class AbstractCAI {
     public abstract String getCombat(); // name of the combat
 
     /** Precondition: player is in combat getCombat().
@@ -26,19 +26,19 @@ public abstract class AbstractAI {
      * @param combat name of current combat
      * @return Move Returns the determined best next move.  */
     public static Move pickMove(String combat){
-        AbstractAI ai = getAI(combat);
+        AbstractCAI ai = getAI(combat);
         // if no AI for the combat exists, use generic AI
         return ai == null ? genericPickMove() : ai.pickMove();
     }
 
     /** @param combat name of current combat
-     * @return AbstractAI Return appropriate AI based on combat, null if none exists. */
-    public static AbstractAI getAI(String combat){
+     * @return AbstractCAI Return appropriate AI based on combat, null if none exists. */
+    public static AbstractCAI getAI(String combat){
         switch (combat){
             case "Gremlin Nob":
-                return new GremlinNobAI();
+                return new GremlinNobCAI();
             case "3 Sentries":
-                return new SentriesAI();
+                return new SentriesCAI();
             default:
                 return null;
         }

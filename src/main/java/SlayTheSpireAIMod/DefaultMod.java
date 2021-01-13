@@ -1,7 +1,7 @@
 package SlayTheSpireAIMod;
 
 import SlayTheSpireAIMod.commands.*;
-import SlayTheSpireAIMod.items.FightAIItem;
+import SlayTheSpireAIMod.items.UseAIItem;
 import basemod.*;
 import basemod.devcommands.ConsoleCommand;
 import basemod.eventUtil.AddEventParams;
@@ -49,7 +49,7 @@ import java.util.Properties;
 // Please don't just mass replace "theDefault" with "yourMod" everywhere.
 // It'll be a bigger pain for you. You only need to replace it in 4 places.
 // I comment those places below, under the place where you set your ID.
-//note s
+
 //TODO: FIRST THINGS FIRST: RENAME YOUR PACKAGE AND ID NAMES FIRST-THING!!!
 // Right click the package (Open the project pane on the left. Folder with black dot on it. The name's at the very top) -> Refactor -> Rename, and name it whatever you wanna call your mod.
 // Scroll down in this file. Change the ID from "theDefault:" to "yourModName:" or whatever your heart desires (don't use spaces). Dw, you'll see it.
@@ -345,7 +345,7 @@ public class DefaultMod implements
         ConsoleCommand.addCommand("fightai", FightAICommand.class);
         ConsoleCommand.addCommand("mattack", MonsterAttackCommand.class);
 
-        FightAIItem item = new FightAIItem();
+        UseAIItem item = new UseAIItem();
         BaseMod.addTopPanelItem(item);
         // =============== EVENTS =================
         // https://github.com/daviscook477/BaseMod/wiki/Custom-Events
@@ -449,7 +449,7 @@ public class DefaultMod implements
 
         //TODO: Rename the "DefaultMod" with the modid in your ModTheSpire.json file
         //TODO: The artifact mentioned in ModTheSpire.json is the artifactId in pom.xml you should've edited earlier
-        new AutoAdd("DefaultMod") // ${project.artifactId}
+        new AutoAdd("SlayTheSpireAIMod") // ${project.artifactId}
             .packageFilter(AbstractDefaultCard.class) // filters to any class in the same package as AbstractDefaultCard, nested packages included
             .setDefaultSeen(true)
             .cards();

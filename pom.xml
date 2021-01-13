@@ -3,11 +3,11 @@
 
     <!--Hello! You'll basically should only need to change these names and the steam path (just below)-->
     <!--The author name(s) as they appear in MTS and any other comments are in your ModTheSpire.json-->
-    <groupId>defaultmod</groupId>
-    <artifactId>DefaultMod</artifactId> <!--Keep a note of this one: this is the ID used in the "auto add cards" method-->
+    <groupId>STSMod</groupId>
+    <artifactId>SlayTheSpireAIMod</artifactId> <!--Keep a note of this one: this is the ID used in the "auto add cards" method-->
     <name>SlayTheSpireAIMod</name>
-    <version>0.0.1</version>
-    <description>A default base to start your own mod from.</description>
+    <version>0.0.2</version>
+    <description>An AI which plays Slay the Spire.</description>
 
     <properties>
         <maven.compiler.source>1.8</maven.compiler.source>

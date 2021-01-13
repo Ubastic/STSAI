@@ -27,9 +27,7 @@ SlayTheSpireAIMod\communicationmod\patches\InputActionPatch.class
 SlayTheSpireAIMod\communicationmod\patches\CardRewardScreenPatch$AcquireCardPatch.class
 SlayTheSpireAIMod\util\TextureLoader.class
 SlayTheSpireAIMod\communicationmod\patches\GremlinMatchGamePatch$HoverCardPatch$Locator.class
-SlayTheSpireAIMod\items\FightAIItem$1.class
 SlayTheSpireAIMod\patches\DefaultInsertPatch.class
-SlayTheSpireAIMod\AIs\CombatAIs\GremlinNobAI.class
 SlayTheSpireAIMod\characters\TheDefault$Enums.class
 SlayTheSpireAIMod\communicationmod\patches\ShopScreenPatch.class
 SlayTheSpireAIMod\communicationmod\patches\GameActionManagerBottomPatch.class
@@ -43,7 +41,6 @@ SlayTheSpireAIMod\communicationmod\patches\UpdateBodyTextPatch$RoomEventPatch.cl
 SlayTheSpireAIMod\communicationmod\patches\GremlinMatchGamePatch$WaitForCardFlipPatch.class
 SlayTheSpireAIMod\communicationmod\patches\AbstractRelicUpdatePatch$HitboxLocator.class
 SlayTheSpireAIMod\powers\RarePower.class
-SlayTheSpireAIMod\AIs\CombatAIs\AbstractAI.class
 SlayTheSpireAIMod\communicationmod\patches\CardRewardScreenPatch$HoverCardPatch.class
 SlayTheSpireAIMod\communicationmod\CommandExecutor.class
 SlayTheSpireAIMod\communicationmod\InvalidCommandException$1.class
@@ -76,6 +73,8 @@ SlayTheSpireAIMod\communicationmod\patches\CampfireSleepEffectPatch$LocatorAfter
 SlayTheSpireAIMod\communicationmod\InvalidCommandException$InvalidCommandFormat.class
 SlayTheSpireAIMod\patches\relics\BottledPlaceholderField.class
 SlayTheSpireAIMod\cards\DefaultCommonAttack.class
+SlayTheSpireAIMod\items\UseAIItem$1.class
+SlayTheSpireAIMod\AIs\CombatRewardAI.class
 SlayTheSpireAIMod\communicationmod\DataReader.class
 SlayTheSpireAIMod\communicationmod\patches\EnableEndTurnPatch.class
 SlayTheSpireAIMod\communicationmod\patches\GremlinMatchGamePatch$HoverCardPatch.class
@@ -92,6 +91,7 @@ SlayTheSpireAIMod\patches\DefaultInsertPatch$Locator.class
 SlayTheSpireAIMod\communicationmod\patches\CampfireRecallEffectPatch$LocatorBefore.class
 SlayTheSpireAIMod\communicationmod\patches\GridCardSelectScreenPatch.class
 SlayTheSpireAIMod\communicationmod\patches\CampfireLiftEffectPatch$Locator.class
+SlayTheSpireAIMod\AIs\CombatAIs\AbstractCAI.class
 SlayTheSpireAIMod\relics\DefaultClickableRelic.class
 SlayTheSpireAIMod\communicationmod\patches\GremlinMatchGamePatch$InitializeCardsPatch.class
 SlayTheSpireAIMod\AIs\EventAI.class
@@ -103,7 +103,6 @@ SlayTheSpireAIMod\communicationmod\patches\CampfireDigEffectPatch$LocatorAfter.c
 SlayTheSpireAIMod\communicationmod\patches\MerchantPatch.class
 SlayTheSpireAIMod\util\CombatUtils.class
 SlayTheSpireAIMod\communicationmod\patches\CardRewardScreenPatch$HoverCardPatch$Locator.class
-SlayTheSpireAIMod\items\FightAIItem.class
 SlayTheSpireAIMod\communicationmod\patches\CampfireSleepEffectPatch.class
 SlayTheSpireAIMod\communicationmod\patches\SetDialogOptionPatch.class
 SlayTheSpireAIMod\communicationmod\patches\AbstractRelicUpdatePatch$ObtainedLocator.class
@@ -114,6 +113,7 @@ SlayTheSpireAIMod\util\Move$TYPE.class
 SlayTheSpireAIMod\communicationmod\patches\MapRoomNodeHoverPatch.class
 SlayTheSpireAIMod\communicationmod\GameStateConverter.class
 SlayTheSpireAIMod\communicationmod\ChoiceScreenUtils$EventDialogType.class
+SlayTheSpireAIMod\items\UseAIItem.class
 SlayTheSpireAIMod\commands\FightAICommand.class
 SlayTheSpireAIMod\communicationmod\patches\AbstractRoomEndTurnPatch$EndTurnPatch.class
 SlayTheSpireAIMod\communicationmod\patches\AbstractRoomEndTurnPatch.class
@@ -126,13 +126,15 @@ SlayTheSpireAIMod\communicationmod\patches\CombatRewardScreenPatch$Locator.class
 SlayTheSpireAIMod\actions\FightAIAction.class
 SlayTheSpireAIMod\communicationmod\ChoiceScreenUtils.class
 SlayTheSpireAIMod\communicationmod\patches\DungeonMapPatch$Locator.class
+SlayTheSpireAIMod\AIs\CardSelectAI.class
 SlayTheSpireAIMod\communicationmod\CommunicationMod.class
 SlayTheSpireAIMod\DefaultMod.class
 SlayTheSpireAIMod\communicationmod\patches\GenericEventDialogPatch.class
 SlayTheSpireAIMod\communicationmod\patches\MapRoomNodeHoverPatch$Locator.class
-SlayTheSpireAIMod\AIs\CombatAIs\SentriesAI.class
 SlayTheSpireAIMod\commands\MonsterAttackCommand.class
 SlayTheSpireAIMod\communicationmod\patches\ShopScreenPatch$HoverCardPatch$Locator.class
+SlayTheSpireAIMod\AIs\CombatAIs\SentriesCAI.class
+SlayTheSpireAIMod\AIs\CombatAIs\GremlinNobCAI.class
 SlayTheSpireAIMod\communicationmod\patches\InputActionPatch$PressedPatch.class
 SlayTheSpireAIMod\communicationmod\patches\CampfireTokeEffectPatch$LocatorBefore.class
 SlayTheSpireAIMod\communicationmod\patches\GridCardSelectScreenUpdatePatch.class

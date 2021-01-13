@@ -1,8 +1,11 @@
 package SlayTheSpireAIMod.items;
 
+import SlayTheSpireAIMod.AIs.CardSelectAI;
+import SlayTheSpireAIMod.AIs.CombatRewardAI;
 import SlayTheSpireAIMod.AIs.RestSiteAI;
 import SlayTheSpireAIMod.actions.FightAIAction;
 import SlayTheSpireAIMod.communicationmod.ChoiceScreenUtils;
+import SlayTheSpireAIMod.communicationmod.CommandExecutor;
 import SlayTheSpireAIMod.communicationmod.InvalidCommandException;
 import basemod.DevConsole;
 import basemod.TopPanelItem;
@@ -14,11 +17,11 @@ import com.megacrit.cardcrawl.helpers.TipHelper;
 import java.util.ArrayList;
 
 /** When clicked during combat, execute the current turn. */
-public class FightAIItem extends TopPanelItem {
+public class UseAIItem extends TopPanelItem {
     private static final Texture IMG = new Texture("SlayTheSpireAIModResources/images/ui/robotimage-small.png");
-    public static final String ID = "myfirstmod:FightAIItem";
+    public static final String ID = "slaythespireai:UseAIItem";
 
-    public FightAIItem() {
+    public UseAIItem() {
         super(IMG, ID);
     }
 
@@ -26,6 +29,7 @@ public class FightAIItem extends TopPanelItem {
     protected void onClick() {
         try{
             DevConsole.log("clicked");
+            DevConsole.log("before:" + ChoiceScreenUtils.getCurrentChoiceType().toString());
             ChoiceScreenUtils.ChoiceType type = ChoiceScreenUtils.getCurrentChoiceType();
             ArrayList<String> choices = ChoiceScreenUtils.getCurrentChoiceList();
             switch(type){
@@ -39,8 +43,10 @@ public class FightAIItem extends TopPanelItem {
                     RestSiteAI.execute();
                     break;
                 case CARD_REWARD:
+                    CardSelectAI.execute();
                     break;
                 case COMBAT_REWARD:
+                    CombatRewardAI.execute();
                     break;
                 case MAP:
                     break;
@@ -60,10 +66,10 @@ public class FightAIItem extends TopPanelItem {
                     AbstractDungeon.actionManager.addToBottom(new FightAIAction(0));
                     break;
             }
-            DevConsole.log(ChoiceScreenUtils.getCurrentChoiceType().toString());
+            DevConsole.log("after:" + ChoiceScreenUtils.getCurrentChoiceType().toString());
             DevConsole.log(choices.toString());
-        }catch(InvalidCommandException e){
-            DevConsole.log("Invalid command exception thrown.");
+        }catch(Exception e){
+            DevConsole.log(e.toString());
         }
 
     }
