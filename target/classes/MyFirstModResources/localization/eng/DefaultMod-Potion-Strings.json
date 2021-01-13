@@ -1,0 +1,10 @@
+{
+"MyFirstMod:PlaceholderPotion": {
+        "NAME": "Placeholder Potion",
+        "DESCRIPTIONS": ["Gain ", " At the end of your turn, lose ", " Strength."]
+},
+"MyFirstMod:BarricadePotion": {
+        "NAME": "Placeholder Potion",
+        "DESCRIPTIONS": ["Gain ", " block."]
+}
+}
