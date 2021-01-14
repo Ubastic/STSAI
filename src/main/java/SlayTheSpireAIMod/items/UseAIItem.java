@@ -1,9 +1,6 @@
 package SlayTheSpireAIMod.items;
 
-import SlayTheSpireAIMod.AIs.CardSelectAI;
-import SlayTheSpireAIMod.AIs.CombatRewardAI;
-import SlayTheSpireAIMod.AIs.MapAI;
-import SlayTheSpireAIMod.AIs.RestSiteAI;
+import SlayTheSpireAIMod.AIs.*;
 import SlayTheSpireAIMod.actions.FightAIAction;
 import SlayTheSpireAIMod.communicationmod.ChoiceScreenUtils;
 import SlayTheSpireAIMod.communicationmod.CommandExecutor;
@@ -30,15 +27,19 @@ public class UseAIItem extends TopPanelItem {
     protected void onClick() {
         try{
             DevConsole.log("clicked");
+            DevConsole.log("Current Screen: " + AbstractDungeon.screen.toString());
             DevConsole.log("before:" + ChoiceScreenUtils.getCurrentChoiceType().toString());
             ChoiceScreenUtils.ChoiceType type = ChoiceScreenUtils.getCurrentChoiceType();
             ArrayList<String> choices = ChoiceScreenUtils.getCurrentChoiceList();
             switch(type){
                 case EVENT:
+                    EventAI.execute();
                     break;
                 case CHEST:
+                    ChestAI.execute();
                     break;
                 case SHOP_ROOM:
+                    ShopAI.execute();
                     break;
                 case REST:
                     RestSiteAI.execute();
@@ -53,12 +54,16 @@ public class UseAIItem extends TopPanelItem {
                     MapAI.execute();
                     break;
                 case BOSS_REWARD:
+                    BossRewardAI.execute();
                     break;
                 case SHOP_SCREEN:
+                    ShopAI.execute();
                     break;
                 case GRID:
+                    GridSelectAI.execute();
                     break;
                 case HAND_SELECT:
+                    HandSelectAI.execute();
                     break;
                 case GAME_OVER:
                     break;

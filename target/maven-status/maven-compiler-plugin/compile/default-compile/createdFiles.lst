@@ -1,8 +1,10 @@
 SlayTheSpireAIMod\communicationmod\patches\InputActionPatch$JustPressedPatch.class
+SlayTheSpireAIMod\AIs\ShopAI.class
 SlayTheSpireAIMod\cards\DefaultUncommonSkill.class
 SlayTheSpireAIMod\communicationmod\patches\ShopScreenPatch$PurgeCardPatch.class
 SlayTheSpireAIMod\util\MapUtils.class
 SlayTheSpireAIMod\communicationmod\ChoiceScreenUtils$1.class
+SlayTheSpireAIMod\AIs\ChestAI.class
 SlayTheSpireAIMod\communicationmod\patches\MerchantPatch$MerchantUpdatePatch.class
 SlayTheSpireAIMod\communicationmod\patches\GameActionManagerTopPatch.class
 SlayTheSpireAIMod\cards\DefaultAttackWithVariable.class
@@ -42,6 +44,7 @@ SlayTheSpireAIMod\communicationmod\patches\UpdateBodyTextPatch$RoomEventPatch.cl
 SlayTheSpireAIMod\communicationmod\patches\GremlinMatchGamePatch$WaitForCardFlipPatch.class
 SlayTheSpireAIMod\communicationmod\patches\AbstractRelicUpdatePatch$HitboxLocator.class
 SlayTheSpireAIMod\powers\RarePower.class
+SlayTheSpireAIMod\util\ScreenUpdateUtils.class
 SlayTheSpireAIMod\communicationmod\patches\CardRewardScreenPatch$HoverCardPatch.class
 SlayTheSpireAIMod\communicationmod\CommandExecutor.class
 SlayTheSpireAIMod\communicationmod\InvalidCommandException$1.class
@@ -64,6 +67,7 @@ SlayTheSpireAIMod\commands\CardInfoCommand.class
 SlayTheSpireAIMod\actions\FightAIAction$1.class
 SlayTheSpireAIMod\communicationmod\GameStateListener.class
 SlayTheSpireAIMod\communicationmod\patches\GremlinMatchGamePatch$CardIdentificationPatch.class
+SlayTheSpireAIMod\util\ScreenUpdateUtils$1.class
 SlayTheSpireAIMod\cards\DefaultRarePower.class
 SlayTheSpireAIMod\communicationmod\patches\AbstractRelicUpdatePatch.class
 SlayTheSpireAIMod\communicationmod\patches\CampfireLiftEffectPatch.class
@@ -78,6 +82,7 @@ SlayTheSpireAIMod\items\UseAIItem$1.class
 SlayTheSpireAIMod\AIs\CombatRewardAI.class
 SlayTheSpireAIMod\communicationmod\DataReader.class
 SlayTheSpireAIMod\communicationmod\patches\EnableEndTurnPatch.class
+SlayTheSpireAIMod\AIs\GridSelectAI.class
 SlayTheSpireAIMod\communicationmod\patches\GremlinMatchGamePatch$HoverCardPatch.class
 SlayTheSpireAIMod\potions\BarricadePotion.class
 SlayTheSpireAIMod\util\IDCheckDontTouchPls.class
@@ -99,6 +104,7 @@ SlayTheSpireAIMod\AIs\EventAI.class
 SlayTheSpireAIMod\communicationmod\patches\CampfireTokeEffectPatch.class
 SlayTheSpireAIMod\communicationmod\patches\GremlinMatchGamePatch.class
 SlayTheSpireAIMod\powers\CommonPower.class
+SlayTheSpireAIMod\AIs\HandSelectAI.class
 SlayTheSpireAIMod\cards\DefaultUncommonPower.class
 SlayTheSpireAIMod\communicationmod\patches\CampfireDigEffectPatch$LocatorAfter.class
 SlayTheSpireAIMod\communicationmod\patches\MerchantPatch.class
@@ -128,6 +134,7 @@ SlayTheSpireAIMod\actions\FightAIAction.class
 SlayTheSpireAIMod\communicationmod\ChoiceScreenUtils.class
 SlayTheSpireAIMod\communicationmod\patches\DungeonMapPatch$Locator.class
 SlayTheSpireAIMod\AIs\CardSelectAI.class
+SlayTheSpireAIMod\AIs\BossRewardAI.class
 SlayTheSpireAIMod\communicationmod\CommunicationMod.class
 SlayTheSpireAIMod\DefaultMod.class
 SlayTheSpireAIMod\communicationmod\patches\GenericEventDialogPatch.class
