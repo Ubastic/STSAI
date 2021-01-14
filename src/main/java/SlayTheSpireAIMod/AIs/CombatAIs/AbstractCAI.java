@@ -53,42 +53,93 @@ public abstract class AbstractCAI {
         ArrayList<AbstractMonster> monsters = AbstractDungeon.getCurrRoom().monsters.monsters;
         int[] monsterHPs = new int[monsters.size()];
         CombatUtils.MonsterAttack[] monsterAttacks = new CombatUtils.MonsterAttack[monsters.size()];
-
+        int aliveMonsters = 0;
         for(int i = 0; i < monsters.size(); i++){
             AbstractMonster m = monsters.get(i);
+            if(m.currentHealth > 0){
+                aliveMonsters++;
+            }
             monsterHPs[i] = m.currentHealth;
             monsterAttacks[i] = new CombatUtils.MonsterAttack(m);
+        }
+
+        // check if combat can be won this turn
+        if(aliveMonsters == 1){
+            Move tryKill = toKill(getRandomTarget());
+            if(tryKill != null) return tryKill;
+        }
+
+        int monsterDamage = 0;
+        for(CombatUtils.MonsterAttack attack : monsterAttacks){
+            monsterDamage += attack.getDamage();
         }
 
         ArrayList<AbstractCard> cards = AbstractDungeon.player.hand.group;
 
         return CombatUtils.playLeft();
-//        // For now, use the first alive monster as the target
-//        AbstractMonster target = null;
-//        for (AbstractMonster m : monsters) {
-//            if (!m.isDeadOrEscaped()) {
-//                target = m;
-//                break;
-//            }
-//        }
-//
-//        // For now, play the leftmost playable card
-//        ArrayList<AbstractCard> cards = AbstractDungeon.player.hand.group;
-//        AbstractCard toPlay = null;
-//        for (AbstractCard c : cards) {
-//            if (c.canUse(AbstractDungeon.player, target)) {
-//                toPlay = c;
-//                break;
-//            }
-//        }
-//        if(toPlay == null){
-//            return new Move(Move.TYPE.PASS);
-//        }
-//        return new Move(Move.TYPE.CARD, cards.indexOf(toPlay), target);
     }
+
+    /** Determine if a monster can be killed this turn with attacks from hand. (Ironclad skills deal no damage)
+     * Ignores poison, monster armor gain effects, relics. If multiple, best kill option is not guaranteed.
+     * @param target Monster to be killed this turn.
+     * @return Move Return a Move which lets the player kill m this turn, null if none exists. */
+    public static Move toKill(AbstractMonster target){
+        ArrayList<AbstractCard> cards = AbstractDungeon.player.hand.group;
+        ArrayList<AbstractCard> attacks = new ArrayList<>();
+        for(AbstractCard card : cards){
+            if(card.type == AbstractCard.CardType.ATTACK){
+                attacks.add(card);
+            }
+        }
+        int energy = CombatUtils.usableEnergy();
+        for(AbstractCard attack : attacks){
+            if(toKillHelper(target, target.currentHealth, energy, attack, attacks)){
+                return new Move(Move.TYPE.CARD, cards.indexOf(attack), target);
+            }
+        }
+        return null;
+    }
+
+    /** @param target Monster we are attempting to kill.
+     * @param health Amount of damage that needs to be dealt to kill target.
+     * @param energy Amount of energy the player has left to use.
+     * @param use Card to be played.
+     * @param attacks The attack cards the player has left to use (must include use).
+     * @return boolean Return true if playing use allows the player to kill target.  */
+    private static boolean toKillHelper(AbstractMonster target, int health, int energy, AbstractCard use, ArrayList<AbstractCard> attacks){
+        energy -= use.costForTurn;
+        if(energy < 0){ return false; } // use cannot even be played
+
+        health -= CombatUtils.getDamage(use, target);
+        if(health <= 0){ return true; }
+
+        ArrayList<AbstractCard> remaining = new ArrayList<>(attacks);
+        remaining.remove(use);
+        for(AbstractCard attack : remaining){
+            if(toKillHelper(target, health, energy, attack, remaining)){
+                return true;
+            }
+        }
+        return false;
+    }
+
 
     /** @return AbstractMonster Return a random alive monster. */
     public static AbstractMonster getRandomTarget(){
         return AbstractDungeon.getRandomMonster();
     }
+
+    /** @return AbstractMonster Return the alive monster with the lowest health left. */
+    public static AbstractMonster getWeakestTarget(){
+        int minHealth = 999;
+        AbstractMonster weakest = null;
+        for(AbstractMonster m : AbstractDungeon.getCurrRoom().monsters.monsters){
+            if(m.currentHealth > 0 && m.currentHealth < minHealth){
+                minHealth = m.currentHealth;
+                weakest = m;
+            }
+        }
+        return weakest;
+    }
+
 }
