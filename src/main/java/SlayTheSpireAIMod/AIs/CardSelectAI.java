@@ -7,10 +7,9 @@ import java.util.ArrayList;
 
 /** Class which decides what to do given card rewards. */
 public class CardSelectAI {
-    /** If */
+    /** Choose the card on the left. */
     public static void execute(){
         if(ChoiceScreenUtils.getCurrentChoiceType() != ChoiceScreenUtils.ChoiceType.CARD_REWARD){
-            DevConsole.log("not card reward choice");
             return;
         }
         ArrayList<String> choices = ChoiceScreenUtils.getCurrentChoiceList();

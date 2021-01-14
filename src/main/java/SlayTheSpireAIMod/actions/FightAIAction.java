@@ -2,6 +2,7 @@ package SlayTheSpireAIMod.actions;
 
 import SlayTheSpireAIMod.util.CombatUtils;
 import SlayTheSpireAIMod.util.Move;
+import basemod.DevConsole;
 import com.megacrit.cardcrawl.actions.AbstractGameAction;
 import com.megacrit.cardcrawl.actions.utility.NewQueueCardAction;
 import com.megacrit.cardcrawl.cards.AbstractCard;
@@ -10,7 +11,8 @@ import com.megacrit.cardcrawl.potions.AbstractPotion;
 
 import java.util.ArrayList;
 
-/** Action which plays the rest of the turn in combat. */
+/** Action which plays the rest of the turn in combat.
+ * Screen decisions from cards (select card from hand/pile) are handled by respective AIs. */
 public class FightAIAction extends AbstractGameAction {
     int id;
     public FightAIAction(int id){

@@ -2,6 +2,7 @@ package SlayTheSpireAIMod.AIs;
 
 import SlayTheSpireAIMod.communicationmod.ChoiceScreenUtils;
 import SlayTheSpireAIMod.communicationmod.CommandExecutor;
+import SlayTheSpireAIMod.util.ScreenUpdateUtils;
 import basemod.DevConsole;
 import com.megacrit.cardcrawl.core.CardCrawlGame;
 import com.megacrit.cardcrawl.dungeons.AbstractDungeon;
@@ -11,7 +12,7 @@ import java.util.ArrayList;
 
 /** Class which decides what to do given combat rewards. */
 public class CombatRewardAI {
-    /** TODO */
+    /** Take gold, cards, relics. */
     public static void execute(){
         try{
             if(ChoiceScreenUtils.getCurrentChoiceType() != ChoiceScreenUtils.ChoiceType.COMBAT_REWARD) return;
@@ -36,8 +37,8 @@ public class CombatRewardAI {
                         break;
                     case "card":
                         ChoiceScreenUtils.makeCombatRewardChoice(i);
-                        // TODO find a way to use more broad update()
-                        AbstractDungeon.combatRewardScreen.update();
+                        ScreenUpdateUtils.update();
+//                        AbstractDungeon.combatRewardScreen.update();
 //                        AbstractDungeon current = CardCrawlGame.dungeon;
 //                        if(AbstractDungeon.screen != AbstractDungeon.CurrentScreen.CARD_REWARD)
 //                            current.update();

@@ -7,13 +7,15 @@ import java.util.ArrayList;
 
 /** Class which decides what room to travel to. */
 public class MapAI {
-    /** Always take the leftmost node. */
+    /** Travel the leftmost node. */
     public static void execute(){
         if(ChoiceScreenUtils.getCurrentChoiceType() != ChoiceScreenUtils.ChoiceType.MAP) return;
         ArrayList<String> choices = ChoiceScreenUtils.getCurrentChoiceList();
         ChoiceScreenUtils.makeMapChoice(0);
     }
 
+    // TODO
+    /** Class which represents a possible path to the boss. */
     private static class Path{
         int events;
         int shops;
