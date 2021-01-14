@@ -6,13 +6,20 @@ import SlayTheSpireAIMod.util.ScreenUpdateUtils;
 import basemod.DevConsole;
 import com.megacrit.cardcrawl.core.CardCrawlGame;
 import com.megacrit.cardcrawl.dungeons.AbstractDungeon;
+import com.megacrit.cardcrawl.potions.AbstractPotion;
+import com.megacrit.cardcrawl.potions.PotionSlot;
 import com.megacrit.cardcrawl.screens.CombatRewardScreen;
 
 import java.util.ArrayList;
 
 /** Class which decides what to do given combat rewards. */
 public class CombatRewardAI {
-    /** Take gold, cards, relics. */
+    /** Execute the following strategy:
+     *  - Take potions if slots are not full
+     *  - Take gold
+     *  - Take cards according to CardSelectAI
+     *  - Take relics
+     *  - Take keys */
     public static void execute(){
         try{
             if(ChoiceScreenUtils.getCurrentChoiceType() != ChoiceScreenUtils.ChoiceType.COMBAT_REWARD) return;
@@ -22,12 +29,18 @@ public class CombatRewardAI {
                 switch(choice){
                     case "potion":
                         String potionName = AbstractDungeon.combatRewardScreen.rewards.get(i).potion.name;
-//                        if(AbstractDungeon.player.potions.size())
-                        DevConsole.log("Num potions: " + AbstractDungeon.player.potions.size());
+                        boolean full = true;
+                        for(AbstractPotion potion : AbstractDungeon.player.potions){
+                            if(potion.getClass() == PotionSlot.class){
+                                full = false;
+                                break;
+                            }
+                        }
+                        if(!full){
+                            ChoiceScreenUtils.makeCombatRewardChoice(i);
+                        }
                         break;
                     case "gold":
-                        ChoiceScreenUtils.makeCombatRewardChoice(i);
-                        break;
                     case "stolen_gold":
                         ChoiceScreenUtils.makeCombatRewardChoice(i);
                         break;
@@ -37,18 +50,18 @@ public class CombatRewardAI {
                         break;
                     case "card":
                         ChoiceScreenUtils.makeCombatRewardChoice(i);
+                        // Skip card select screen
                         ScreenUpdateUtils.update();
-//                        AbstractDungeon.combatRewardScreen.update();
-//                        AbstractDungeon current = CardCrawlGame.dungeon;
-//                        if(AbstractDungeon.screen != AbstractDungeon.CurrentScreen.CARD_REWARD)
-//                            current.update();
                         CardSelectAI.execute();
+                        ScreenUpdateUtils.update();
                         break;
                     case "sapphire_key":
                     case "emerald_key":
+                        ChoiceScreenUtils.makeCombatRewardChoice(i);
                         break;
                 }
             }
+            ChoiceScreenUtils.pressConfirmButton();
 //
 //            int goldIndex = choices.indexOf("gold");
 //            int cardIndex1 = choices.indexOf("card");

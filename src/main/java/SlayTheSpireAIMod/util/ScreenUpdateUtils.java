@@ -50,12 +50,12 @@ public class ScreenUpdateUtils {
 //                    currMapNode.room.update();
 //                }
 //                break;
-//            case CARD_REWARD:
-//                cardRewardScreen.update();
-//                if (PeekButton.isPeeking) {
-//                    currMapNode.room.update();
-//                }
-//                break;
+            case CARD_REWARD:
+                AbstractDungeon.cardRewardScreen.update();
+                if (PeekButton.isPeeking) {
+                    AbstractDungeon.currMapNode.room.update();
+                }
+                break;
             case COMBAT_REWARD:
                 AbstractDungeon.combatRewardScreen.update();
                 break;
