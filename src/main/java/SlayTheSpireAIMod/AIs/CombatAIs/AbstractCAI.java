@@ -80,10 +80,16 @@ public abstract class AbstractCAI {
     }
 
     /** Determine if a monster can be killed this turn with attacks from hand. (Ironclad skills deal no damage)
-     * Ignores poison, monster armor gain effects, relics. If multiple, best kill option is not guaranteed.
+     * Ignores poison, monster armor gain effects, relics.
+     * Ignores Time Warp, Velvet Choker
+     * If multiple, best kill option is not guaranteed.
      * @param target Monster to be killed this turn.
      * @return Move Return a Move which lets the player kill m this turn, null if none exists. */
     public static Move toKill(AbstractMonster target){
+        // Cannot kill with attacks when Entangled
+        if(AbstractDungeon.player.hasPower("Entangled")){
+            return null;
+        }
         ArrayList<AbstractCard> cards = AbstractDungeon.player.hand.group;
         ArrayList<AbstractCard> attacks = new ArrayList<>();
         for(AbstractCard card : cards){

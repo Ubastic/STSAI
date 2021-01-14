@@ -4,6 +4,7 @@ import SlayTheSpireAIMod.util.CombatUtils;
 import SlayTheSpireAIMod.util.Move;
 import basemod.DevConsole;
 import com.megacrit.cardcrawl.actions.AbstractGameAction;
+import com.megacrit.cardcrawl.actions.common.EndTurnAction;
 import com.megacrit.cardcrawl.actions.utility.NewQueueCardAction;
 import com.megacrit.cardcrawl.cards.AbstractCard;
 import com.megacrit.cardcrawl.dungeons.AbstractDungeon;
@@ -11,7 +12,7 @@ import com.megacrit.cardcrawl.potions.AbstractPotion;
 
 import java.util.ArrayList;
 
-/** Action which plays the rest of the turn in combat.
+/** Action which plays the rest of the turn in combat (includes end turn).
  * Screen decisions from cards (select card from hand/pile) are handled by respective AIs. */
 public class FightAIAction extends AbstractGameAction {
     int id;
@@ -26,11 +27,16 @@ public class FightAIAction extends AbstractGameAction {
             isDone = true;
             return;
         }
-
         ArrayList<AbstractCard> cards = AbstractDungeon.player.hand.group;
-        Move toMake = CombatUtils.pickMove(); // There is no check for validity of this Move
+        Move toMake = CombatUtils.pickMove(); // There is no check for validity of non-card moves
         switch (toMake.type){
             case CARD:
+                AbstractCard toPlay = cards.get(toMake.index);
+                if(!toPlay.canUse(AbstractDungeon.player, toMake.target)){
+                    isDone = true;
+                    DevConsole.log("Illegal card played");
+                    return;
+                }
                 NewQueueCardAction queueCard = new NewQueueCardAction(cards.get(toMake.index), toMake.target);
                 this.addToTop(queueCard);
                 isDone = true; // so that actionManager.update() does not keep calling this method
@@ -47,6 +53,7 @@ public class FightAIAction extends AbstractGameAction {
                 break;
             case PASS:
                 isDone = true;
+                AbstractDungeon.overlayMenu.endTurnButton.disable(true);
                 break;
         }
     }
