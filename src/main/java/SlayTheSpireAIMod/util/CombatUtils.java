@@ -7,12 +7,14 @@ import com.megacrit.cardcrawl.cards.DamageInfo;
 import com.megacrit.cardcrawl.dungeons.AbstractDungeon;
 import com.megacrit.cardcrawl.monsters.AbstractMonster;
 import com.megacrit.cardcrawl.monsters.EnemyMoveInfo;
+import com.megacrit.cardcrawl.ui.panels.EnergyPanel;
 
 import java.util.ArrayList;
 
 public class CombatUtils {
+    /** @return int Return the amount of energy the player has left to use this turn. */
     public static int usableEnergy(){
-        return AbstractDungeon.player.energy.energy;
+        return EnergyPanel.totalCount;
     }
 
     /** Evaluate the combat state and return the best valid next move.
@@ -58,7 +60,7 @@ public class CombatUtils {
 
     /** @return int Return how much damage would be dealt to target by playing card at it (if applicable). */
     public static int getDamage(AbstractCard card, AbstractMonster target){
-        if(card.type != AbstractCard.CardType.ATTACK){ //TODO maybe nclude a thousand cuts
+        if(card.type != AbstractCard.CardType.ATTACK){ //TODO maybe include a thousand cuts
             return 0;
         }
         DamageInfo dinfo = new DamageInfo(AbstractDungeon.player, card.baseDamage, card.damageTypeForTurn);
