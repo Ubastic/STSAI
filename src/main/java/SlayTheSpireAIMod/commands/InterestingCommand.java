@@ -1,8 +1,10 @@
 package SlayTheSpireAIMod.commands;
 
+import SlayTheSpireAIMod.util.CombatUtils;
 import basemod.DevConsole;
 import basemod.devcommands.ConsoleCommand;
 import com.megacrit.cardcrawl.dungeons.AbstractDungeon;
+import com.megacrit.cardcrawl.monsters.AbstractMonster;
 
 import java.util.ArrayList;
 
@@ -31,8 +33,14 @@ public class InterestingCommand extends ConsoleCommand {
 //                }
 //            }
 //        };
-        testFightName();
-
+//        for(AbstractMonster m : AbstractDungeon.getCurrRoom().monsters.monsters){
+//            DevConsole.log("Name: " + m.name + ", health: " + m.currentHealth);
+//        }
+//        AbstractMonster weak = CombatUtils.getWeakestTarget();
+//        DevConsole.log(CombatUtils.getWeakestTarget().toString());
+//        DevConsole.log(weak.name + " h:" + weak.currentHealth);
+//        testFightName();
+        DevConsole.log("" + AbstractDungeon.actionManager.currentAction.getClass());
     }
 
     public ArrayList<String> extraOptions(String[] tokens, int depth) {

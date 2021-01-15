@@ -34,7 +34,7 @@ public class FightAIAction extends AbstractGameAction {
                 AbstractCard toPlay = cards.get(toMake.index);
                 if(!toPlay.canUse(AbstractDungeon.player, toMake.target)){
                     isDone = true;
-                    DevConsole.log("Illegal card played");
+                    DevConsole.log("Illegal card played: " + toMake.toString());
                     return;
                 }
                 NewQueueCardAction queueCard = new NewQueueCardAction(cards.get(toMake.index), toMake.target);

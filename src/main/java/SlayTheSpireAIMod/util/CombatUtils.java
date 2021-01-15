@@ -10,6 +10,7 @@ import com.megacrit.cardcrawl.monsters.EnemyMoveInfo;
 import com.megacrit.cardcrawl.ui.panels.EnergyPanel;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class CombatUtils {
     /** @return int Return the amount of energy the player has left to use this turn. */
@@ -58,18 +59,50 @@ public class CombatUtils {
                 || intent == AbstractMonster.Intent.ATTACK_DEBUFF || intent == AbstractMonster.Intent.ATTACK_DEFEND;
     }
 
-    /** @return int Return how much damage would be dealt to target by playing card at it (if applicable). */
+    /** For Whirlwind(+) returns damage dealt per strike.
+     * @return int Return how much damage would be dealt to target by playing card at it (if applicable). */
     public static int getDamage(AbstractCard card, AbstractMonster target){
         if(card.type != AbstractCard.CardType.ATTACK){ //TODO maybe include a thousand cuts
             return 0;
         }
         DamageInfo dinfo = new DamageInfo(AbstractDungeon.player, card.baseDamage, card.damageTypeForTurn);
         dinfo.applyPowers(AbstractDungeon.player, target);
-        return dinfo.output;
+
+        int hits = getHits(card.cardID);
+        return dinfo.output * hits;
+    }
+
+    /** @param attackID CardID of the attack.
+     * @return int Return number of strikes in the given attack. */
+    public static int getHits(String attackID){
+        if(attackID.equals("Twin Strike")) return 2;
+        if(attackID.equals("Twin Strike+")) return 2;
+        if(attackID.equals("Pummel")) return 4;
+        if(attackID.equals("Pummel+")) return 5;
+        return 1;
     }
 
 
-    /** TODO Represent an incoming attack by a monster. */
+
+    /** @return AbstractMonster Return a random alive monster. */
+    public static AbstractMonster getRandomTarget(){
+        return AbstractDungeon.getRandomMonster();
+    }
+
+    /** @return AbstractMonster Return the alive monster with the lowest health left. */
+    public static AbstractMonster getWeakestTarget(){
+        int minHealth = 999;
+        AbstractMonster weakest = null;
+        for(AbstractMonster m : AbstractDungeon.getCurrRoom().monsters.monsters){
+            if(m.currentHealth > 0 && m.currentHealth < minHealth){
+                minHealth = m.currentHealth;
+                weakest = m;
+            }
+        }
+        return weakest;
+    }
+
+    /** Represent an incoming attack by a monster. */
     public static class MonsterAttack{
         AbstractMonster monster; // attacking monster
         int baseDmg; // amount of damage each strike deals, no modifiers
@@ -87,6 +120,10 @@ public class CombatUtils {
 
         /** Update field values to represent the combat state. */
         public void update(){
+            if(monster.isDeadOrEscaped()){
+                hits = 0;
+                return;
+            }
             EnemyMoveInfo moveInfo = ReflectionHacks.getPrivate(monster, AbstractMonster.class, "move");
             baseDmg = moveInfo.baseDamage;
             damage =  monster.getIntentDmg();
@@ -118,14 +155,6 @@ public class CombatUtils {
                 double wFactor = AbstractDungeon.player.hasRelic("Paper Crane") ? 0.6 : 0.75;
                 int wBase = Math.max(0, (int)Math.floor((baseDmg + strength) * wFactor)); // damage per hit if weakened
                 return (int)Math.floor(wBase * vFactor) * hits;
-
-//                if(AbstractDungeon.player.hasRelic("Paper Crane")){
-//                    int wBase = Math.max(0, (int)Math.floor((baseDmg + strength) * 0.6));
-//                    return wBase * hits;
-//                }else{
-//                    int wBase = Math.max(0, (int)Math.floor((baseDmg + strength) * 0.75));
-//                    return wBase * hits;
-//                }
             }
         }
 
@@ -141,6 +170,11 @@ public class CombatUtils {
          * @return int Return the amount of damage that would be dealt if vulnerable was removed. */
         public int getNonVulnerableDamage(){
             return -1;
+        }
+
+        /** @return AbstractMonster Return the owner of this attack. */
+        public AbstractMonster getMonster(){
+            return monster;
         }
 
         public String toString(){

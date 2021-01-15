@@ -26,5 +26,12 @@ public class Move {
         if(t != TYPE.PASS) throw new IllegalArgumentException("Not enough Move information.");
     }
 
-
+    @Override
+    public String toString() {
+        return "Move{" +
+                "type=" + type +
+                ", index=" + index +
+                ", target=" + target +
+                '}';
+    }
 }

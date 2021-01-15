@@ -2,6 +2,7 @@ package SlayTheSpireAIMod.AIs;
 
 import SlayTheSpireAIMod.communicationmod.ChoiceScreenUtils;
 import SlayTheSpireAIMod.util.ScreenUpdateUtils;
+import com.megacrit.cardcrawl.actions.unique.DiscardPileToTopOfDeckAction;
 import com.megacrit.cardcrawl.dungeons.AbstractDungeon;
 import com.megacrit.cardcrawl.screens.select.GridCardSelectScreen;
 
@@ -34,7 +35,11 @@ public class GridSelectAI {
             ChoiceScreenUtils.makeGridScreenChoice(0);
             ScreenUpdateUtils.update();
             ChoiceScreenUtils.pressConfirmButton();
-        }else{ // AFAIK Only possibility is for duplicator
+        }else if(AbstractDungeon.actionManager.currentAction instanceof DiscardPileToTopOfDeckAction){
+            // possibilities: headbutt
+            ChoiceScreenUtils.makeGridScreenChoice(0);
+        }else{
+            //duplicator
 
         }
     }
