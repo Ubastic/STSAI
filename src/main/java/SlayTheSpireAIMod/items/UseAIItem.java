@@ -14,7 +14,7 @@ import com.megacrit.cardcrawl.helpers.TipHelper;
 
 import java.util.ArrayList;
 
-/** When clicked during combat, execute the current turn. */
+/** Clickable panel item which has an AI execute the current decision. */
 public class UseAIItem extends TopPanelItem {
     private static final Texture IMG = new Texture("SlayTheSpireAIModResources/images/ui/robotimage-small.png");
     public static final String ID = "slaythespireai:UseAIItem";
@@ -66,8 +66,8 @@ public class UseAIItem extends TopPanelItem {
                     HandSelectAI.execute();
                     break;
                 case GAME_OVER:
-                    break;
                 case COMPLETE:
+                    ChoiceScreenUtils.pressConfirmButton();
                     break;
                 case NONE:
                     AbstractDungeon.actionManager.addToBottom(new FightAIAction(0));
