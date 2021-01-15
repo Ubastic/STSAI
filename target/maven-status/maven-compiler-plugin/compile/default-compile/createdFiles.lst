@@ -95,6 +95,7 @@ SlayTheSpireAIMod\cards\AbstractDynamicCard.class
 SlayTheSpireAIMod\communicationmod\patches\CampfireSmithEffectPatch$LocatorBefore.class
 SlayTheSpireAIMod\patches\DefaultInsertPatch$Locator.class
 SlayTheSpireAIMod\communicationmod\patches\CampfireRecallEffectPatch$LocatorBefore.class
+SlayTheSpireAIMod\commands\EventInfoCommand.class
 SlayTheSpireAIMod\communicationmod\patches\GridCardSelectScreenPatch.class
 SlayTheSpireAIMod\communicationmod\patches\CampfireLiftEffectPatch$Locator.class
 SlayTheSpireAIMod\AIs\CombatAIs\AbstractCAI.class
