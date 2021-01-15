@@ -2,6 +2,7 @@ package SlayTheSpireAIMod.AIs;
 
 import SlayTheSpireAIMod.communicationmod.ChoiceScreenUtils;
 import SlayTheSpireAIMod.communicationmod.InvalidCommandException;
+import com.megacrit.cardcrawl.dungeons.AbstractDungeon;
 
 import java.util.ArrayList;
 
@@ -13,6 +14,9 @@ public class RestSiteAI {
         ArrayList<String> choices = ChoiceScreenUtils.getCurrentChoiceList();
         if(choices.size() > 0){
             ChoiceScreenUtils.makeRestRoomChoice(0);
+            ChoiceScreenUtils.pressConfirmButton();
+        }
+        if(ChoiceScreenUtils.isConfirmButtonAvailable()){
             ChoiceScreenUtils.pressConfirmButton();
         }
     }
