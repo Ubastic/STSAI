@@ -10,12 +10,13 @@ import com.megacrit.cardcrawl.events.beyond.*;
 import com.megacrit.cardcrawl.events.city.*;
 import com.megacrit.cardcrawl.events.exordium.*;
 import com.megacrit.cardcrawl.events.shrines.*;
+import com.megacrit.cardcrawl.neow.NeowEvent;
 
 import java.util.*;
 
 /** Class which decides what to during an event. */
 public class EventAI {
-    /** Make first decision. */
+    /** Follow a basic strategy for the event. */
     public static void execute(){
         if(ChoiceScreenUtils.getCurrentChoiceType() != ChoiceScreenUtils.ChoiceType.EVENT) return;
         ArrayList<String> choices = ChoiceScreenUtils.getCurrentChoiceList();
@@ -40,8 +41,37 @@ public class EventAI {
         }
 
 
-//        ChoiceScreenUtils.makeEventChoice(0);
-
+        if(event instanceof NeowEvent){
+            // in the 2-choice version, choose max hp over 1hp combats
+            // with 4 choices choose one of the non-drawback rewards
+            if(choices.size() == 2){
+                choose("max hp +8");
+            }else{
+                if(choices.contains("remove a card")){
+                    choose("remove a card");
+                }else if(choices.contains("obtain a random common relic")){
+                    choose("obtain a random common relic");
+                }else if(choices.contains("receive 100 gold")){
+                    choose("receive 100 gold");
+                }else if(choices.contains("upgrade a card")){
+                    choose("upgrade a card");
+                }else if(choices.contains("transform a card")){
+                    choose("transform a card");
+                }else if(choices.contains("max hp +8")){
+                    choose("max hp +8");
+                }else if(choices.contains("choose a card to obtain")){
+                    choose("choose a card to obtain");
+                }else if(choices.contains("obtain a random rare card")){
+                    choose("obtain a random rare card");
+                }else if(choices.contains("obtain a random uncommon colorless card")){
+                    choose("obtain a random uncommon colorless card");
+                }else if(choices.contains("enemies in the next three combat will have one health")){
+                    choose("enemies in the next three combat will have one health");
+                }else{
+                    ChoiceScreenUtils.makeEventChoice(0);
+                }
+            }
+        }
 
         if(event instanceof AccursedBlacksmith){
             // upgrade if possible, leave otherwise (never relic/curse)
