@@ -15,13 +15,14 @@ public class Deck {
     boolean isBarricade;
     boolean isLimitBreak;
     boolean isDemonForm;
-    // TODO isSnecko
+    // TODO is Snecko
+    // TODO is SearingBlow
 
     public Deck(CardGroup deck){
         cards = deck.group;
         int newAttacks = 0;
         for(AbstractCard c : cards){
-            if(c.type == AbstractCard.CardType.ATTACK && !c.cardID.equals("Strike_R")){
+            if(c.type == AbstractCard.CardType.ATTACK && !c.isStarterStrike()){
                 newAttacks += 1;
             }
             switch (c.cardID) {
@@ -48,7 +49,35 @@ public class Deck {
 
     /** @return AbstractCard Return the best card to upgrade in the deck. */
     public AbstractCard getUpgrade(){
-        // TODO
+        if(containsUpgradable("Body Slam")){
+            return getCard("Body Slam");
+        }
+        if(containsUpgradable("Armaments")){
+            return getCard("Armaments");
+        }
+        if(containsUpgradable("Whirlwind")) {
+            return getCard("Whirlwind");
+        }
+        if(containsUpgradable("Barricade")) {
+            return getCard("Barricade");
+        }
+        if(containsUpgradable("Limit Break")) {
+            return getCard("Limit Break");
+        }
+        if(containsUpgradable("Demon Form")) {
+            return getCard("Demon Form");
+        }
+        if(containsUpgradable("Entrench")) {
+            return getCard("Entrench");
+        }
+        for(AbstractCard c : cards){
+            if(!c.isStarterStrike() && !c.isStarterDefend())
+                return c;
+        }
+        for(AbstractCard c : cards){
+            if(!c.upgraded)
+                return c;
+        }
         return null;
     }
 
@@ -69,9 +98,9 @@ public class Deck {
         int strikes = 0;
         int defends = 0;
         for(AbstractCard c : cards){
-            if(c.cardID.equals("Strike_R")){
+            if(c.isStarterStrike()){
                 strikes += 1;
-            }else if(c.cardID.equals("Defend_R")){
+            }else if(c.isStarterDefend()){
                 defends += 1;
             }
         }
@@ -97,7 +126,18 @@ public class Deck {
         return getRemove(canPass);
     }
 
-    /** @param cardID Name of a card (no '+').
+    /** @param cardID ID of a card (no '+').
+     * @return boolean Return true if the deck contains an upgradable version of the given card. */
+    public boolean containsUpgradable(String cardID){
+        for(AbstractCard c : cards){
+            if(c.cardID.equals(cardID) && (!c.upgraded || c.cardID.equals("Searing Blow"))){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /** @param cardID ID of a card (no '+').
      * @return boolean Return true if the deck contains the given card, either upgraded or unupgraded. */
     public boolean contains(String cardID){
         for(AbstractCard c : cards){

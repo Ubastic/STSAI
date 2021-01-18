@@ -22,13 +22,15 @@ public class GridSelectAI {
             return;
         }
         if(screen.forUpgrade){
-            // upgrade the last card
-            ChoiceScreenUtils.makeGridScreenChoice(choices.size() - 1);
+            Deck deck = new Deck(AbstractDungeon.player.masterDeck);
+            AbstractCard toUpgrade = deck.getUpgrade();
+            ChoiceScreenUtils.makeGridScreenChoice(choices.indexOf(toUpgrade.name));
             ScreenUpdateUtils.update();
             ChoiceScreenUtils.pressConfirmButton();
         }else if(screen.forTransform){
-            // transform the first card
-            ChoiceScreenUtils.makeGridScreenChoice(0);
+            Deck deck = new Deck(AbstractDungeon.player.masterDeck);
+            AbstractCard toTransform = deck.getTransform(false);
+            ChoiceScreenUtils.makeGridScreenChoice(choices.indexOf(toTransform.name));
             ScreenUpdateUtils.update();
             ChoiceScreenUtils.pressConfirmButton();
         }else if(screen.forPurge){
