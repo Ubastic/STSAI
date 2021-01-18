@@ -2,6 +2,7 @@ package SlayTheSpireAIMod.AIs;
 
 import SlayTheSpireAIMod.communicationmod.ChoiceScreenUtils;
 import SlayTheSpireAIMod.util.ScreenUpdateUtils;
+import basemod.DevConsole;
 import com.megacrit.cardcrawl.actions.unique.DiscardPileToTopOfDeckAction;
 import com.megacrit.cardcrawl.cards.AbstractCard;
 import com.megacrit.cardcrawl.dungeons.AbstractDungeon;
@@ -24,19 +25,19 @@ public class GridSelectAI {
         if(screen.forUpgrade){
             Deck deck = new Deck(AbstractDungeon.player.masterDeck);
             AbstractCard toUpgrade = deck.getUpgrade();
-            ChoiceScreenUtils.makeGridScreenChoice(choices.indexOf(toUpgrade.name));
+            ChoiceScreenUtils.makeGridScreenChoice(choices.indexOf(toUpgrade.name.toLowerCase()));
             ScreenUpdateUtils.update();
             ChoiceScreenUtils.pressConfirmButton();
         }else if(screen.forTransform){
             Deck deck = new Deck(AbstractDungeon.player.masterDeck);
             AbstractCard toTransform = deck.getTransform(false);
-            ChoiceScreenUtils.makeGridScreenChoice(choices.indexOf(toTransform.name));
+            ChoiceScreenUtils.makeGridScreenChoice(choices.indexOf(toTransform.name.toLowerCase()));
             ScreenUpdateUtils.update();
             ChoiceScreenUtils.pressConfirmButton();
         }else if(screen.forPurge){
             Deck deck = new Deck(AbstractDungeon.player.masterDeck);
             AbstractCard toRemove = deck.getRemove(false);
-            ChoiceScreenUtils.makeGridScreenChoice(choices.indexOf(toRemove.name));
+            ChoiceScreenUtils.makeGridScreenChoice(choices.indexOf(toRemove.name.toLowerCase()));
             ScreenUpdateUtils.update();
             ChoiceScreenUtils.pressConfirmButton();
         }else if(AbstractDungeon.actionManager.currentAction instanceof DiscardPileToTopOfDeckAction){

@@ -70,8 +70,10 @@ public class UseAIItem extends TopPanelItem {
                     ChoiceScreenUtils.pressConfirmButton();
                     break;
                 case NONE:
-                    AbstractDungeon.actionManager.addToBottom(new FightAIAction(0));
-                    break;
+                    if(!AbstractDungeon.actionManager.turnHasEnded){
+                        AbstractDungeon.actionManager.addToBottom(new FightAIAction(0));
+                        break;
+                    }
             }
             DevConsole.log("after:" + ChoiceScreenUtils.getCurrentChoiceType().toString());
             DevConsole.log(choices.toString());

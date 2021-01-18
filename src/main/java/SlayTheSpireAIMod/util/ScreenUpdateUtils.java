@@ -2,6 +2,7 @@ package SlayTheSpireAIMod.util;
 
 import com.megacrit.cardcrawl.core.CardCrawlGame;
 import com.megacrit.cardcrawl.dungeons.AbstractDungeon;
+import com.megacrit.cardcrawl.helpers.MathHelper;
 import com.megacrit.cardcrawl.helpers.input.InputHelper;
 import com.megacrit.cardcrawl.ui.buttons.PeekButton;
 import com.megacrit.cardcrawl.vfx.AbstractGameEffect;
@@ -10,8 +11,19 @@ import com.megacrit.cardcrawl.vfx.PlayerTurnEffect;
 import java.util.Iterator;
 
 public class ScreenUpdateUtils {
-    /** Update the current screen. If a screen-loading/closing action has been made, load/close that screen. */
+    /** Update the current screen. If a screen-loading/closing action has been made, load/close that screen.
+     * Does not work for: loading grid */
     public static void update(){
+        AbstractDungeon.dynamicBanner.update();
+        CardCrawlGame.dungeon.updateFading();
+        AbstractDungeon.currMapNode.room.updateObjects();
+        if (AbstractDungeon.isScreenUp) {
+            AbstractDungeon.topGradientColor.a = MathHelper.fadeLerpSnap(AbstractDungeon.topGradientColor.a, 0.25F);
+            AbstractDungeon.botGradientColor.a = MathHelper.fadeLerpSnap(AbstractDungeon.botGradientColor.a, 0.25F);
+        } else {
+            AbstractDungeon.topGradientColor.a = MathHelper.fadeLerpSnap(AbstractDungeon.topGradientColor.a, 0.1F);
+            AbstractDungeon.botGradientColor.a = MathHelper.fadeLerpSnap(AbstractDungeon.botGradientColor.a, 0.1F);
+        }
         AbstractDungeon.CurrentScreen screen = AbstractDungeon.screen;
         switch(screen){
             case NO_INTERACT:
@@ -27,27 +39,27 @@ public class ScreenUpdateUtils {
                 InputHelper.justClickedLeft = false;
                 AbstractDungeon.currMapNode.room.update();
                 break;
-//            case MASTER_DECK_VIEW:
-//                deckViewScreen.update();
-//                break;
-//            case GAME_DECK_VIEW:
-//                gameDeckViewScreen.update();
-//                break;
-//            case DISCARD_VIEW:
-//                discardPileViewScreen.update();
-//                break;
-//            case EXHAUST_VIEW:
-//                exhaustPileViewScreen.update();
-//                break;
-//            case SETTINGS:
-//                settingsScreen.update();
-//                break;
-//            case INPUT_SETTINGS:
-//                inputSettingsScreen.update();
-//                break;
-//            case MAP:
-//                dungeonMapScreen.update();
-//                break;
+            case MASTER_DECK_VIEW:
+                AbstractDungeon.deckViewScreen.update();
+                break;
+            case GAME_DECK_VIEW:
+                AbstractDungeon.gameDeckViewScreen.update();
+                break;
+            case DISCARD_VIEW:
+                AbstractDungeon.discardPileViewScreen.update();
+                break;
+            case EXHAUST_VIEW:
+                AbstractDungeon.exhaustPileViewScreen.update();
+                break;
+            case SETTINGS:
+                AbstractDungeon.settingsScreen.update();
+                break;
+            case INPUT_SETTINGS:
+                AbstractDungeon.inputSettingsScreen.update();
+                break;
+            case MAP:
+                AbstractDungeon.dungeonMapScreen.update();
+                break;
             case GRID:
                 AbstractDungeon.gridSelectScreen.update();
                 if (PeekButton.isPeeking) {
@@ -63,14 +75,14 @@ public class ScreenUpdateUtils {
             case COMBAT_REWARD:
                 AbstractDungeon.combatRewardScreen.update();
                 break;
-//            case BOSS_REWARD:
-//                bossRelicScreen.update();
-//                currMapNode.room.update();
-//                break;
-//            case HAND_SELECT:
-//                handCardSelectScreen.update();
-//                currMapNode.room.update();
-//                break;
+            case BOSS_REWARD:
+                AbstractDungeon.bossRelicScreen.update();
+                AbstractDungeon.currMapNode.room.update();
+                break;
+            case HAND_SELECT:
+                AbstractDungeon.handCardSelectScreen.update();
+                AbstractDungeon.currMapNode.room.update();
+                break;
             case SHOP:
                 AbstractDungeon.shopScreen.update();
                 break;
