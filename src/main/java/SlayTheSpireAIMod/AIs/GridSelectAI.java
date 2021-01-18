@@ -3,6 +3,7 @@ package SlayTheSpireAIMod.AIs;
 import SlayTheSpireAIMod.communicationmod.ChoiceScreenUtils;
 import SlayTheSpireAIMod.util.ScreenUpdateUtils;
 import com.megacrit.cardcrawl.actions.unique.DiscardPileToTopOfDeckAction;
+import com.megacrit.cardcrawl.cards.AbstractCard;
 import com.megacrit.cardcrawl.dungeons.AbstractDungeon;
 import com.megacrit.cardcrawl.screens.select.GridCardSelectScreen;
 
@@ -31,8 +32,9 @@ public class GridSelectAI {
             ScreenUpdateUtils.update();
             ChoiceScreenUtils.pressConfirmButton();
         }else if(screen.forPurge){
-            // purge the first card
-            ChoiceScreenUtils.makeGridScreenChoice(0);
+            Deck deck = new Deck(AbstractDungeon.player.masterDeck);
+            AbstractCard toRemove = deck.getRemove(false);
+            ChoiceScreenUtils.makeGridScreenChoice(choices.indexOf(toRemove.name));
             ScreenUpdateUtils.update();
             ChoiceScreenUtils.pressConfirmButton();
         }else if(AbstractDungeon.actionManager.currentAction instanceof DiscardPileToTopOfDeckAction){
