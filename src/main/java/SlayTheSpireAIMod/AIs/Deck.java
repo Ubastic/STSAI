@@ -41,9 +41,58 @@ public class Deck {
     }
 
     /** Choose what to do given a card reward.
+     * @param options List of card names in lowercase (includes '+').
      * @return String Return name of chosen card or null if chosen skip. */
     public String chooseCard(ArrayList<String> options){
         // TODO
+        HashSet<String> optionSet = new HashSet<>(options);
+        if(!isBarricade && !isLimitBreak && !isDemonForm){
+            // TODO decide between multiple wincons better
+            if(optionSet.contains("barricade")){
+                isBarricade = true;
+                return "barricade";
+            }
+            if(optionSet.contains("barricade+")){
+                isBarricade = true;
+                return "barricade+";
+            }
+            if(optionSet.contains("limit break")){
+                isLimitBreak = true;
+                return "limit break";
+            }
+            if(optionSet.contains("limit break+")){
+                isLimitBreak = true;
+                return "limit break+";
+            }
+            if(optionSet.contains("demon form")){
+                isDemonForm = true;
+                return "demon form";
+            }
+            if(optionSet.contains("demon form+")){
+                isDemonForm = true;
+                return "demon form+";
+            }
+        }
+        if(!hasDamage){
+            if(optionSet.contains("whirlwind")){
+                return "whirlwind";
+            }
+            if(optionSet.contains("pommel strike")){
+                return "pommel strike";
+            }
+            if(optionSet.contains("cleave")){
+                return "cleave";
+            }
+            if(optionSet.contains("headbutt")){
+                return "headbutt";
+            }
+            if(optionSet.contains("body slam")){
+                return "body slam";
+            }
+            if(optionSet.contains("rampage")){
+                return "rampage";
+            }
+        }
         return options.get(0);
     }
 
