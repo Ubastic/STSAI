@@ -19,6 +19,10 @@ public class MapAI {
     public static void execute(){
         if(ChoiceScreenUtils.getCurrentChoiceType() != ChoiceScreenUtils.ChoiceType.MAP) return;
         ArrayList<String> choices = ChoiceScreenUtils.getCurrentChoiceList();
+        if(choices.size() == 1){
+            // will handle when there is only one child, like final rest -> boss
+            ChoiceScreenUtils.makeMapChoice(0);
+        }
 
         // create all possible paths from this node
         MapRoomNode current = AbstractDungeon.currMapNode;
@@ -110,13 +114,30 @@ public class MapAI {
             return this;
         }
 
-        /** @return int 1 if p is better, -1 if worse, 0 if equal to this path. */
+        /** @return int positive if this path is better, negative if worse, 0 if equal to the other path. */
         @Override
         public int compareTo(Path p) {
-            if(rests > p.rests){
-                return 1;
+            if(AbstractDungeon.player.currentHealth > 40){
+                if(elites == 0 && p.elites > 0){
+                    return -1;
+                }
+                if(elites > 0 && p.elites == 0){
+                    return 1;
+                }
             }
-            return 0;
+            if(rests == p.rests){
+                if(AbstractDungeon.player.gold > 200){
+                    if(shops == 0 && p.shops > 0){
+                        return -1;
+                    }
+                    if(shops > 0 && p.shops == 0){
+                        return 1;
+                    }
+                }
+                return unknowns - p.unknowns;
+            }else{
+                return rests - p.rests;
+            }
         }
 
         @Override
