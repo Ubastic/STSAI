@@ -16,8 +16,13 @@ public class MapUtils {
         return roots;
     }
 
-    /** @return MapRoomNode Return node in map at specific coordinates. */
+    /** @return MapRoomNode Return node in map at specific coordinates, null if does not exist. */
     public static MapRoomNode getNode(int x, int y, ArrayList<ArrayList<MapRoomNode>> map) {
-        return map.get(y).get(x);
+        try{
+            return map.get(y).get(x);
+        }catch (IndexOutOfBoundsException e){
+            return null;
+        }
+
     }
 }
