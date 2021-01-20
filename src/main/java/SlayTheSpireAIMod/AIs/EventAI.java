@@ -2,6 +2,7 @@ package SlayTheSpireAIMod.AIs;
 
 import SlayTheSpireAIMod.communicationmod.ChoiceScreenUtils;
 import SlayTheSpireAIMod.util.ScreenUpdateUtils;
+import basemod.DevConsole;
 import basemod.ReflectionHacks;
 import com.megacrit.cardcrawl.cards.AbstractCard;
 import com.megacrit.cardcrawl.dungeons.AbstractDungeon;
@@ -71,6 +72,7 @@ public class EventAI {
                     ChoiceScreenUtils.makeEventChoice(0);
                 }
             }
+            return;
         }
 
         if(event instanceof AccursedBlacksmith){
