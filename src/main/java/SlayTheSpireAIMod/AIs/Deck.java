@@ -1,5 +1,6 @@
 package SlayTheSpireAIMod.AIs;
 
+import basemod.DevConsole;
 import com.megacrit.cardcrawl.cards.AbstractCard;
 import com.megacrit.cardcrawl.cards.CardGroup;
 import com.megacrit.cardcrawl.dungeons.AbstractDungeon;
@@ -10,7 +11,7 @@ import java.util.HashSet;
 
 /** Class which represents the player's current permanent deck/relics and evaluates changes to it. */
 public class Deck {
-    ArrayList<AbstractCard> cards; // player's current deck at the start of combat
+    ArrayList<AbstractCard> cards; // copy of player's current deck at the start of combat
     boolean hasDamage; // true if deck contains non-starter attacks
     boolean isBarricade;
     boolean isLimitBreak;
@@ -19,7 +20,8 @@ public class Deck {
     // TODO is SearingBlow
 
     public Deck(CardGroup deck){
-        cards = deck.group;
+        cards = new ArrayList<>();
+        cards.addAll(deck.group);
         int newAttacks = 0;
         for(AbstractCard c : cards){
             if(c.type == AbstractCard.CardType.ATTACK && !c.isStarterStrike()){
@@ -41,86 +43,88 @@ public class Deck {
     }
 
     /** Choose what to do given a card reward.
-     * @param options List of card names in lowercase (includes '+').
-     * @return String Return name of chosen card or null if chosen skip. */
-    public String chooseCard(ArrayList<String> options){
-        // TODO
-        HashSet<String> optionSet = new HashSet<>(options);
+     * @param rewardOptions List of cards in a card reward.
+     * @return String Return lowercase name of chosen card or null if chosen skip. */
+    public String chooseCard(ArrayList<AbstractCard> rewardOptions){
+        ArrayList<String> rewardOptionNames = new ArrayList<>();
+        for(AbstractCard c : rewardOptions){
+            rewardOptionNames.add(c.name.toLowerCase());
+        }
+        HashSet<String> rewardOptionNameSet = new HashSet<>(rewardOptionNames);
+
+        // first check for win conditions
         if(!isBarricade && !isLimitBreak && !isDemonForm){
             // TODO decide between multiple wincons better
-            if(optionSet.contains("barricade")){
-                isBarricade = true;
-                return "barricade";
-            }
-            if(optionSet.contains("barricade+")){
-                isBarricade = true;
-                return "barricade+";
-            }
-            if(optionSet.contains("limit break")){
-                isLimitBreak = true;
-                return "limit break";
-            }
-            if(optionSet.contains("limit break+")){
-                isLimitBreak = true;
-                return "limit break+";
-            }
-            if(optionSet.contains("demon form")){
-                isDemonForm = true;
-                return "demon form";
-            }
-            if(optionSet.contains("demon form+")){
-                isDemonForm = true;
-                return "demon form+";
+            String[] winConNames = // names of win condition cards
+                    {"barricade", "barricade+", "limit break", "limit break+", "demon form", "demon form+"};
+            for(String cardName : winConNames){
+                if(rewardOptionNameSet.contains(cardName)){
+                    return cardName;
+                }
             }
         }
+
+        // create set of all cards currently in the deck
+        HashSet<String> deckCardSet = new HashSet<>();
+        for(AbstractCard card : cards){
+            deckCardSet.add(card.cardID);
+        }
+
+        // create set of cards deck cannot have multiple copies of
+        String[] maxOneCards = // cardIDs of cards the deck cannot have multiple copies of
+                {"Whirlwind", "Body Slam", "Searing Blow", "Armaments"};
+        HashSet<String> maxOneCardSet = new HashSet<>(Arrays.asList(maxOneCards));
+
+        // TODO add upgraded cards, replace with indexOf
+        // prioritize damageCards if deck lacks attacks
         if(!hasDamage){
-            if(optionSet.contains("whirlwind")){
-                return "whirlwind";
-            }
-            if(optionSet.contains("pommel strike")){
-                return "pommel strike";
-            }
-            if(optionSet.contains("cleave")){
-                return "cleave";
-            }
-            if(optionSet.contains("headbutt")){
-                return "headbutt";
-            }
-            if(optionSet.contains("body slam")){
-                return "body slam";
-            }
-            if(optionSet.contains("rampage")){
-                return "rampage";
+            String[] damageNames = // names of takeable cards when the deck lacks damage, best->worst
+                    {"whirlwind", "pommel strike", "cleave", "headbutt", "body slam", "rampage", "iron wave"};
+            for(String cardName : damageNames){
+                if(rewardOptionNameSet.contains(cardName)){
+                    AbstractCard c = rewardOptions.get(rewardOptionNames.indexOf(cardName));
+                    if(!maxOneCardSet.contains(c.cardID) || !deckCardSet.contains(c.cardID)){
+                        return cardName;
+                    }
+                }
             }
         }
-        return options.get(0);
+
+        // take cards that are always good
+        String[] goodNames = // names of cards that are always good, best->worst
+                {"shrug it off", "metallicize", "battle trance", "inflame"};
+        for(String cardName : goodNames){
+            if(rewardOptionNameSet.contains(cardName)){
+                AbstractCard c = rewardOptions.get(rewardOptionNames.indexOf(cardName));
+                if(!maxOneCardSet.contains(c.cardID) || !deckCardSet.contains(c.cardID)){
+                    return cardName;
+                }
+            }
+        }
+
+        // otherwise don't take anything
+        return null;
+    }
+
+    /** Remove and return the best card to upgrade.
+     * @return AbstractCard Return the best card to upgrade. */
+    public AbstractCard upgradeCard(){
+        AbstractCard toRemove = getUpgrade();
+        cards.remove(toRemove);
+        return toRemove;
     }
 
     /** @return AbstractCard Return the best card to upgrade in the deck. */
     public AbstractCard getUpgrade(){
-        if(containsUpgradable("Body Slam")){
-            return getCard("Body Slam");
-        }
-        if(containsUpgradable("Armaments")){
-            return getCard("Armaments");
-        }
-        if(containsUpgradable("Whirlwind")) {
-            return getCard("Whirlwind");
-        }
-        if(containsUpgradable("Barricade")) {
-            return getCard("Barricade");
-        }
-        if(containsUpgradable("Limit Break")) {
-            return getCard("Limit Break");
-        }
-        if(containsUpgradable("Demon Form")) {
-            return getCard("Demon Form");
-        }
-        if(containsUpgradable("Entrench")) {
-            return getCard("Entrench");
+        String[] upgradeIDs = // cardIDs of cards to upgrade, best->worst
+                {"Body Slam", "Armaments", "Whirlwind", "Barricade", "Limit Break", "Demon Form", "Entrench"};
+        for(String id : upgradeIDs){
+            if(containsUpgradable(id)){
+                return getCard(id);
+            }
         }
         for(AbstractCard c : cards){
-            if(!c.isStarterStrike() && !c.isStarterDefend())
+            if(!c.isStarterStrike() && !c.isStarterDefend() && !c.upgraded)
                 return c;
         }
         for(AbstractCard c : cards){
@@ -128,6 +132,14 @@ public class Deck {
                 return c;
         }
         return null;
+    }
+
+    /** Remove and return the best card to remove.
+     * @return AbstractCard Return the best card to remove. */
+    public AbstractCard removeCard(){
+        AbstractCard toRemove = getRemove(false);
+        cards.remove(toRemove);
+        return toRemove;
     }
 
     /** @param canPass If true, can return null if passing is preferred to removing a card.
@@ -168,6 +180,14 @@ public class Deck {
             // TODO If there are no strikes or defends
             return cards.get(0);
         }
+    }
+
+    /** Remove and return the best card to transform.
+     * @return AbstractCard Return the best card to transform in the deck. */
+    public AbstractCard transformCard(){
+        AbstractCard toTransform = getTransform(false);
+        cards.remove(toTransform);
+        return toTransform;
     }
 
     /** @return AbstractCard Return the best card to transform in the deck. */
