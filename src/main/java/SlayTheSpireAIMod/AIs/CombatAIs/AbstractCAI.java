@@ -1,5 +1,6 @@
 package SlayTheSpireAIMod.AIs.CombatAIs;
 
+import SlayTheSpireAIMod.DefaultMod;
 import SlayTheSpireAIMod.util.CombatUtils;
 import SlayTheSpireAIMod.util.Move;
 import basemod.DevConsole;
@@ -7,12 +8,17 @@ import basemod.ReflectionHacks;
 import com.megacrit.cardcrawl.cards.AbstractCard;
 import com.megacrit.cardcrawl.dungeons.AbstractDungeon;
 import com.megacrit.cardcrawl.monsters.AbstractMonster;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
+import javax.smartcardio.Card;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Objects;
 
 /** Class which evaluates Moves to execute when in combat, based on the specific combat. */
 public abstract class AbstractCAI {
+    public static final Logger logger = LogManager.getLogger(DefaultMod.class.getName());
     public abstract String getCombat(); // name of the combat
 
     /** Precondition: player is in combat getCombat().
@@ -31,7 +37,7 @@ public abstract class AbstractCAI {
     public static Move pickMove(String combat){
         AbstractCAI ai = getAI(combat);
         // if no AI for the combat exists, use generic AI
-        return ai == null ? genericPickMove() : ai.pickMove();
+        return ai == null ? newGenericPickMove() : ai.pickMove();
     }
 
     /** @param combat name of current combat
@@ -106,7 +112,6 @@ public abstract class AbstractCAI {
         // if no health will be lost from incoming attacks, play like it
         int damageTaken = Math.max(0, monsterDamage - AbstractDungeon.player.currentBlock - extraBlock);
         if(damageTaken == 0){
-            DevConsole.log("107 reached");
             return withFullBlockCard();
         }
 
@@ -129,6 +134,7 @@ public abstract class AbstractCAI {
      * @param target Monster to be killed this turn.
      * @return Move Return a Move which lets the player kill m this turn, null if none exists. */
     public static Move toKill(AbstractMonster target){
+        // TODO use CardSequence
         // Cannot kill with attacks when Entangled
         if(AbstractDungeon.player.hasPower("Entangled")){
             return null;
@@ -206,9 +212,10 @@ public abstract class AbstractCAI {
      * Otherwise play playable block cards. Otherwise pass.
      * @return Move Return the Move to make when the player already blocks all incoming damage.  */
     public static Move withFullBlockCard(){
-        Move tryAttack = bestAttackCard();
+//        Move tryAttack = bestAttackCard();
+        Move tryAttack = newBestAttack();
         if(tryAttack != null){
-            DevConsole.log("tryattack");
+            logger.info("tryattack");
             return tryAttack;
         }
         ArrayList<AbstractCard> cards = AbstractDungeon.player.hand.group;
@@ -268,13 +275,17 @@ public abstract class AbstractCAI {
             double dpe = 0;
             if(card.cardID.equals("Whirlwind") || card.cardID.equals("Whirlwind+")){
                 for(AbstractMonster m : AbstractDungeon.getCurrRoom().monsters.monsters){
-                    dpe += CombatUtils.getDamage(card, m);
+                    if(m.currentHealth > 0){
+                        dpe += CombatUtils.getDamage(card, m);
+                    }
                 }
             }else{
                 boolean isMultiDamage = ReflectionHacks.getPrivate(card, AbstractCard.class, "isMultiDamage");
                 if(isMultiDamage){
                     for(AbstractMonster m : AbstractDungeon.getCurrRoom().monsters.monsters){
-                        dpe += CombatUtils.getDamage(card, m);
+                        if(m.currentHealth > 0){
+                            dpe += CombatUtils.getDamage(card, m);
+                        }
                     }
                     dpe = dpe / card.costForTurn;
                 }else{
@@ -293,4 +304,245 @@ public abstract class AbstractCAI {
         }
         return new Move(Move.TYPE.CARD, cards.indexOf(maxDPECard), target);
     }
+
+    public static Move newGenericPickMove(){
+        // if a no-negative card can be played, play it
+        Move tryFree = FreeCard();
+        if(tryFree != null){
+            return tryFree;
+        }
+
+        // play the card that leads to the best state
+        // looks only at monster health and damage player will take from attacks
+        CardSequence start = new CardSequence();
+        HashSet<CardSequence> ended = start.getDistantPossibilities();
+        int bestEval = heuristic(start, 0);
+        CardSequence bestState = start;
+        for(CardSequence state : ended){
+            int eval = heuristic(state, 0);
+            if(eval < bestEval){
+                bestEval = eval;
+                bestState = state;
+            }
+        }
+        if(bestState != start){
+            int bestIndex = AbstractDungeon.player.hand.group.indexOf(bestState.first);
+            return new Move(Move.TYPE.CARD, bestIndex, AbstractDungeon.getCurrRoom().monsters.monsters.get(bestState.firstTargetIndex));
+        }
+        return new Move(Move.TYPE.PASS);
+    }
+
+    /** Determine the best attack card to play, prioritizing killing monsters and lowering total monster health.
+     * @return Move Return the best attack card to play. */
+    public static Move newBestAttack(){
+        CardSequence start = new CardSequence();
+        start.simplePlayer.hand.removeIf(c -> c.type != AbstractCard.CardType.ATTACK);
+        HashSet<CardSequence> ongoing = new HashSet<>();
+        ongoing.add(start);
+        HashSet<CardSequence> ended = new HashSet<>();
+        for(int i = 0; i < 10; i++){
+            HashSet<CardSequence> toReplace = new HashSet<>();
+            for(CardSequence c : ongoing){
+                ArrayList<CardSequence> poss = c.getPossibilities();
+                if(poss.size() == 0){
+                    ended.add(c);
+                }else{
+                    toReplace.addAll(poss);
+                }
+            }
+            ongoing = toReplace;
+        }
+
+        int bestEval = start.ignorePlayerEval();
+        CardSequence bestState = start;
+        for(CardSequence state : ended){
+            int eval = state.ignorePlayerEval();
+            if(eval < bestEval){
+                bestEval = eval;
+                bestState = state;
+            }
+        }
+
+        if(bestState != start){
+            int bestIndex = AbstractDungeon.player.hand.group.indexOf(bestState.first);
+            logger.info(bestState.toString());
+            return new Move(Move.TYPE.CARD, bestIndex, AbstractDungeon.getCurrRoom().monsters.monsters.get(bestState.firstTargetIndex));
+        }
+        return null;
+    }
+
+    /** @param state The state to be evaluated.
+     * Evaluation of the given state (lower is better).
+     * @return int Return a measure of how good a state is. */
+    public static int heuristic(CardSequence state, int tolerance){
+        int aliveMonsters = 0;
+        int totalHealth = 0;
+        int incomingDmg = 0;
+
+        int extraBlock = 0;
+        if(AbstractDungeon.player.hasPower("Metallicize")){
+            extraBlock += AbstractDungeon.player.getPower("Metallicize").amount;
+        }
+        if(AbstractDungeon.player.hasPower("Plated Armor")){
+            extraBlock += AbstractDungeon.player.getPower("Plated Armor").amount;
+        }
+
+        for(CombatUtils.SimpleMonster m : state.simpleMonsters){
+            if(!m.isDead()){
+                aliveMonsters += 1;
+                totalHealth += m.health;
+                incomingDmg += m.attack.getDamage();
+            }
+        }
+
+        int willLoseHP = Math.max(0, incomingDmg - state.simplePlayer.block - extraBlock);
+        int hpLossFactor = Math.max(0, willLoseHP - tolerance);
+
+        logger.info("" + (totalHealth + aliveMonsters * 5 + hpLossFactor));
+        return totalHealth + aliveMonsters * 5 + hpLossFactor * 3;
+    }
+
+    // TODO
+    /** Represent the state of the game after playing a sequence of cards. */
+    static class CardSequence{
+        public static final Logger logger = LogManager.getLogger(DefaultMod.class.getName());
+        AbstractCard first; // first card played in this sequence, null if none
+        int firstTargetIndex; // index in monster list of the target of first
+        ArrayList<CombatUtils.SimpleMonster> simpleMonsters; //
+        CombatUtils.SimplePlayer simplePlayer;
+
+        /** Current game state. */
+        public CardSequence(){
+            first = null;
+            firstTargetIndex = 0;
+            simpleMonsters = new ArrayList<>();
+            ArrayList<AbstractMonster> monsters = AbstractDungeon.getCurrRoom().monsters.monsters;
+            for (AbstractMonster m : monsters) {
+                simpleMonsters.add(new CombatUtils.SimpleMonster(new CombatUtils.MonsterAttack(m), m.currentHealth,
+                        m.currentBlock, m.hasPower("Vulnerable"), m.hasPower("Intangible")));
+            }
+            simplePlayer = new CombatUtils.SimplePlayer();
+        }
+
+        public CardSequence(CardSequence s){
+            first = s.first;
+            firstTargetIndex = s.firstTargetIndex;
+            simpleMonsters = new ArrayList<>();
+            for(CombatUtils.SimpleMonster m : s.simpleMonsters){
+                simpleMonsters.add(new CombatUtils.SimpleMonster(m));
+            }
+            simplePlayer = new CombatUtils.SimplePlayer(s.simplePlayer);
+        }
+
+        /** Return a new CardSequence representing the state after playing a card.
+         * @param toPlay The card to be played.
+         * @return CardSequence Return the state of the game after playing a card, null if not allowed. */
+        public CardSequence playCard(AbstractCard toPlay, CombatUtils.SimpleMonster target){
+            if(toPlay.costForTurn > simplePlayer.energy){
+                return null;
+            }
+            CardSequence toRet = new CardSequence(this);
+            if(toRet.first == null){
+                toRet.first = toPlay;
+                toRet.firstTargetIndex = simpleMonsters.indexOf(target);
+            }
+            toRet.simplePlayer.playCard(toPlay, toRet.simpleMonsters.get(simpleMonsters.indexOf(target)), toRet.simpleMonsters);
+            return toRet;
+        }
+
+        /** Return a list of possible states after playing 1 card from this one, empty list if no cards can be played. */
+        public ArrayList<CardSequence> getPossibilities(){
+            ArrayList<CardSequence> possibilities = new ArrayList<>();
+            ArrayList<CombatUtils.SimpleMonster> aliveMonsters = new ArrayList<>();
+            for(CombatUtils.SimpleMonster m : simpleMonsters){
+                if(!m.isDead()){
+                    aliveMonsters.add(m);
+                }
+            }
+            if(aliveMonsters.size() == 0){
+                return possibilities;
+            }
+
+            for(AbstractCard c : simplePlayer.hand){
+                if(c.type != AbstractCard.CardType.POWER){
+                    for(CombatUtils.SimpleMonster m : aliveMonsters){
+                        CardSequence pos = playCard(c, m);
+                        if(pos != null){
+                            possibilities.add(pos);
+                        }
+                    }
+                }else{
+                    CardSequence pos = playCard(c, aliveMonsters.get(0));
+                    if(pos != null){
+                        possibilities.add(pos);
+                    }
+                }
+
+            }
+            return possibilities;
+        }
+
+        /** Return a set of possible states 1 or more cards from this one, set has this state if no cards can be played. */
+        public HashSet<CardSequence> getDistantPossibilities(){
+            HashSet<CardSequence> ongoing = new HashSet<>();
+            ongoing.add(this);
+            HashSet<CardSequence> ended = new HashSet<>();
+            for(int i = 0; i < 10; i++){
+                HashSet<CardSequence> toReplace = new HashSet<>();
+                for(CardSequence c : ongoing){
+                    ArrayList<CardSequence> poss = c.getPossibilities();
+                    if(poss.size() == 0){
+                        ended.add(c);
+                    }else{
+                        toReplace.addAll(poss);
+                    }
+                }
+                ongoing = toReplace;
+            }
+            return ended;
+        }
+
+
+        /** Evaluation of the state (lower is better), ignoring damage dealt to player.
+         * @return int Return a measure of how close the monsters are to dying. */
+        public int ignorePlayerEval(){
+            int aliveMonsters = 0;
+            int totalHealth = 0;
+            for(CombatUtils.SimpleMonster m : simpleMonsters){
+                if(!m.isDead()){
+                    aliveMonsters += 1;
+                    totalHealth += m.health;
+                }
+            }
+            return totalHealth + aliveMonsters * 5;
+        }
+
+
+        @Override
+        public String toString() {
+            return "CardSequence{" +
+                    "first=" + first +
+                    ", firstTargetIndex=" + firstTargetIndex +
+                    ", simpleMonsters=" + simpleMonsters +
+                    ", simplePlayer=" + simplePlayer +
+                    '}';
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            CardSequence that = (CardSequence) o;
+            return firstTargetIndex == that.firstTargetIndex &&
+                    first.equals(that.first) &&
+                    simpleMonsters.equals(that.simpleMonsters) &&
+                    simplePlayer.equals(that.simplePlayer);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(first, firstTargetIndex, simpleMonsters, simplePlayer);
+        }
+    }
+
 }
