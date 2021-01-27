@@ -22,7 +22,7 @@ public class Deck {
     public Deck(CardGroup deck){
         cards = new ArrayList<>();
         cards.addAll(deck.group);
-        int newAttacks = 0;
+        int newAttacks = -1; // don't count bash
         for(AbstractCard c : cards){
             if(c.type == AbstractCard.CardType.ATTACK && !c.isStarterStrike()){
                 newAttacks += 1;

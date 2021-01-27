@@ -1,25 +1,32 @@
 package SlayTheSpireAIMod.actions;
 
+import SlayTheSpireAIMod.DefaultMod;
 import SlayTheSpireAIMod.util.CombatUtils;
 import SlayTheSpireAIMod.util.Move;
+import SlayTheSpireAIMod.util.ScreenUpdateUtils;
 import basemod.DevConsole;
 import com.megacrit.cardcrawl.actions.AbstractGameAction;
 import com.megacrit.cardcrawl.actions.common.EndTurnAction;
 import com.megacrit.cardcrawl.actions.utility.NewQueueCardAction;
 import com.megacrit.cardcrawl.cards.AbstractCard;
 import com.megacrit.cardcrawl.dungeons.AbstractDungeon;
+import com.megacrit.cardcrawl.monsters.AbstractMonster;
 import com.megacrit.cardcrawl.potions.AbstractPotion;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
 
 /** Action which plays the rest of the turn in combat (includes end turn).
  * Screen decisions from cards (select card from hand/pile) are handled by respective AIs. */
 public class FightAIAction extends AbstractGameAction {
+    public static final Logger logger = LogManager.getLogger(DefaultMod.class.getName());
     int id;
     public FightAIAction(int id){
         this.id = id;
     }
 
+    // FIXME lagavulin doesn't properly wake up (graphics only)
     @Override
     public void update() {
         // Ensure Time Warp power is not violated

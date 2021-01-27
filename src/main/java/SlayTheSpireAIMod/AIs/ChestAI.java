@@ -10,6 +10,7 @@ import java.util.ArrayList;
 public class ChestAI {
     /** Always open the chest, and let the appropriate AI decide what to take. */
     public static void execute(){
+        // FIXME glitch when pressed after chest already opened
         if(ChoiceScreenUtils.getCurrentChoiceType() != ChoiceScreenUtils.ChoiceType.CHEST) return;
         ChoiceScreenUtils.makeChestRoomChoice(0); //open the chest
         ScreenUpdateUtils.update();

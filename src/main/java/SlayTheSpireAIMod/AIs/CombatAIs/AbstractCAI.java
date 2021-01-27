@@ -11,7 +11,6 @@ import com.megacrit.cardcrawl.monsters.AbstractMonster;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import javax.smartcardio.Card;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Objects;
@@ -215,7 +214,6 @@ public abstract class AbstractCAI {
 //        Move tryAttack = bestAttackCard();
         Move tryAttack = newBestAttack();
         if(tryAttack != null){
-            logger.info("tryattack");
             return tryAttack;
         }
         ArrayList<AbstractCard> cards = AbstractDungeon.player.hand.group;
@@ -313,9 +311,21 @@ public abstract class AbstractCAI {
         }
 
         // play the card that leads to the best state
+        // first, remove cards that cannot be played
         // looks only at monster health and damage player will take from attacks
         CardSequence start = new CardSequence();
+        ArrayList<AbstractCard> unplayable = new ArrayList<>();
+        for(AbstractCard c : start.simplePlayer.hand){
+            if(!c.canUse(AbstractDungeon.player, CombatUtils.getWeakestTarget())){
+                unplayable.add(c);
+            }
+        }
+        for(AbstractCard c : unplayable){
+            start.simplePlayer.hand.remove(c);
+        }
+
         HashSet<CardSequence> ended = start.getDistantPossibilities();
+        logger.info("Number of Distant Pos: " + ended.size());
         int bestEval = heuristic(start, 0);
         CardSequence bestState = start;
         for(CardSequence state : ended){
@@ -326,6 +336,7 @@ public abstract class AbstractCAI {
             }
         }
         if(bestState != start){
+            logger.info("Evaluated best state (from newGenericMove): " + bestState.toString());
             int bestIndex = AbstractDungeon.player.hand.group.indexOf(bestState.first);
             return new Move(Move.TYPE.CARD, bestIndex, AbstractDungeon.getCurrRoom().monsters.monsters.get(bestState.firstTargetIndex));
         }
@@ -365,7 +376,7 @@ public abstract class AbstractCAI {
 
         if(bestState != start){
             int bestIndex = AbstractDungeon.player.hand.group.indexOf(bestState.first);
-            logger.info(bestState.toString());
+            logger.info("Evaluated best state (from newBestAttack): " + bestState.toString());
             return new Move(Move.TYPE.CARD, bestIndex, AbstractDungeon.getCurrRoom().monsters.monsters.get(bestState.firstTargetIndex));
         }
         return null;
@@ -398,14 +409,13 @@ public abstract class AbstractCAI {
         int willLoseHP = Math.max(0, incomingDmg - state.simplePlayer.block - extraBlock);
         int hpLossFactor = Math.max(0, willLoseHP - tolerance);
 
-        logger.info("" + (totalHealth + aliveMonsters * 5 + hpLossFactor));
+//        logger.info("" + (totalHealth + aliveMonsters * 5 + hpLossFactor));
         return totalHealth + aliveMonsters * 5 + hpLossFactor * 3;
     }
 
     // TODO
     /** Represent the state of the game after playing a sequence of cards. */
     static class CardSequence{
-        public static final Logger logger = LogManager.getLogger(DefaultMod.class.getName());
         AbstractCard first; // first card played in this sequence, null if none
         int firstTargetIndex; // index in monster list of the target of first
         ArrayList<CombatUtils.SimpleMonster> simpleMonsters; //

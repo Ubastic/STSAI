@@ -11,6 +11,7 @@ import java.util.ArrayList;
 public class ShopAI {
     /** Buy nothing. */
     public static void execute(){
+        // TODO make basic AI
         ChoiceScreenUtils.ChoiceType type = ChoiceScreenUtils.getCurrentChoiceType();
         if(type != ChoiceScreenUtils.ChoiceType.SHOP_ROOM && type != ChoiceScreenUtils.ChoiceType.SHOP_SCREEN) return;
         ArrayList<String> choices = ChoiceScreenUtils.getCurrentChoiceList();

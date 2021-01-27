@@ -15,7 +15,6 @@ import com.megacrit.cardcrawl.ui.panels.EnergyPanel;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.lang.reflect.Array;
 import java.util.*;
 
 public class CombatUtils {
@@ -92,8 +91,6 @@ public class CombatUtils {
         if(attackID.equals("Pummel+")) return 5;
         return 1;
     }
-
-
 
     /** @return AbstractMonster Return a random alive monster. */
     public static AbstractMonster getRandomTarget(){
@@ -230,7 +227,7 @@ public class CombatUtils {
         }
     }
 
-    /** Represent a monster during combat */
+    /** Represent a monster during combat. */
     public static class SimpleMonster{
         public MonsterAttack attack;
         public int health;
@@ -277,12 +274,13 @@ public class CombatUtils {
             }
             int hits = getHits(attack.name);
             if(attack.cardID.equals("Whirlwind")){
-                hits = player.energy; // TODO add relic
+                hits = player.energy;
+                if(AbstractDungeon.player.hasRelic("Chemical X")){
+                    hits += 2;
+                }
             }
-            logger.info("strike damage for " + attack.name + ": " + strikeDamage + " hits: " + hits);
             // take damage from attack
             takeDamage(strikeDamage * hits, false);
-
             // apply vulnerable
             if(attack.cardID.equals("Bash") || attack.cardID.equals("Thunderclap") || attack.cardID.equals("Uppercut")){
                 vulnerable = true;
@@ -298,8 +296,8 @@ public class CombatUtils {
                 if(block >= amount){
                     block -= amount;
                 }else{
-                    block -= block;
                     health -= amount - block;
+                    block = 0;
                 }
             }
         }
@@ -337,6 +335,7 @@ public class CombatUtils {
         }
     }
 
+    /** Represent the player during combat. */
     public static class SimplePlayer{
         public ArrayList<AbstractCard> hand;
         public int energy;
@@ -391,13 +390,14 @@ public class CombatUtils {
          * Update player values after player plays an attack on a monster. */
         public void playCard(AbstractCard toPlay, SimpleMonster target, ArrayList<SimpleMonster> monsters){
             hand.remove(toPlay);
-            energy -= toPlay.costForTurn;
+            if(toPlay.costForTurn > 0){ // Whirlwind costs -1
+                energy -= toPlay.costForTurn;
+            }
             if(toPlay.type == AbstractCard.CardType.ATTACK){
                 if(toPlay.cardID.equals("Whirlwind")){
                     for(SimpleMonster m : monsters){
                         if(!m.isDead()){
                             m.takeAttack(this, toPlay);
-                            logger.info("health after attack: " + m.health);
                         }
                     }
                     energy = 0;

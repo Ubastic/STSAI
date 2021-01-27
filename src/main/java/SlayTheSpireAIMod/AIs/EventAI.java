@@ -56,14 +56,14 @@ public class EventAI {
                     choose("receive 100 gold");
                 }else if(choices.contains("upgrade a card")){
                     choose("upgrade a card");
-                }else if(choices.contains("transform a card")){
-                    choose("transform a card");
                 }else if(choices.contains("max hp +8")){
                     choose("max hp +8");
                 }else if(choices.contains("choose a card to obtain")){
                     choose("choose a card to obtain");
                 }else if(choices.contains("obtain a random rare card")){
                     choose("obtain a random rare card");
+                }else if(choices.contains("transform a card")){
+                    choose("transform a card");
                 }else if(choices.contains("obtain a random uncommon colorless card")){
                     choose("obtain a random uncommon colorless card");
                 }else if(choices.contains("enemies in the next three combat will have one health")){
@@ -209,10 +209,13 @@ public class EventAI {
             }
         }else if(event instanceof GremlinMatchGame){
             // keep picking the first cards until the event ends
-            for(int i = 0; i < 5; i++){
+            // FIXME loop does not work
+//            for(int i = 0; i < 5; i++){
                 ChoiceScreenUtils.makeEventChoice(0);
-                ChoiceScreenUtils.makeEventChoice(1);
-            }
+                ScreenUpdateUtils.update();
+                ChoiceScreenUtils.makeEventChoice(0);
+                ScreenUpdateUtils.update();
+//            }
         }else if(event instanceof MindBloom){
             // always fight act 1 boss
             choose("i am war");

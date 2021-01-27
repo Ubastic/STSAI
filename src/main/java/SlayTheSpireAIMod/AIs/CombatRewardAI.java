@@ -62,21 +62,6 @@ public class CombatRewardAI {
                 }
             }
             ChoiceScreenUtils.pressConfirmButton();
-//
-//            int goldIndex = choices.indexOf("gold");
-//            int cardIndex1 = choices.indexOf("card");
-//
-//            if(choices.contains("gold")){
-////                ChoiceScreenUtils.makeCombatRewardChoice(ChoiceScreenUtils.get);
-//            }
-//            if(choices.contains("card")){
-//                CommandExecutor.executeCommand("choose card");
-//                CardSelectAI.execute();
-//            }
-//            if(choices.size() > 1){
-//                ChoiceScreenUtils.makeCombatRewardChoice(0);
-//                ChoiceScreenUtils.makeCombatRewardChoice(1);
-//            }
         }catch(Exception e){
             DevConsole.log(e.toString());
         }

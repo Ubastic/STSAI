@@ -31,6 +31,7 @@ public class UseAIItem extends TopPanelItem {
             DevConsole.log("before:" + ChoiceScreenUtils.getCurrentChoiceType().toString());
             ChoiceScreenUtils.ChoiceType type = ChoiceScreenUtils.getCurrentChoiceType();
             ArrayList<String> choices = ChoiceScreenUtils.getCurrentChoiceList();
+            DevConsole.log(choices.toString());
             switch(type){
                 case EVENT:
                     EventAI.execute();
@@ -76,7 +77,6 @@ public class UseAIItem extends TopPanelItem {
                     }
             }
             DevConsole.log("after:" + ChoiceScreenUtils.getCurrentChoiceType().toString());
-            DevConsole.log(choices.toString());
         }catch(Exception e){
             DevConsole.log(e.toString());
         }
