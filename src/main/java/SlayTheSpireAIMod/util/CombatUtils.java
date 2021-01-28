@@ -1,8 +1,7 @@
 package SlayTheSpireAIMod.util;
 
 import SlayTheSpireAIMod.AIs.CombatAIs.AbstractCAI;
-import SlayTheSpireAIMod.DefaultMod;
-import basemod.DevConsole;
+import SlayTheSpireAIMod.STSAIMod;
 import basemod.ReflectionHacks;
 import com.megacrit.cardcrawl.cards.AbstractCard;
 import com.megacrit.cardcrawl.cards.DamageInfo;
@@ -18,7 +17,7 @@ import org.apache.logging.log4j.Logger;
 import java.util.*;
 
 public class CombatUtils {
-    public static final Logger logger = LogManager.getLogger(DefaultMod.class.getName());
+    public static final Logger logger = LogManager.getLogger(STSAIMod.class.getName());
     /** @return int Return the amount of energy the player has left to use this turn. */
     public static int usableEnergy(){
         return EnergyPanel.totalCount;

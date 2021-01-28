@@ -1,9 +1,8 @@
 package SlayTheSpireAIMod.AIs.CombatAIs;
 
-import SlayTheSpireAIMod.DefaultMod;
+import SlayTheSpireAIMod.STSAIMod;
 import SlayTheSpireAIMod.util.CombatUtils;
 import SlayTheSpireAIMod.util.Move;
-import basemod.DevConsole;
 import basemod.ReflectionHacks;
 import com.megacrit.cardcrawl.cards.AbstractCard;
 import com.megacrit.cardcrawl.dungeons.AbstractDungeon;
@@ -17,7 +16,7 @@ import java.util.Objects;
 
 /** Class which evaluates Moves to execute when in combat, based on the specific combat. */
 public abstract class AbstractCAI {
-    public static final Logger logger = LogManager.getLogger(DefaultMod.class.getName());
+    public static final Logger logger = LogManager.getLogger(STSAIMod.class.getName());
     public abstract String getCombat(); // name of the combat
 
     /** Precondition: player is in combat getCombat().
