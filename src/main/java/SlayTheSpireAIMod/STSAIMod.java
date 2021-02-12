@@ -1,20 +1,23 @@
 package SlayTheSpireAIMod;
 
+import SlayTheSpireAIMod.actions.FightAIAction;
 import SlayTheSpireAIMod.commands.*;
+import SlayTheSpireAIMod.communicationmod.ChoiceScreenUtils;
 import SlayTheSpireAIMod.items.UseAIItem;
 import basemod.*;
 import basemod.devcommands.ConsoleCommand;
 import basemod.interfaces.*;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.evacipated.cardcrawl.modthespire.lib.SpireConfig;
 import com.evacipated.cardcrawl.modthespire.lib.SpireInitializer;
 import com.google.gson.Gson;
+import com.megacrit.cardcrawl.actions.GameActionManager;
 import com.megacrit.cardcrawl.core.Settings;
-import com.megacrit.cardcrawl.helpers.CardHelper;
+import com.megacrit.cardcrawl.dungeons.AbstractDungeon;
 import com.megacrit.cardcrawl.helpers.FontHelper;
+import com.megacrit.cardcrawl.rooms.AbstractRoom;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import SlayTheSpireAIMod.util.IDCheckDontTouchPls;
@@ -26,14 +29,19 @@ import java.nio.charset.StandardCharsets;
 import java.util.Properties;
 
 @SpireInitializer
-public class STSAIMod implements PostInitializeSubscriber, PostDungeonUpdateSubscriber {
+public class STSAIMod implements PostInitializeSubscriber,
+        PostDungeonUpdateSubscriber,
+        OnStartBattleSubscriber,
+        PostBattleSubscriber,
+        PostDeathSubscriber,
+        StartGameSubscriber{
     public static final Logger logger = LogManager.getLogger(STSAIMod.class.getName());
     private static String modID;
 
     // Mod-settings settings. This is if you want an on/off savable button
     public static Properties theDefaultDefaultSettings = new Properties();
     public static final String ENABLE_PLACEHOLDER_SETTINGS = "enablePlaceholder";
-    public static boolean enablePlaceholder = true; // The boolean we'll be setting on/off (true/false)
+    public static boolean autoCombat = true; // The boolean we'll be setting on/off (true/false)
 
     //This is for the in-game mod settings panel.
     private static final String MODNAME = "SlayTheSpireAIMod";
@@ -46,7 +54,8 @@ public class STSAIMod implements PostInitializeSubscriber, PostDungeonUpdateSubs
     public static final String BADGE_IMAGE = "SlayTheSpireAIModResources/images/Badge.png";
 
     // =============== /INPUT TEXTURE LOCATION/ =================
-    
+
+    public static boolean inBattle = false;
     
     // =============== SUBSCRIBE, INITIALIZE =================
     
@@ -66,7 +75,7 @@ public class STSAIMod implements PostInitializeSubscriber, PostDungeonUpdateSubs
             SpireConfig config = new SpireConfig("defaultMod", "theDefaultConfig", theDefaultDefaultSettings); // ...right here
             // the "fileName" parameter is the name of the file MTS will create where it will save our setting.
             config.load(); // Load the setting and set the boolean to equal it
-            enablePlaceholder = config.getBool(ENABLE_PLACEHOLDER_SETTINGS);
+            autoCombat = config.getBool(ENABLE_PLACEHOLDER_SETTINGS);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -138,18 +147,18 @@ public class STSAIMod implements PostInitializeSubscriber, PostDungeonUpdateSubs
         ModPanel settingsPanel = new ModPanel();
         
         // Create the on/off button:
-        ModLabeledToggleButton enableNormalsButton = new ModLabeledToggleButton("This is the text which goes next to the checkbox.",
+        ModLabeledToggleButton enableNormalsButton = new ModLabeledToggleButton("Enable fully automatic combat.",
                 350.0f, 700.0f, Settings.CREAM_COLOR, FontHelper.charDescFont, // Position (trial and error it), color, font
-                enablePlaceholder, // Boolean it uses
+                autoCombat, // Boolean it uses
                 settingsPanel, // The mod panel in which this button will be in
                 (label) -> {}, // thing??????? idk
                 (button) -> { // The actual button:
             
-            enablePlaceholder = button.enabled; // The boolean true/false will be whether the button is enabled or not
+            autoCombat = button.enabled; // The boolean true/false will be whether the button is enabled or not
             try {
                 // And based on that boolean, set the settings and save them
                 SpireConfig config = new SpireConfig("defaultMod", "theDefaultConfig", theDefaultDefaultSettings);
-                config.setBool(ENABLE_PLACEHOLDER_SETTINGS, enablePlaceholder);
+                config.setBool(ENABLE_PLACEHOLDER_SETTINGS, autoCombat);
                 config.save();
             } catch (Exception e) {
                 e.printStackTrace();
@@ -189,5 +198,45 @@ public class STSAIMod implements PostInitializeSubscriber, PostDungeonUpdateSubs
 //        else if(AbstractDungeon.screen == AbstractDungeon.CurrentScreen.HAND_SELECT){
 //            HandSelectAI.execute();
 //        }
+//        logger.info("Dungeon Update received");
+        if(!autoCombat){
+            return;
+        }
+        ChoiceScreenUtils.ChoiceType type = ChoiceScreenUtils.getCurrentChoiceType();
+        if(type == ChoiceScreenUtils.ChoiceType.NONE){
+            if(!AbstractDungeon.actionManager.turnHasEnded){
+                if (inBattle && AbstractDungeon.actionManager.phase.equals(GameActionManager.Phase.WAITING_ON_USER)
+                        && AbstractDungeon.actionManager.cardQueue.isEmpty()
+                        && AbstractDungeon.actionManager.actions.isEmpty()) {
+                    AbstractDungeon.actionManager.addToBottom(new FightAIAction());
+                    logger.info("FightAIAction added");
+                }
+            }
+        }
+    }
+
+    @Override
+    public void receiveOnBattleStart(AbstractRoom abstractRoom) {
+        logger.info("Battle Start received");
+        inBattle = true;
+    }
+
+    @Override
+    public void receivePostBattle(AbstractRoom abstractRoom) {
+        // triggers only after not losing a combat
+        logger.info("Post Battle received");
+        inBattle = false;
+    }
+
+    @Override
+    public void receivePostDeath() {
+        logger.info("Post Death received");
+        inBattle = false;
+    }
+
+    @Override
+    public void receiveStartGame() {
+        logger.info("Start Game received");
+        inBattle = false;
     }
 }
