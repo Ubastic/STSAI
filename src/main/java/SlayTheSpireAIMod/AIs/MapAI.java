@@ -1,5 +1,6 @@
 package SlayTheSpireAIMod.AIs;
 
+import SlayTheSpireAIMod.STSAIMod;
 import SlayTheSpireAIMod.communicationmod.ChoiceScreenUtils;
 import SlayTheSpireAIMod.util.MapUtils;
 import basemod.DevConsole;
@@ -8,6 +9,8 @@ import com.megacrit.cardcrawl.dungeons.AbstractDungeon;
 import com.megacrit.cardcrawl.map.MapEdge;
 import com.megacrit.cardcrawl.map.MapRoomNode;
 import com.megacrit.cardcrawl.rooms.AbstractRoom;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -15,13 +18,21 @@ import java.util.HashSet;
 
 /** Class which decides what room to travel to. */
 public class MapAI {
+    public static final Logger logger = LogManager.getLogger(STSAIMod.class.getName());
+
     /** Travel the leftmost node. */
     public static void execute(){
+        logger.info("Executing MapAI");
         if(ChoiceScreenUtils.getCurrentChoiceType() != ChoiceScreenUtils.ChoiceType.MAP) return;
         ArrayList<String> choices = ChoiceScreenUtils.getCurrentChoiceList();
+        logger.info("Map Choices: " + choices.toString());
+        if(choices.size() == 0){
+            return;
+        }
         if(choices.size() == 1){
             // will handle when there is only one child, like final rest -> boss
             ChoiceScreenUtils.makeMapChoice(0);
+            return;
         }
 
         // create all possible paths from this node
@@ -59,8 +70,8 @@ public class MapAI {
         Collections.sort(pathsList);
         Path bestPath = pathsList.get(pathsList.size() - 1);
 
-        DevConsole.log("" + paths.size());
-        DevConsole.log(bestPath.toString());
+        logger.info("Number of paths found" + paths.size());
+        logger.info("Best Path: " + bestPath.toString());
         ChoiceScreenUtils.makeMapChoice(choices.indexOf("x=" + bestPath.towards.x));
     }
 

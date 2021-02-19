@@ -1,5 +1,6 @@
 package SlayTheSpireAIMod.AIs;
 
+import SlayTheSpireAIMod.STSAIMod;
 import SlayTheSpireAIMod.communicationmod.ChoiceScreenUtils;
 import SlayTheSpireAIMod.util.ScreenUpdateUtils;
 import basemod.DevConsole;
@@ -12,13 +13,18 @@ import com.megacrit.cardcrawl.events.city.*;
 import com.megacrit.cardcrawl.events.exordium.*;
 import com.megacrit.cardcrawl.events.shrines.*;
 import com.megacrit.cardcrawl.neow.NeowEvent;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.*;
 
 /** Class which decides what to during an event. */
 public class EventAI {
+    public static final Logger logger = LogManager.getLogger(STSAIMod.class.getName());
+
     /** Follow a basic strategy for the event. */
     public static void execute(){
+        logger.info("Executing EventAI");
         if(ChoiceScreenUtils.getCurrentChoiceType() != ChoiceScreenUtils.ChoiceType.EVENT) return;
         ArrayList<String> choices = ChoiceScreenUtils.getCurrentChoiceList();
         AbstractEvent event = AbstractDungeon.getCurrRoom().event;

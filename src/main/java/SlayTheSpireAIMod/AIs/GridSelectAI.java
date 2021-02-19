@@ -1,5 +1,6 @@
 package SlayTheSpireAIMod.AIs;
 
+import SlayTheSpireAIMod.STSAIMod;
 import SlayTheSpireAIMod.communicationmod.ChoiceScreenUtils;
 import SlayTheSpireAIMod.communicationmod.patches.GridCardSelectScreenPatch;
 import SlayTheSpireAIMod.util.ScreenUpdateUtils;
@@ -9,13 +10,18 @@ import com.megacrit.cardcrawl.actions.unique.DiscardPileToTopOfDeckAction;
 import com.megacrit.cardcrawl.cards.AbstractCard;
 import com.megacrit.cardcrawl.dungeons.AbstractDungeon;
 import com.megacrit.cardcrawl.screens.select.GridCardSelectScreen;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
 
 /** Class which decides what to do at a grid choice. */
 public class GridSelectAI {
+    public static final Logger logger = LogManager.getLogger(STSAIMod.class.getName());
+
     /** If a confirm screen is up, select confirm. Otherwise select and confirm an option. */
     public static void execute(){
+        logger.info("Executing GridSelectAI");
         if(ChoiceScreenUtils.getCurrentChoiceType() != ChoiceScreenUtils.ChoiceType.GRID) return;
         ArrayList<String> choices = ChoiceScreenUtils.getCurrentChoiceList();
 
