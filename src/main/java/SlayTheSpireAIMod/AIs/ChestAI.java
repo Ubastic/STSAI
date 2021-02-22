@@ -2,12 +2,12 @@ package SlayTheSpireAIMod.AIs;
 
 import SlayTheSpireAIMod.STSAIMod;
 import SlayTheSpireAIMod.communicationmod.ChoiceScreenUtils;
-import SlayTheSpireAIMod.util.ScreenUpdateUtils;
 import com.megacrit.cardcrawl.dungeons.AbstractDungeon;
+import com.megacrit.cardcrawl.rewards.chests.AbstractChest;
+import com.megacrit.cardcrawl.rooms.TreasureRoom;
+import com.megacrit.cardcrawl.rooms.TreasureRoomBoss;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import java.util.ArrayList;
 
 /** Class which decides what to do at a chest. */
 public class ChestAI {
@@ -15,16 +15,24 @@ public class ChestAI {
 
     /** Always open the chest, and let the appropriate AI decide what to take. */
     public static void execute(){
-        logger.info("Executing ChestAi");
-        // FIXME glitch when pressed after chest already opened
+        logger.info("Executing ChestAI");
+        // TODO
         if(ChoiceScreenUtils.getCurrentChoiceType() != ChoiceScreenUtils.ChoiceType.CHEST) return;
-        ChoiceScreenUtils.makeChestRoomChoice(0); //open the chest
-        ScreenUpdateUtils.update();
-        if(ChoiceScreenUtils.getCurrentChoiceType() == ChoiceScreenUtils.ChoiceType.COMBAT_REWARD){
-            CombatRewardAI.execute();
+        AbstractChest chest = null;
+        if (AbstractDungeon.getCurrRoom() instanceof TreasureRoomBoss) {
+            chest = ((TreasureRoomBoss) AbstractDungeon.getCurrRoom()).chest;
+        } else if (AbstractDungeon.getCurrRoom() instanceof TreasureRoom) {
+            chest = ((TreasureRoom) AbstractDungeon.getCurrRoom()).chest;
         }
-        if(ChoiceScreenUtils.getCurrentChoiceType() == ChoiceScreenUtils.ChoiceType.BOSS_REWARD){
-            BossRewardAI.execute();
+        assert chest != null;
+        if(chest.isOpen){
+            if(ChoiceScreenUtils.isConfirmButtonAvailable()){
+                ChoiceScreenUtils.pressConfirmButton();
+            }
+        }else{
+            ChoiceScreenUtils.makeChestRoomChoice(0); //open the chest
         }
+
+
     }
 }

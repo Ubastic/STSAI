@@ -17,7 +17,7 @@ public class FightAICommand extends ConsoleCommand {
     /** Execute a turn if the player is in a fight. */
     public void execute(String[] tokens, int depth){
         try{
-            AbstractDungeon.actionManager.addToBottom(new FightAIAction(0));
+            AbstractDungeon.actionManager.addToBottom(new FightAIAction());
         }catch(Exception e){
             DevConsole.log("error");
             DevConsole.log(e.toString());

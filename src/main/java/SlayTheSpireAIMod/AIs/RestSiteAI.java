@@ -2,8 +2,6 @@ package SlayTheSpireAIMod.AIs;
 
 import SlayTheSpireAIMod.STSAIMod;
 import SlayTheSpireAIMod.communicationmod.ChoiceScreenUtils;
-import SlayTheSpireAIMod.communicationmod.InvalidCommandException;
-import SlayTheSpireAIMod.util.ScreenUpdateUtils;
 import com.megacrit.cardcrawl.dungeons.AbstractDungeon;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -23,7 +21,7 @@ public class RestSiteAI {
             ChoiceScreenUtils.pressConfirmButton();
         }
 
-        // ignore options that are not rest/smith for now
+        // ignore options that are not rest/smith for now TODO
         int health = AbstractDungeon.player.currentHealth;
         if(health < 60){
             if(choices.contains("rest")){
@@ -41,7 +39,6 @@ public class RestSiteAI {
         // if rest/smith unavailable and at least one other is, pick the first one
         if(choices.size() > 0){
             ChoiceScreenUtils.makeRestRoomChoice(0);
-//            ChoiceScreenUtils.pressConfirmButton();
         }
 
     }

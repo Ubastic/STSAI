@@ -2,8 +2,6 @@ package SlayTheSpireAIMod.AIs;
 
 import SlayTheSpireAIMod.STSAIMod;
 import SlayTheSpireAIMod.communicationmod.ChoiceScreenUtils;
-import SlayTheSpireAIMod.util.ScreenUpdateUtils;
-import basemod.DevConsole;
 import basemod.ReflectionHacks;
 import com.megacrit.cardcrawl.cards.AbstractCard;
 import com.megacrit.cardcrawl.dungeons.AbstractDungeon;
@@ -29,24 +27,14 @@ public class EventAI {
         ArrayList<String> choices = ChoiceScreenUtils.getCurrentChoiceList();
         AbstractEvent event = AbstractDungeon.getCurrRoom().event;
 
-        // Select the only option if there is only one, e.g. [Leave]
+        // Select the only option if there is only one, e.g. [Leave], [Continue]
         if(choices.size() == 1){
-            String choice = choices.get(0);
             ChoiceScreenUtils.makeEventChoice(0);
-            // events where such a selection leads to other screen
-            if(event instanceof Bonfire && choice.equals("offer")){
-                ScreenUpdateUtils.update();
-                GridSelectAI.execute();
-            }else if(event instanceof Lab){
-                // TODO test this
-                ScreenUpdateUtils.update();
-                CombatRewardAI.execute();
-            }else if(event instanceof GremlinWheelGame){
-                // TODO
-            }
             return;
         }
 
+        // Some events are covered just by this, so there is no AI for them below
+        // Bonfire, Lab, GremlinWheelGame
 
         if(event instanceof NeowEvent){
             // in the 2-choice version, choose max hp over 1hp combats
@@ -84,10 +72,6 @@ public class EventAI {
         if(event instanceof AccursedBlacksmith){
             // upgrade if possible, leave otherwise (never relic/curse)
             int chosen = tryChoose("forge", "leave");
-            if(chosen == 1){ // skip upgrade selection screen
-                ScreenUpdateUtils.update();
-                GridSelectAI.execute();
-            }
         }else if(event instanceof Addict){
             // pay for relic if possible, leave otherwise (never relic/curse)
             tryChoose("offer gold", "leave");
@@ -107,12 +91,6 @@ public class EventAI {
         }else if(event instanceof Beggar){
             // pay to remove card if possible, leave otherwise
             int chosen = tryChoose("offer gold", "leave");
-            if(chosen == 1){ // skip remove selection screen
-                // TODO check
-                choose("continue");
-                ScreenUpdateUtils.update();
-                GridSelectAI.execute();
-            }
         }else if(event instanceof BigFish){
             // gain 5 max HP unless current health is below 40 (never relic/curse)
             if(AbstractDungeon.player.currentHealth < 40){
@@ -215,13 +193,7 @@ public class EventAI {
             }
         }else if(event instanceof GremlinMatchGame){
             // keep picking the first cards until the event ends
-            // FIXME loop does not work
-//            for(int i = 0; i < 5; i++){
-                ChoiceScreenUtils.makeEventChoice(0);
-                ScreenUpdateUtils.update();
-                ChoiceScreenUtils.makeEventChoice(0);
-                ScreenUpdateUtils.update();
-//            }
+            ChoiceScreenUtils.makeEventChoice(0);
         }else if(event instanceof MindBloom){
             // always fight act 1 boss
             choose("i am war");
@@ -247,8 +219,6 @@ public class EventAI {
         }else if(event instanceof PurificationShrine){
             // always remove card
             choose("pray");
-            ScreenUpdateUtils.update(); // skip purge selection screen
-            GridSelectAI.execute();
         }else if(event instanceof ScrapOoze){
             // never go for the relic
             choose("leave");
@@ -258,8 +228,6 @@ public class EventAI {
         }else if(event instanceof SensoryStone){
             // always go for 1 card reward
             ChoiceScreenUtils.makeEventChoice(0);
-//            ScreenUpdateUtils.update();
-//            GridSelectAI.execute();
         }else if(event instanceof ShiningLight){
             // upgrade cards with more than 60 health
             if(AbstractDungeon.player.currentHealth > 60){
@@ -273,10 +241,6 @@ public class EventAI {
                 tryChoose("heal", "leave");
             }else{
                 int chosen = tryChoose("purify", "leave");
-                if(chosen == 1){
-                    ScreenUpdateUtils.update(); // skip purge selection screen
-                    GridSelectAI.execute();
-                }
             }
         }else if(event instanceof TheJoust){
             // always bet on the murderer
@@ -311,10 +275,6 @@ public class EventAI {
         }else if(event instanceof UpgradeShrine){
             // always upgrade a card if possible
             int chosen = tryChoose("pray", "leave");
-            if(chosen == 1){
-                ScreenUpdateUtils.update(); // skip upgrade selection screen
-                GridSelectAI.execute();
-            }
         }else if(event instanceof Vampires){
             // refuse bites unless you have blood vial
             if(choices.contains("lose blood vial")){

@@ -2,7 +2,8 @@ package SlayTheSpireAIMod.AIs;
 
 import SlayTheSpireAIMod.STSAIMod;
 import SlayTheSpireAIMod.communicationmod.ChoiceScreenUtils;
-import SlayTheSpireAIMod.util.ScreenUpdateUtils;
+import com.megacrit.cardcrawl.dungeons.AbstractDungeon;
+import com.megacrit.cardcrawl.relics.AbstractRelic;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -17,10 +18,20 @@ public class BossRewardAI {
         // TODO
         logger.info("Executing BossRewardAI");
         if(ChoiceScreenUtils.getCurrentChoiceType() != ChoiceScreenUtils.ChoiceType.BOSS_REWARD) return;
+        if(ChoiceScreenUtils.isConfirmButtonAvailable()){
+            ChoiceScreenUtils.pressConfirmButton();
+        }
         ArrayList<String> choices = ChoiceScreenUtils.getCurrentChoiceList();
-        ChoiceScreenUtils.makeBossRewardChoice(0);
-        ScreenUpdateUtils.update();
-        ChoiceScreenUtils.pressConfirmButton();
+        ArrayList<String> man = new ArrayList<>();
+        for(AbstractRelic relic : AbstractDungeon.bossRelicScreen.relics) {
+            man.add(relic.name);
+        }
+        if(choices.contains("astrolabe")){ // for testing that astrolabe functions properly
+           ChoiceScreenUtils.makeBossRewardChoice(choices.indexOf("astrolabe"));
+        }else{
+            ChoiceScreenUtils.makeBossRewardChoice(0);
+        }
+
     }
 
 }

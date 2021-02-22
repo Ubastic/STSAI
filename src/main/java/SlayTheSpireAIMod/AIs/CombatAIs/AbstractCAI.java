@@ -511,7 +511,6 @@ public abstract class AbstractCAI {
             return ended;
         }
 
-
         /** Evaluation of the state (lower is better), ignoring damage dealt to player.
          * @return int Return a measure of how close the monsters are to dying. */
         public int ignorePlayerEval(){
@@ -525,7 +524,6 @@ public abstract class AbstractCAI {
             }
             return totalHealth + aliveMonsters * 5;
         }
-
 
         @Override
         public String toString() {

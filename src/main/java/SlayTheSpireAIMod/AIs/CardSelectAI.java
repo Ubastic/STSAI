@@ -2,14 +2,12 @@ package SlayTheSpireAIMod.AIs;
 
 import SlayTheSpireAIMod.STSAIMod;
 import SlayTheSpireAIMod.communicationmod.ChoiceScreenUtils;
-import basemod.DevConsole;
 import com.megacrit.cardcrawl.cards.AbstractCard;
 import com.megacrit.cardcrawl.dungeons.AbstractDungeon;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 /** Class which decides what to do given card rewards. */
 public class CardSelectAI {

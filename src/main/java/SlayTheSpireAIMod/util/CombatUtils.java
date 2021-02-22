@@ -81,13 +81,13 @@ public class CombatUtils {
         return dinfo.output * hits;
     }
 
-    /** @param attackID CardID of the attack.
+    /** @param attackName The name of the attack.
      * @return int Return number of strikes in the given attack. */
-    public static int getHits(String attackID){
-        if(attackID.equals("Twin Strike")) return 2;
-        if(attackID.equals("Twin Strike+")) return 2;
-        if(attackID.equals("Pummel")) return 4;
-        if(attackID.equals("Pummel+")) return 5;
+    public static int getHits(String attackName){
+        if(attackName.equals("Twin Strike")) return 2;
+        if(attackName.equals("Twin Strike+")) return 2;
+        if(attackName.equals("Pummel")) return 4;
+        if(attackName.equals("Pummel+")) return 5;
         return 1;
     }
 
@@ -194,16 +194,14 @@ public class CombatUtils {
         }
 
         public String toString(){
-            StringBuilder toRet = new StringBuilder();
-            toRet.append("Attacker: ").append(monster.name).append(", ");
-            toRet.append("Base: ").append(baseDmg).append(", ");
-            toRet.append("Hits: ").append(hits).append(", ");
-            toRet.append("Str: ").append(strength).append(", ");
-            toRet.append("Weak?: ").append(weakened).append(", ");
-            toRet.append("Intent: ").append(monster.getIntentDmg()).append(", ");
-            toRet.append("dmg: ").append(getDamage()).append(", ");
-            toRet.append("wDmg: ").append(getWeakenedDamage());
-            return toRet.toString();
+            return "Attacker: " + monster.name + ", " +
+                    "Base: " + baseDmg + ", " +
+                    "Hits: " + hits + ", " +
+                    "Str: " + strength + ", " +
+                    "Weak?: " + weakened + ", " +
+                    "Intent: " + monster.getIntentDmg() + ", " +
+                    "dmg: " + getDamage() + ", " +
+                    "wDmg: " + getWeakenedDamage();
         }
 
         @Override

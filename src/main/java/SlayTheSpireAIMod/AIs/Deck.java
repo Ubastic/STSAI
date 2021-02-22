@@ -1,9 +1,7 @@
 package SlayTheSpireAIMod.AIs;
 
-import basemod.DevConsole;
 import com.megacrit.cardcrawl.cards.AbstractCard;
 import com.megacrit.cardcrawl.cards.CardGroup;
-import com.megacrit.cardcrawl.dungeons.AbstractDungeon;
 
 import java.util.ArrayList;
 import java.util.Arrays;

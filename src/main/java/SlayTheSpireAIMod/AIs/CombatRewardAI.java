@@ -2,14 +2,9 @@ package SlayTheSpireAIMod.AIs;
 
 import SlayTheSpireAIMod.STSAIMod;
 import SlayTheSpireAIMod.communicationmod.ChoiceScreenUtils;
-import SlayTheSpireAIMod.communicationmod.CommandExecutor;
-import SlayTheSpireAIMod.util.ScreenUpdateUtils;
-import basemod.DevConsole;
-import com.megacrit.cardcrawl.core.CardCrawlGame;
 import com.megacrit.cardcrawl.dungeons.AbstractDungeon;
 import com.megacrit.cardcrawl.potions.AbstractPotion;
 import com.megacrit.cardcrawl.potions.PotionSlot;
-import com.megacrit.cardcrawl.screens.CombatRewardScreen;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -56,10 +51,6 @@ public class CombatRewardAI {
                         break;
                     case "card":
                         ChoiceScreenUtils.makeCombatRewardChoice(i);
-                        // Skip card select screen
-                        ScreenUpdateUtils.update();
-                        CardSelectAI.execute();
-                        ScreenUpdateUtils.update();
                         break;
                     case "sapphire_key":
                     case "emerald_key":
@@ -69,7 +60,7 @@ public class CombatRewardAI {
             }
             ChoiceScreenUtils.pressConfirmButton();
         }catch(Exception e){
-            DevConsole.log(e.toString());
+            logger.info(e.toString());
         }
 
 

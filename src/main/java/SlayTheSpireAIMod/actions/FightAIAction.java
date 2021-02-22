@@ -3,7 +3,6 @@ package SlayTheSpireAIMod.actions;
 import SlayTheSpireAIMod.STSAIMod;
 import SlayTheSpireAIMod.util.CombatUtils;
 import SlayTheSpireAIMod.util.Move;
-import basemod.DevConsole;
 import com.megacrit.cardcrawl.actions.AbstractGameAction;
 import com.megacrit.cardcrawl.actions.utility.NewQueueCardAction;
 import com.megacrit.cardcrawl.cards.AbstractCard;
@@ -33,7 +32,7 @@ public class FightAIAction extends AbstractGameAction {
                 AbstractCard toPlay = cards.get(toMake.index);
                 if(!toPlay.canUse(AbstractDungeon.player, toMake.target)){
                     isDone = true;
-                    DevConsole.log("Illegal card played: " + toMake.toString());
+                    logger.info("Illegal card played: " + toMake.toString());
                     return;
                 }
                 NewQueueCardAction queueCard = new NewQueueCardAction(cards.get(toMake.index), toMake.target);

@@ -2,9 +2,6 @@ package SlayTheSpireAIMod.AIs;
 
 import SlayTheSpireAIMod.STSAIMod;
 import SlayTheSpireAIMod.communicationmod.ChoiceScreenUtils;
-import SlayTheSpireAIMod.util.ScreenUpdateUtils;
-import com.megacrit.cardcrawl.daily.mods.AbstractDailyMod;
-import com.megacrit.cardcrawl.dungeons.AbstractDungeon;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -26,14 +23,6 @@ public class ShopAI {
         }
         else{
             ChoiceScreenUtils.pressCancelButton(); // exit the shop screen
-            ScreenUpdateUtils.update();
-            AbstractDungeon.shopScreen.update();
-            AbstractDungeon.dungeonMapScreen.update();
-            AbstractDungeon.currMapNode.room.update();
-            AbstractDungeon.scene.update();
-            AbstractDungeon.currMapNode.room.eventControllerInput();
-
-            ChoiceScreenUtils.pressConfirmButton();
         }
     }
 }

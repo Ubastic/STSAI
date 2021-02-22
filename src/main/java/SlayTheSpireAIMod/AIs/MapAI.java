@@ -3,7 +3,6 @@ package SlayTheSpireAIMod.AIs;
 import SlayTheSpireAIMod.STSAIMod;
 import SlayTheSpireAIMod.communicationmod.ChoiceScreenUtils;
 import SlayTheSpireAIMod.util.MapUtils;
-import basemod.DevConsole;
 import basemod.ReflectionHacks;
 import com.megacrit.cardcrawl.dungeons.AbstractDungeon;
 import com.megacrit.cardcrawl.map.MapEdge;

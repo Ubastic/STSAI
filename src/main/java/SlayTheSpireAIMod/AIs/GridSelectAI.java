@@ -3,11 +3,10 @@ package SlayTheSpireAIMod.AIs;
 import SlayTheSpireAIMod.STSAIMod;
 import SlayTheSpireAIMod.communicationmod.ChoiceScreenUtils;
 import SlayTheSpireAIMod.communicationmod.patches.GridCardSelectScreenPatch;
-import SlayTheSpireAIMod.util.ScreenUpdateUtils;
-import basemod.DevConsole;
 import basemod.ReflectionHacks;
 import com.megacrit.cardcrawl.actions.unique.DiscardPileToTopOfDeckAction;
 import com.megacrit.cardcrawl.cards.AbstractCard;
+import com.megacrit.cardcrawl.cards.CardGroup;
 import com.megacrit.cardcrawl.dungeons.AbstractDungeon;
 import com.megacrit.cardcrawl.screens.select.GridCardSelectScreen;
 import org.apache.logging.log4j.LogManager;
@@ -24,7 +23,7 @@ public class GridSelectAI {
         logger.info("Executing GridSelectAI");
         if(ChoiceScreenUtils.getCurrentChoiceType() != ChoiceScreenUtils.ChoiceType.GRID) return;
         ArrayList<String> choices = ChoiceScreenUtils.getCurrentChoiceList();
-
+        logger.info(choices.toString());
         GridCardSelectScreen screen = AbstractDungeon.gridSelectScreen;
         if(screen.confirmScreenUp){
             ChoiceScreenUtils.pressConfirmButton();
@@ -33,7 +32,7 @@ public class GridSelectAI {
 
         int numCards = ReflectionHacks.getPrivate(AbstractDungeon.gridSelectScreen, GridCardSelectScreen.class, "numCards");
         String tipMsg = ReflectionHacks.getPrivate(AbstractDungeon.gridSelectScreen, GridCardSelectScreen.class, "tipMsg");
-        DevConsole.log("tip: " + tipMsg);
+        logger.info("Tip Message: " + tipMsg);
 
         if(screen.forUpgrade){
             Deck deck = new Deck(AbstractDungeon.player.masterDeck);
@@ -42,8 +41,8 @@ public class GridSelectAI {
                 ArrayList<AbstractCard> gridScreenCards = ChoiceScreenUtils.getGridScreenCards();
                 GridCardSelectScreenPatch.hoverCard = gridScreenCards.get(gridScreenCards.indexOf(toUpgrade));
                 GridCardSelectScreenPatch.replaceHoverCard = true;
-                ScreenUpdateUtils.update();
-//                ChoiceScreenUtils.makeGridScreenChoice(choices.indexOf(toUpgrade.name.toLowerCase()));
+                AbstractDungeon.gridSelectScreen.update();
+
             }
             ChoiceScreenUtils.pressConfirmButton();
         }else if(screen.forTransform){
@@ -53,8 +52,7 @@ public class GridSelectAI {
                 ArrayList<AbstractCard> gridScreenCards = ChoiceScreenUtils.getGridScreenCards();
                 GridCardSelectScreenPatch.hoverCard = gridScreenCards.get(gridScreenCards.indexOf(toTransform));
                 GridCardSelectScreenPatch.replaceHoverCard = true;
-                ScreenUpdateUtils.update();
-                // ChoiceScreenUtils.makeGridScreenChoice(choices.indexOf(toTransform.name.toLowerCase()));
+                AbstractDungeon.gridSelectScreen.update();
             }
             ChoiceScreenUtils.pressConfirmButton();
         }else if(screen.forPurge){
@@ -64,8 +62,7 @@ public class GridSelectAI {
                 ArrayList<AbstractCard> gridScreenCards = ChoiceScreenUtils.getGridScreenCards();
                 GridCardSelectScreenPatch.hoverCard = gridScreenCards.get(gridScreenCards.indexOf(toRemove));
                 GridCardSelectScreenPatch.replaceHoverCard = true;
-                ScreenUpdateUtils.update();
-//                ChoiceScreenUtils.makeGridScreenChoice(choices.indexOf(toRemove.name.toLowerCase()));
+                AbstractDungeon.gridSelectScreen.update();
             }
             ChoiceScreenUtils.pressConfirmButton();
         }else if(AbstractDungeon.actionManager.currentAction instanceof DiscardPileToTopOfDeckAction){
@@ -82,19 +79,24 @@ public class GridSelectAI {
             // TODO
             ChoiceScreenUtils.makeGridScreenChoice(0);
         }else if(tipMsg.equals("Choose 3 cards for Astrolabe.")){
-            // TODO
-            Deck deck = new Deck(AbstractDungeon.player.masterDeck);
+            CardGroup onGrid = AbstractDungeon.player.masterDeck.getPurgeableCards();
+            for(AbstractCard selected : AbstractDungeon.gridSelectScreen.selectedCards){
+                onGrid.removeCard(selected);
+            }
+
+            Deck deck = new Deck(onGrid);
             for(int i = 0; i < numCards; i++){
                 AbstractCard toTransform = deck.transformCard();
                 ArrayList<AbstractCard> gridScreenCards = ChoiceScreenUtils.getGridScreenCards();
                 GridCardSelectScreenPatch.hoverCard = gridScreenCards.get(gridScreenCards.indexOf(toTransform));
+                logger.info("index: " + gridScreenCards.indexOf(toTransform));
                 GridCardSelectScreenPatch.replaceHoverCard = true;
-                ScreenUpdateUtils.update();
-                // ChoiceScreenUtils.makeGridScreenChoice(choices.indexOf(toTransform.name.toLowerCase()));
+                AbstractDungeon.gridSelectScreen.update();
             }
             ChoiceScreenUtils.pressConfirmButton();
         }else{
-            //duplicator
+            // TODO
+            // possibilities: duplicator
 
         }
     }

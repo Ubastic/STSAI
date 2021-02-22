@@ -4,9 +4,6 @@ import SlayTheSpireAIMod.AIs.*;
 import SlayTheSpireAIMod.STSAIMod;
 import SlayTheSpireAIMod.actions.FightAIAction;
 import SlayTheSpireAIMod.communicationmod.ChoiceScreenUtils;
-import SlayTheSpireAIMod.communicationmod.CommandExecutor;
-import SlayTheSpireAIMod.communicationmod.InvalidCommandException;
-import basemod.DevConsole;
 import basemod.TopPanelItem;
 import com.badlogic.gdx.graphics.Texture;
 import com.megacrit.cardcrawl.core.Settings;
@@ -46,6 +43,7 @@ public class UseAIItem extends TopPanelItem {
                     ChestAI.execute();
                     break;
                 case SHOP_ROOM:
+                case SHOP_SCREEN:
                     ShopAI.execute();
                     break;
                 case REST:
@@ -62,9 +60,6 @@ public class UseAIItem extends TopPanelItem {
                     break;
                 case BOSS_REWARD:
                     BossRewardAI.execute();
-                    break;
-                case SHOP_SCREEN:
-                    ShopAI.execute();
                     break;
                 case GRID:
                     GridSelectAI.execute();
@@ -94,8 +89,5 @@ public class UseAIItem extends TopPanelItem {
         super.onHover();
         // x and y values gotten from TopPanel
         TipHelper.renderGenericTip(1550.0F * Settings.scale, (float)Settings.HEIGHT - 120.0F * Settings.scale, "AI", "Have an AI decide what to do.");
-
     }
-
-
 }

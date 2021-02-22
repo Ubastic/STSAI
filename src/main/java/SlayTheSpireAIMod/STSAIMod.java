@@ -1,8 +1,10 @@
 package SlayTheSpireAIMod;
 
+import SlayTheSpireAIMod.AIs.*;
 import SlayTheSpireAIMod.actions.FightAIAction;
 import SlayTheSpireAIMod.commands.*;
 import SlayTheSpireAIMod.communicationmod.ChoiceScreenUtils;
+import SlayTheSpireAIMod.communicationmod.GameStateListener;
 import SlayTheSpireAIMod.items.UseAIItem;
 import basemod.*;
 import basemod.devcommands.ConsoleCommand;
@@ -40,8 +42,22 @@ public class STSAIMod implements PostInitializeSubscriber,
 
     // Mod-settings settings. This is if you want an on/off savable button
     public static Properties theDefaultDefaultSettings = new Properties();
-    public static final String ENABLE_PLACEHOLDER_SETTINGS = "enablePlaceholder";
-    public static boolean autoCombat = true; // The boolean we'll be setting on/off (true/false)
+    public static final String ENABLE_AUTO_COMBAT = "enableAutoCombat";
+    public static final String ENABLE_AUTO_MAP = "enableAutoMap";
+    public static final String ENABLE_AUTO_EVENT = "enableAutoEvent";
+    public static final String ENABLE_AUTO_REWARD = "enableAutoReward";
+    public static final String ENABLE_AUTO_REST = "enableAutoRest";
+    public static final String ENABLE_AUTO_SHOP = "enableAutoShop";
+    public static final String ENABLE_AUTO_CHEST = "enableAutoChest";
+
+    public static boolean autoCombat = true;
+    public static boolean autoMap = true;
+    public static boolean autoEvent = true;
+    public static boolean autoReward = true;
+    public static boolean autoRest = true;
+    public static boolean autoShop = true;
+    public static boolean autoChest = true;
+
 
     //This is for the in-game mod settings panel.
     private static final String MODNAME = "SlayTheSpireAIMod";
@@ -56,7 +72,8 @@ public class STSAIMod implements PostInitializeSubscriber,
     // =============== /INPUT TEXTURE LOCATION/ =================
 
     public static boolean inBattle = false;
-    
+    public static boolean waitedOne = false;
+
     // =============== SUBSCRIBE, INITIALIZE =================
     
     public STSAIMod() {
@@ -70,12 +87,25 @@ public class STSAIMod implements PostInitializeSubscriber,
         logger.info("Adding mod settings");
         // This loads the mod settings.
         // The actual mod Button is added below in receivePostInitialize()
-        theDefaultDefaultSettings.setProperty(ENABLE_PLACEHOLDER_SETTINGS, "FALSE"); // This is the default setting. It's actually set...
+        theDefaultDefaultSettings.setProperty(ENABLE_AUTO_COMBAT, "FALSE"); // This is the default setting. It's actually set...
+        theDefaultDefaultSettings.setProperty(ENABLE_AUTO_MAP, "FALSE");
+        theDefaultDefaultSettings.setProperty(ENABLE_AUTO_EVENT, "FALSE");
+        theDefaultDefaultSettings.setProperty(ENABLE_AUTO_REWARD, "FALSE");
+        theDefaultDefaultSettings.setProperty(ENABLE_AUTO_REST, "FALSE");
+        theDefaultDefaultSettings.setProperty(ENABLE_AUTO_SHOP, "FALSE");
+        theDefaultDefaultSettings.setProperty(ENABLE_AUTO_CHEST, "FALSE");
+
         try {
             SpireConfig config = new SpireConfig("defaultMod", "theDefaultConfig", theDefaultDefaultSettings); // ...right here
             // the "fileName" parameter is the name of the file MTS will create where it will save our setting.
             config.load(); // Load the setting and set the boolean to equal it
-            autoCombat = config.getBool(ENABLE_PLACEHOLDER_SETTINGS);
+            autoCombat = config.getBool(ENABLE_AUTO_COMBAT);
+            autoMap = config.getBool(ENABLE_AUTO_MAP);
+            autoEvent = config.getBool(ENABLE_AUTO_EVENT);
+            autoReward = config.getBool(ENABLE_AUTO_REWARD);
+            autoRest = config.getBool(ENABLE_AUTO_REST);
+            autoShop = config.getBool(ENABLE_AUTO_SHOP);
+            autoChest = config.getBool(ENABLE_AUTO_CHEST);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -147,7 +177,7 @@ public class STSAIMod implements PostInitializeSubscriber,
         ModPanel settingsPanel = new ModPanel();
         
         // Create the on/off button:
-        ModLabeledToggleButton enableNormalsButton = new ModLabeledToggleButton("Enable fully automatic combat.",
+        ModLabeledToggleButton enableAutoCombatButton = new ModLabeledToggleButton("Enable automatic combat.",
                 350.0f, 700.0f, Settings.CREAM_COLOR, FontHelper.charDescFont, // Position (trial and error it), color, font
                 autoCombat, // Boolean it uses
                 settingsPanel, // The mod panel in which this button will be in
@@ -158,15 +188,111 @@ public class STSAIMod implements PostInitializeSubscriber,
             try {
                 // And based on that boolean, set the settings and save them
                 SpireConfig config = new SpireConfig("defaultMod", "theDefaultConfig", theDefaultDefaultSettings);
-                config.setBool(ENABLE_PLACEHOLDER_SETTINGS, autoCombat);
+                config.setBool(ENABLE_AUTO_COMBAT, autoCombat);
                 config.save();
             } catch (Exception e) {
                 e.printStackTrace();
             }
         });
-        
-        settingsPanel.addUIElement(enableNormalsButton); // Add the button to the settings panel. Button is a go.
-        
+
+        ModLabeledToggleButton enableAutoMapButton = new ModLabeledToggleButton("Enable automatic path selection.",
+                350.0f, 670.0f, Settings.CREAM_COLOR, FontHelper.charDescFont,
+                autoMap, settingsPanel, (label) -> {}, (button) -> {
+
+            autoMap = button.enabled;
+            try {
+                // And based on that boolean, set the settings and save them
+                SpireConfig config = new SpireConfig("defaultMod", "theDefaultConfig", theDefaultDefaultSettings);
+                config.setBool(ENABLE_AUTO_MAP, autoMap);
+                config.save();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+
+        ModLabeledToggleButton enableAutoEventButton = new ModLabeledToggleButton("Enable automatic event decisions.",
+                350.0f, 640.0f, Settings.CREAM_COLOR, FontHelper.charDescFont,
+                autoEvent, settingsPanel, (label) -> {}, (button) -> {
+
+            autoEvent = button.enabled;
+            try {
+                // And based on that boolean, set the settings and save them
+                SpireConfig config = new SpireConfig("defaultMod", "theDefaultConfig", theDefaultDefaultSettings);
+                config.setBool(ENABLE_AUTO_EVENT, autoEvent);
+                config.save();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+
+        ModLabeledToggleButton enableAutoRewardButton = new ModLabeledToggleButton("Enable automatic reward selection.",
+                350.0f, 610.0f, Settings.CREAM_COLOR, FontHelper.charDescFont,
+                autoReward, settingsPanel, (label) -> {}, (button) -> {
+
+            autoReward = button.enabled;
+            try {
+                // And based on that boolean, set the settings and save them
+                SpireConfig config = new SpireConfig("defaultMod", "theDefaultConfig", theDefaultDefaultSettings);
+                config.setBool(ENABLE_AUTO_REWARD, autoReward);
+                config.save();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+
+        ModLabeledToggleButton enableAutoRestButton = new ModLabeledToggleButton("Enable automatic rest site decisions.",
+                350.0f, 580.0f, Settings.CREAM_COLOR, FontHelper.charDescFont,
+                autoRest, settingsPanel, (label) -> {}, (button) -> {
+
+            autoRest = button.enabled;
+            try {
+                // And based on that boolean, set the settings and save them
+                SpireConfig config = new SpireConfig("defaultMod", "theDefaultConfig", theDefaultDefaultSettings);
+                config.setBool(ENABLE_AUTO_REST, autoRest);
+                config.save();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+
+        ModLabeledToggleButton enableAutoShopButton = new ModLabeledToggleButton("Enable automatic shop decisions.",
+                350.0f, 550.0f, Settings.CREAM_COLOR, FontHelper.charDescFont,
+                autoShop, settingsPanel, (label) -> {}, (button) -> {
+
+            autoShop = button.enabled;
+            try {
+                // And based on that boolean, set the settings and save them
+                SpireConfig config = new SpireConfig("defaultMod", "theDefaultConfig", theDefaultDefaultSettings);
+                config.setBool(ENABLE_AUTO_SHOP, autoShop);
+                config.save();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+
+        ModLabeledToggleButton enableAutoChestButton = new ModLabeledToggleButton("Enable automatic chest decisions.",
+                350.0f, 520.0f, Settings.CREAM_COLOR, FontHelper.charDescFont,
+                autoChest, settingsPanel, (label) -> {}, (button) -> {
+
+            autoChest = button.enabled;
+            try {
+                // And based on that boolean, set the settings and save them
+                SpireConfig config = new SpireConfig("defaultMod", "theDefaultConfig", theDefaultDefaultSettings);
+                config.setBool(ENABLE_AUTO_CHEST, autoChest);
+                config.save();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+
+        settingsPanel.addUIElement(enableAutoCombatButton); // Add the button to the settings panel. Button is a go.
+        settingsPanel.addUIElement(enableAutoMapButton);
+        settingsPanel.addUIElement(enableAutoEventButton);
+        settingsPanel.addUIElement(enableAutoRewardButton);
+        settingsPanel.addUIElement(enableAutoRestButton);
+        settingsPanel.addUIElement(enableAutoShopButton);
+        settingsPanel.addUIElement(enableAutoChestButton);
+
         BaseMod.registerModBadge(badgeTexture, MODNAME, AUTHOR, DESCRIPTION, settingsPanel);
 
         ConsoleCommand.addCommand("tellhp", BasicCommand.class);
@@ -190,28 +316,71 @@ public class STSAIMod implements PostInitializeSubscriber,
 
     @Override
     public void receivePostDungeonUpdate() {
-//        // automatic Grid choice selection
-//        if(AbstractDungeon.screen == AbstractDungeon.CurrentScreen.GRID){
-//            GridSelectAI.execute();
-//        }
-//        // automatic Hand choice selection
-//        else if(AbstractDungeon.screen == AbstractDungeon.CurrentScreen.HAND_SELECT){
-//            HandSelectAI.execute();
-//        }
-//        logger.info("Dungeon Update received");
-        if(!autoCombat){
+        if(!GameStateListener.checkForDungeonStateChange() && !waitedOne){
             return;
         }
+
         ChoiceScreenUtils.ChoiceType type = ChoiceScreenUtils.getCurrentChoiceType();
-        if(type == ChoiceScreenUtils.ChoiceType.NONE){
-            if(!AbstractDungeon.actionManager.turnHasEnded){
-                if (inBattle && AbstractDungeon.actionManager.phase.equals(GameActionManager.Phase.WAITING_ON_USER)
-                        && AbstractDungeon.actionManager.cardQueue.isEmpty()
-                        && AbstractDungeon.actionManager.actions.isEmpty()) {
-                    AbstractDungeon.actionManager.addToBottom(new FightAIAction());
-                    logger.info("FightAIAction added");
+        switch(type){
+            case EVENT:
+                if(!autoEvent) return;
+                EventAI.execute();
+                break;
+            case CHEST:
+                if(!autoChest) return;
+                ChestAI.execute();
+                break;
+            case SHOP_ROOM:
+            case SHOP_SCREEN:
+                if(!autoShop) return;
+                ShopAI.execute();
+                break;
+            case REST:
+                if(!autoRest) return;
+                RestSiteAI.execute();
+                break;
+            case CARD_REWARD:
+                if(!autoReward) return;
+                CardSelectAI.execute();
+                break;
+            case COMBAT_REWARD:
+                if(!autoReward) return;
+                CombatRewardAI.execute();
+                break;
+            case MAP:
+                if(!autoMap) return;
+                MapAI.execute();
+                break;
+            case BOSS_REWARD:
+                if(!autoReward) return;
+                BossRewardAI.execute();
+                break;
+            case GRID:
+                GridSelectAI.execute();
+                break;
+            case HAND_SELECT:
+                HandSelectAI.execute();
+                break;
+            case GAME_OVER:
+            case COMPLETE:
+                ChoiceScreenUtils.pressConfirmButton();
+                break;
+            case NONE:
+                if(!autoCombat) return;
+                // at the start of combat, wait for intents to load in
+                // without this, first turn of combat for first card play has always has monster intent at 0
+                if(!waitedOne){
+                    waitedOne = true;
+                    return;
                 }
-            }
+                if(!AbstractDungeon.actionManager.turnHasEnded){
+                    if (inBattle && AbstractDungeon.actionManager.phase.equals(GameActionManager.Phase.WAITING_ON_USER)
+                            && AbstractDungeon.actionManager.cardQueue.isEmpty()
+                            && AbstractDungeon.actionManager.actions.isEmpty()) {
+                        AbstractDungeon.actionManager.addToBottom(new FightAIAction());
+                        logger.info("FightAIAction added");
+                    }
+                }
         }
     }
 
@@ -219,6 +388,7 @@ public class STSAIMod implements PostInitializeSubscriber,
     public void receiveOnBattleStart(AbstractRoom abstractRoom) {
         logger.info("Battle Start received");
         inBattle = true;
+        waitedOne = false;
     }
 
     @Override
@@ -226,17 +396,20 @@ public class STSAIMod implements PostInitializeSubscriber,
         // triggers only after not losing a combat
         logger.info("Post Battle received");
         inBattle = false;
+        waitedOne = false;
     }
 
     @Override
     public void receivePostDeath() {
         logger.info("Post Death received");
         inBattle = false;
+        waitedOne = false;
     }
 
     @Override
     public void receiveStartGame() {
         logger.info("Start Game received");
         inBattle = false;
+        waitedOne = false;
     }
 }

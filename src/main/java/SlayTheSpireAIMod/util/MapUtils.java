@@ -23,6 +23,5 @@ public class MapUtils {
         }catch (IndexOutOfBoundsException e){
             return null;
         }
-
     }
 }

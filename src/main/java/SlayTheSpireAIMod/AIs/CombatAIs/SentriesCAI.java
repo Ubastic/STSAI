@@ -10,6 +10,6 @@ public class SentriesCAI extends AbstractCAI {
 
     @Override
     public Move pickMove() {
-        return genericPickMove();
+        return newGenericPickMove();
     }
 }

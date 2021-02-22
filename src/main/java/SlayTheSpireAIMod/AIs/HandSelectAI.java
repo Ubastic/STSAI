@@ -2,7 +2,6 @@ package SlayTheSpireAIMod.AIs;
 
 import SlayTheSpireAIMod.STSAIMod;
 import SlayTheSpireAIMod.communicationmod.ChoiceScreenUtils;
-import com.megacrit.cardcrawl.actions.utility.WaitAction;
 import com.megacrit.cardcrawl.dungeons.AbstractDungeon;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
