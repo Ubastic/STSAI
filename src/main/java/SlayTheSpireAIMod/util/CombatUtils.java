@@ -294,6 +294,8 @@ public class CombatUtils {
             int realBaseDamage = attack.baseDamage;
             if(attack.cardID.equals("Perfected Strike")){
                 realBaseDamage += attack.magicNumber * PerfectedStrike.countCards();
+            }else if (attack.cardID.equals("Body Slam")){
+                realBaseDamage = player.block;
             }
             double vFactor = vulnerable ? player.getVulnerableDealFactor() : 1;
             double wFactor = player.getWeakDealFactor();
