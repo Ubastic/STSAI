@@ -175,8 +175,7 @@ public class CombatUtils {
             if(!isAttack(monster.intent)){
                 return 0;
             }
-            double vFactor = vulnerable ? 1.5 : 1;
-            return (int)Math.floor(damage * vFactor) * hits; // damage accounts for monster strength and weakened
+            return damage;
         }
 
         /** @return int Return the amount of damage that would be dealt after weakened is applied. */
