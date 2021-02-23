@@ -51,62 +51,6 @@ public abstract class AbstractCAI {
         }
     }
 
-
-//    /** Determine if a monster can be killed this turn with attacks from hand. (Ironclad skills deal no damage)
-//     * Ignores poison, monster armor gain effects, relics.
-//     * Ignores Time Warp, Velvet Choker
-//     * If multiple, best kill option is not guaranteed.
-//     * @param target Monster to be killed this turn.
-//     * @return Move Return a Move which lets the player kill m this turn, null if none exists. */
-//    public static Move toKill(AbstractMonster target){
-//        // TODO use CardSequence
-//        // Cannot kill with attacks when Entangled
-//        if(AbstractDungeon.player.hasPower("Entangled")){
-//            return null;
-//        }
-//        ArrayList<AbstractCard> cards = AbstractDungeon.player.hand.group;
-//        ArrayList<AbstractCard> attacks = new ArrayList<>();
-//        for(AbstractCard card : cards){
-//            if(card.type == AbstractCard.CardType.ATTACK){
-//                attacks.add(card);
-//            }
-//        }
-//        int energy = CombatUtils.usableEnergy();
-//        for(AbstractCard attack : attacks){
-//            if(toKillHelper(target, target.currentHealth + target.currentBlock, energy, attack, attacks)){
-//                if(attack.canUse(AbstractDungeon.player, target)){ // Entangled is checked for, but maybe other problems
-//                    return new Move(Move.TYPE.CARD, cards.indexOf(attack), target);
-//                }else{
-//                    return null;
-//                }
-//            }
-//        }
-//        return null;
-//    }
-
-//    /** @param target Monster we are attempting to kill.
-//     * @param health Amount of damage that needs to be dealt to kill target (hp + block).
-//     * @param energy Amount of energy the player has left to use.
-//     * @param use Card to be played.
-//     * @param attacks The attack cards the player has left to use (must include use).
-//     * @return boolean Return true if playing use allows the player to kill target.  */
-//    private static boolean toKillHelper(AbstractMonster target, int health, int energy, AbstractCard use, ArrayList<AbstractCard> attacks){
-//        energy -= use.costForTurn;
-//        if(energy < 0){ return false; } // use cannot even be played
-//
-//        health -= CombatUtils.getDamage(use, target);
-//        if(health <= 0){ return true; }
-//
-//        ArrayList<AbstractCard> remaining = new ArrayList<>(attacks);
-//        remaining.remove(use);
-//        for(AbstractCard attack : remaining){
-//            if(toKillHelper(target, health, energy, attack, remaining)){
-//                return true;
-//            }
-//        }
-//        return false;
-//    }
-
     /** Determine if there are any "safe" cards to play.
      * Ignores negative effects that trigger on playing a card.
      * Ignores no-draw from Battle Trance(+).
@@ -154,18 +98,6 @@ public abstract class AbstractCAI {
             start.simplePlayer.hand.remove(c);
         }
 
-//        HashSet<CardSequence> ended = start.getDistantPossibilities();
-//        logger.info("Number of Distant Pos: " + ended.size());
-//        int bestEval = heuristic(start, 0);
-//        CardSequence bestState = start;
-//        for(CardSequence state : ended){
-//            int eval = heuristic(state, 0);
-//            if(eval < bestEval){
-//                bestEval = eval;
-//                bestState = state;
-//            }
-//        }
-
         CardSequence bestState = start.getBestPossibility(x -> heuristic(x, 0));
 
         if(bestState != start){
@@ -187,9 +119,7 @@ public abstract class AbstractCAI {
 
         int extraBlock = 0;
         extraBlock += state.simplePlayer.metallicize;
-//        if(AbstractDungeon.player.hasPower("Metallicize")){
-//            extraBlock += AbstractDungeon.player.getPower("Metallicize").amount;
-//        }
+
         if(AbstractDungeon.player.hasPower("Plated Armor")){
             extraBlock += AbstractDungeon.player.getPower("Plated Armor").amount;
         }
@@ -221,7 +151,6 @@ public abstract class AbstractCAI {
         return totalHealth + aliveMonstersFactor + hpLossFactor + strengthFactor + metallicizeFactor;
     }
 
-    // TODO
     /** Represent the state of the game after playing a sequence of cards. */
     public static class CardSequence{
         AbstractCard first; // first card played in this sequence, null if none
@@ -339,6 +268,7 @@ public abstract class AbstractCAI {
                     bestState = state;
                 }
             }
+            logger.info("Best evaluation: " + bestEval);
             return bestState;
         }
 
@@ -357,10 +287,6 @@ public abstract class AbstractCAI {
             if (this == o) return true;
             if (o == null || getClass() != o.getClass()) return false;
             CardSequence that = (CardSequence) o;
-//            return firstTargetIndex == that.firstTargetIndex &&
-//                    first.equals(that.first) &&
-//                    simpleMonsters.equals(that.simpleMonsters) &&
-//                    simplePlayer.equals(that.simplePlayer);
             return simpleMonsters.equals(that.simpleMonsters) &&
                     simplePlayer.equals(that.simplePlayer);
         }
