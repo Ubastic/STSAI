@@ -125,6 +125,35 @@ public class CombatUtils {
             update();
         }
 
+        public MonsterAttack(AbstractMonster m, boolean noDamage){
+            if(noDamage){
+                monster = m;
+                baseDmg = -1;
+                damage = 0;
+                hits = 0;
+                strength = 0;
+                weakened = false;
+                vulnerable = false;
+            }else{
+                monster = m;
+                update();
+            }
+        }
+
+        public MonsterAttack(MonsterAttack a){
+            monster = a.monster;
+            baseDmg = a.baseDmg;
+            damage = a.damage;
+            hits = a.hits;
+            strength = a.strength;
+            weakened = a.weakened;
+            vulnerable = a.vulnerable;
+        }
+
+        public MonsterAttack copy(){
+            return new MonsterAttack(this);
+        }
+
         /** Update field values to represent the combat state. */
         public void update(){
             if(monster.isDeadOrEscaped()){
@@ -171,8 +200,6 @@ public class CombatUtils {
             // TODO
             return -1;
         }
-
-
 
         /** @return double Return the factor of increased damage due to vulnerable. */
         public double getVulnerableFactor(){
@@ -250,6 +277,11 @@ public class CombatUtils {
             this.intangible = m.intangible;
         }
 
+        public SimpleMonster copy(){
+            return new SimpleMonster(this);
+        }
+
+
         /** @param player The player who plays the attack.
          * @param attack The attack played.
          * Update monster values after player plays an attack on this monster. */
@@ -299,8 +331,8 @@ public class CombatUtils {
             }
         }
 
-        public boolean isDead(){
-            return health <= 0;
+        public boolean isAlive(){
+            return health > 0;
         }
 
         @Override
@@ -340,6 +372,7 @@ public class CombatUtils {
         public int block;
         public int strength;
         // TODO add dexterity
+        public int metallicize;
         boolean weakened;
         boolean vulnerable;
         boolean intangible;
@@ -353,17 +386,20 @@ public class CombatUtils {
             health = p.currentHealth;
             block = p.currentBlock;
             strength = p.hasPower("Strength") ? p.getPower("Strength").amount : 0;
+            metallicize = p.hasPower("Metallicize") ? p.getPower("Metallicize").amount : 0;
             weakened = p.hasPower("Weakened");
             vulnerable = p.hasPower("Vulnerable");
             intangible = p.hasPower("Intangible");
         }
 
-        public SimplePlayer(ArrayList<AbstractCard> hand, int energy, int health, int block, int strength, boolean weakened, boolean vulnerable, boolean intangible){
+        public SimplePlayer(ArrayList<AbstractCard> hand, int energy, int health, int block, int strength,
+                            int metallicize, boolean weakened, boolean vulnerable, boolean intangible){
             this.hand = hand;
             this.energy = energy;
             this.health = health;
             this.block = block;
             this.strength = strength;
+            this.metallicize = metallicize;
             this.weakened = weakened;
             this.vulnerable = vulnerable;
             this.intangible = intangible;
@@ -376,11 +412,11 @@ public class CombatUtils {
             this.health = p.health;
             this.block = p.block;
             this.strength = p.strength;
+            this.metallicize = p.metallicize;
             this.weakened = p.weakened;
             this.vulnerable = p.vulnerable;
             this.intangible = p.intangible;
         }
-
 
         /** @param toPlay The card played.
          * @param target The target of the card.
@@ -393,7 +429,7 @@ public class CombatUtils {
             if(toPlay.type == AbstractCard.CardType.ATTACK){
                 if(toPlay.cardID.equals("Whirlwind")){
                     for(SimpleMonster m : monsters){
-                        if(!m.isDead()){
+                        if(m.isAlive()){
                             m.takeAttack(this, toPlay);
                         }
                     }
@@ -404,6 +440,12 @@ public class CombatUtils {
                 }
             }else if(toPlay.type == AbstractCard.CardType.SKILL){
                 block += toPlay.block;
+            }else if(toPlay.type == AbstractCard.CardType.POWER){
+                if(toPlay.cardID.equals("Inflame")){
+                    strength += toPlay.magicNumber;
+                }else if(toPlay.cardID.equals("Metallicize")){
+                    metallicize += toPlay.magicNumber;
+                }
             }
         }
 
