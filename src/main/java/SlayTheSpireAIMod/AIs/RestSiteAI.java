@@ -3,6 +3,7 @@ package SlayTheSpireAIMod.AIs;
 import SlayTheSpireAIMod.STSAIMod;
 import SlayTheSpireAIMod.communicationmod.ChoiceScreenUtils;
 import com.megacrit.cardcrawl.dungeons.AbstractDungeon;
+import com.megacrit.cardcrawl.rooms.RestRoom;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -19,6 +20,10 @@ public class RestSiteAI {
         ArrayList<String> choices = ChoiceScreenUtils.getCurrentChoiceList();
         if(ChoiceScreenUtils.isConfirmButtonAvailable()){
             ChoiceScreenUtils.pressConfirmButton();
+        }
+        if(((RestRoom)AbstractDungeon.getCurrRoom()).campfireUI.somethingSelected){
+            logger.info("RestSiteAI: something was already selected");
+            return;
         }
 
         // ignore options that are not rest/smith for now TODO
