@@ -38,13 +38,15 @@ public class GridSelectAI {
             Deck deck = new Deck(AbstractDungeon.player.masterDeck);
             for(int i = 0; i < numCards; i++){
                 AbstractCard toUpgrade = deck.upgradeCard();
+                if(AbstractDungeon.gridSelectScreen.selectedCards.contains(toUpgrade)){
+                    toUpgrade = deck.upgradeCard();
+                }
                 ArrayList<AbstractCard> gridScreenCards = ChoiceScreenUtils.getGridScreenCards();
                 GridCardSelectScreenPatch.hoverCard = gridScreenCards.get(gridScreenCards.indexOf(toUpgrade));
                 GridCardSelectScreenPatch.replaceHoverCard = true;
                 AbstractDungeon.gridSelectScreen.update();
-
             }
-            ChoiceScreenUtils.pressConfirmButton();
+//            ChoiceScreenUtils.pressConfirmButton();
         }else if(screen.forTransform){
             Deck deck = new Deck(AbstractDungeon.player.masterDeck);
             for(int i = 0; i < numCards; i++){
@@ -79,6 +81,7 @@ public class GridSelectAI {
             // TODO
             ChoiceScreenUtils.makeGridScreenChoice(0);
         }else if(tipMsg.equals("Choose 3 cards for Astrolabe.")){
+            // FIXME 3 cards removed but not added
             CardGroup onGrid = AbstractDungeon.player.masterDeck.getPurgeableCards();
             for(AbstractCard selected : AbstractDungeon.gridSelectScreen.selectedCards){
                 onGrid.removeCard(selected);
@@ -93,7 +96,7 @@ public class GridSelectAI {
                 GridCardSelectScreenPatch.replaceHoverCard = true;
                 AbstractDungeon.gridSelectScreen.update();
             }
-            ChoiceScreenUtils.pressConfirmButton();
+//            ChoiceScreenUtils.pressConfirmButton();
         }else{
             // TODO
             // possibilities: duplicator
