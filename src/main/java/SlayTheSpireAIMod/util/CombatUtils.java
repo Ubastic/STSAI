@@ -160,6 +160,7 @@ public class CombatUtils {
                 hits = 0;
                 return;
             }
+            // TODO reflect when you cannot see intents
             EnemyMoveInfo moveInfo = ReflectionHacks.getPrivate(monster, AbstractMonster.class, "move");
             baseDmg = moveInfo.baseDamage;
             damage =  monster.getIntentDmg();
