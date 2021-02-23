@@ -26,6 +26,7 @@ public class ChestAI {
         }
         assert chest != null;
         if(chest.isOpen){
+            // TODO don't press confirm until actions are processed
             if(ChoiceScreenUtils.isConfirmButtonAvailable()){
                 ChoiceScreenUtils.pressConfirmButton();
             }
