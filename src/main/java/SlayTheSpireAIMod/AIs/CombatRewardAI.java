@@ -13,7 +13,7 @@ import java.util.ArrayList;
 /** Class which decides what to do given combat rewards. */
 public class CombatRewardAI {
     public static final Logger logger = LogManager.getLogger(STSAIMod.class.getName());
-
+    // TODO multiple card rewards
     /** Execute the following strategy:
      *  - Take potions if slots are not full
      *  - Take gold
