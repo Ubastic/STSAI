@@ -2,6 +2,7 @@ package SlayTheSpireAIMod.AIs;
 
 import SlayTheSpireAIMod.STSAIMod;
 import SlayTheSpireAIMod.communicationmod.ChoiceScreenUtils;
+import com.megacrit.cardcrawl.actions.unique.GamblingChipAction;
 import com.megacrit.cardcrawl.dungeons.AbstractDungeon;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -18,6 +19,20 @@ public class HandSelectAI {
         if(ChoiceScreenUtils.getCurrentChoiceType() != ChoiceScreenUtils.ChoiceType.HAND_SELECT) return;
         int toSelect = AbstractDungeon.handCardSelectScreen.numCardsToSelect;
         ArrayList<String> choices = ChoiceScreenUtils.getCurrentChoiceList();
+        if(choices.size() == 0){
+            logger.info("HandSelectAI: no choices");
+            return;
+        }
+        if(AbstractDungeon.actionManager.currentAction instanceof GamblingChipAction){
+            logger.info("HandSelectAI: Processing Gambling Chip");
+            if(ChoiceScreenUtils.isConfirmButtonAvailable()){
+                logger.info("HandSelectAI: Pressing confirm");
+                ChoiceScreenUtils.pressConfirmButton();
+            }
+            return;
+        }
+
+
         for(int i = 0; i < toSelect; i++){
             ChoiceScreenUtils.makeHandSelectScreenChoice(0);
         }
