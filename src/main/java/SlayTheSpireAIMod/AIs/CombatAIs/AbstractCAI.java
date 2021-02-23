@@ -51,79 +51,6 @@ public abstract class AbstractCAI {
         }
     }
 
-//    /** Evaluate the combat state and return the best valid next move.
-//     * Generic AI:
-//     *  - Look at health and incoming damage from monsters
-//     *  - If player can kill only alive monster, do it (ignores damage taken, potential heal (e.g. Feed))
-//     * @return Move Return the determined best next move.  */
-//    public static Move genericPickMove(){
-//        ArrayList<AbstractMonster> monsters = AbstractDungeon.getCurrRoom().monsters.monsters;
-//        CombatUtils.MonsterAttack[] monsterAttacks = new CombatUtils.MonsterAttack[monsters.size()];
-//        int aliveMonsters = 0;
-//        AbstractMonster soleAlive = null;
-//        for(int i = 0; i < monsters.size(); i++){
-//            AbstractMonster m = monsters.get(i);
-//            if(m.currentHealth > 0){
-//                aliveMonsters++;
-//                soleAlive = m;
-//            }
-//            monsterAttacks[i] = new CombatUtils.MonsterAttack(m);
-//        }
-//
-//        // if player can kill only alive monster, do it
-//        if(aliveMonsters == 1){
-//            Move tryKill = toKill(soleAlive);
-//            if(tryKill != null) return tryKill;
-//        }
-//
-//        int monsterDamage = 0; // total incoming damage
-//        AbstractMonster soleAttacker = null; // null if 0 or 2+ attackers
-//        for(CombatUtils.MonsterAttack attack : monsterAttacks){
-//            if(monsterDamage == 0 && attack.getDamage() > 0){
-//                soleAttacker = attack.getMonster();
-//            }else if(monsterDamage > 0 && attack.getDamage() > 0){
-//                soleAttacker = null;
-//            }
-//            monsterDamage += attack.getDamage();
-//        }
-//
-//        // if only one monster is threatening to deal damage, kill it if possible
-//        if(soleAttacker != null){
-//            Move tryKill = toKill(soleAttacker);
-//            if(tryKill != null) return tryKill;
-//        }
-//
-//        // if a no-negative card can be played, play it
-//        Move tryFree = FreeCard();
-//        if(tryFree != null){
-//            return tryFree;
-//        }
-//
-//        int extraBlock = 0;
-//        if(AbstractDungeon.player.hasPower("Metallicize")){
-//            extraBlock += AbstractDungeon.player.getPower("Metallicize").amount;
-//        }
-//        if(AbstractDungeon.player.hasPower("Plated Armor")){
-//            extraBlock += AbstractDungeon.player.getPower("Plated Armor").amount;
-//        }
-//
-//        // if no health will be lost from incoming attacks, play like it
-//        int damageTaken = Math.max(0, monsterDamage - AbstractDungeon.player.currentBlock - extraBlock);
-//        if(damageTaken == 0){
-//            return withFullBlockCard();
-//        }
-//
-//        int tolerance = 5;
-//        if(damageTaken > tolerance){
-//            Move tryBlock = bestBlockCard();
-//            if(tryBlock != null){
-//                return tryBlock;
-//            }else{
-//                return withFullBlockCard();
-//            }
-//        }
-//        return withFullBlockCard();
-//    }
 
 //    /** Determine if a monster can be killed this turn with attacks from hand. (Ironclad skills deal no damage)
 //     * Ignores poison, monster armor gain effects, relics.
@@ -206,102 +133,6 @@ public abstract class AbstractCAI {
         return null;
     }
 
-//    /** Play the best available attack if possible. Otherwise play playable power cards.
-//     * Otherwise play playable block cards. Otherwise pass.
-//     * @return Move Return the Move to make when the player already blocks all incoming damage.  */
-//    public static Move withFullBlockCard(){
-////        Move tryAttack = bestAttackCard();
-//        Move tryAttack = newBestAttack();
-//        if(tryAttack != null){
-//            return tryAttack;
-//        }
-//        ArrayList<AbstractCard> cards = AbstractDungeon.player.hand.group;
-//        AbstractMonster target = CombatUtils.getRandomTarget();
-//        for(AbstractCard card : cards){
-//            if(!card.canUse(AbstractDungeon.player, target)){
-//                continue;
-//            }
-//            if(card.type == AbstractCard.CardType.POWER){
-//                return new Move(Move.TYPE.CARD, cards.indexOf(card), target);
-//            }
-//        }
-//        Move tryBlock = bestBlockCard();
-//        if(tryBlock != null){
-//            return tryBlock;
-//        }
-//        return new Move(Move.TYPE.PASS);
-//    }
-
-//    /** Determine the best block-gaining card to play. TODO Armaments tiebreaker
-//     * @return Move Return the Move which gains the most block-per-energy, null if no cards gain block. */
-//    public static Move bestBlockCard(){
-//        ArrayList<AbstractCard> cards = AbstractDungeon.player.hand.group;
-//        double maxBPE = 0;
-//        AbstractCard maxBPECard = null;
-//        AbstractMonster target = CombatUtils.getWeakestTarget();
-//        for(AbstractCard card : cards){
-//            if(!card.canUse(AbstractDungeon.player, target)){
-//                continue;
-//            }
-//            // block per energy, with damage as a tiebreaker (Iron Wave vs Defend)
-//            double bpe = card.costForTurn == 0 && card.block > 0 ?
-//                    999 : (double) card.block / card.costForTurn + card.damage * 0.0001;
-//            if(bpe > maxBPE){
-//                maxBPE = bpe;
-//                maxBPECard = card;
-//            }
-//        }
-//        if(maxBPE < 1){
-//            return null;
-//        }
-//        return new Move(Move.TYPE.CARD, cards.indexOf(maxBPECard), CombatUtils.getWeakestTarget());
-//    }
-
-//    /** Determine the best attack card to play.
-//     * @return Move Return the Move which deals the most damage-per-energy, null if no cards deal damage. */
-//    public static Move bestAttackCard(){
-//        ArrayList<AbstractCard> cards = AbstractDungeon.player.hand.group;
-//        double maxDPE = 0;
-//        AbstractCard maxDPECard = null;
-//        AbstractMonster target = CombatUtils.getWeakestTarget();
-//        for(AbstractCard card : cards){
-//            if(!card.canUse(AbstractDungeon.player, target)){
-//                continue;
-//            }
-//            // damage per energy
-//            double dpe = 0;
-//            if(card.cardID.equals("Whirlwind") || card.cardID.equals("Whirlwind+")){
-//                for(AbstractMonster m : AbstractDungeon.getCurrRoom().monsters.monsters){
-//                    if(m.currentHealth > 0){
-//                        dpe += CombatUtils.getDamage(card, m);
-//                    }
-//                }
-//            }else{
-//                boolean isMultiDamage = ReflectionHacks.getPrivate(card, AbstractCard.class, "isMultiDamage");
-//                if(isMultiDamage){
-//                    for(AbstractMonster m : AbstractDungeon.getCurrRoom().monsters.monsters){
-//                        if(m.currentHealth > 0){
-//                            dpe += CombatUtils.getDamage(card, m);
-//                        }
-//                    }
-//                    dpe = dpe / card.costForTurn;
-//                }else{
-//                    int damage = CombatUtils.getDamage(card, target);
-//                    dpe = card.costForTurn == 0 && damage > 0 ?
-//                            999 : (double) damage / card.costForTurn;
-//                }
-//            }
-//            if(dpe > maxDPE){
-//                maxDPE = dpe;
-//                maxDPECard = card;
-//            }
-//        }
-//        if(maxDPE == 0){
-//            return null;
-//        }
-//        return new Move(Move.TYPE.CARD, cards.indexOf(maxDPECard), target);
-//    }
-
     public static Move newGenericPickMove(){
         // if a no-negative card can be played, play it
         Move tryFree = FreeCard();
@@ -346,45 +177,6 @@ public abstract class AbstractCAI {
         return new Move(Move.TYPE.PASS);
     }
 
-//    /** Determine the best attack card to play, prioritizing killing monsters and lowering total monster health.
-//     * @return Move Return the best attack card to play. */
-//    public static Move newBestAttack(){
-//        CardSequence start = new CardSequence();
-//        start.simplePlayer.hand.removeIf(c -> c.type != AbstractCard.CardType.ATTACK);
-//        HashSet<CardSequence> ongoing = new HashSet<>();
-//        ongoing.add(start);
-//        HashSet<CardSequence> ended = new HashSet<>();
-//        for(int i = 0; i < 10; i++){
-//            HashSet<CardSequence> toReplace = new HashSet<>();
-//            for(CardSequence c : ongoing){
-//                ArrayList<CardSequence> poss = c.getPossibilities();
-//                if(poss.size() == 0){
-//                    ended.add(c);
-//                }else{
-//                    toReplace.addAll(poss);
-//                }
-//            }
-//            ongoing = toReplace;
-//        }
-//
-//        int bestEval = start.ignorePlayerEval();
-//        CardSequence bestState = start;
-//        for(CardSequence state : ended){
-//            int eval = state.ignorePlayerEval();
-//            if(eval < bestEval){
-//                bestEval = eval;
-//                bestState = state;
-//            }
-//        }
-//
-//        if(bestState != start){
-//            int bestIndex = AbstractDungeon.player.hand.group.indexOf(bestState.first);
-//            logger.info("Evaluated best state (from newBestAttack): " + bestState.toString());
-//            return new Move(Move.TYPE.CARD, bestIndex, AbstractDungeon.getCurrRoom().monsters.monsters.get(bestState.firstTargetIndex));
-//        }
-//        return null;
-//    }
-
     /** @param state The state to be evaluated.
      * Evaluation of the given state (lower is better).
      * @return int Return a measure of how good a state is. */
@@ -394,9 +186,10 @@ public abstract class AbstractCAI {
         int incomingDmg = 0;
 
         int extraBlock = 0;
-        if(AbstractDungeon.player.hasPower("Metallicize")){
-            extraBlock += AbstractDungeon.player.getPower("Metallicize").amount;
-        }
+        extraBlock += state.simplePlayer.metallicize;
+//        if(AbstractDungeon.player.hasPower("Metallicize")){
+//            extraBlock += AbstractDungeon.player.getPower("Metallicize").amount;
+//        }
         if(AbstractDungeon.player.hasPower("Plated Armor")){
             extraBlock += AbstractDungeon.player.getPower("Plated Armor").amount;
         }
@@ -410,10 +203,22 @@ public abstract class AbstractCAI {
         }
 
         int willLoseHP = Math.max(0, incomingDmg - state.simplePlayer.block - extraBlock);
-        int hpLossFactor = Math.max(0, willLoseHP - tolerance);
+        int hpLossFactor =  3 * Math.max(0, willLoseHP - tolerance);
+        int aliveMonstersFactor = 5 * aliveMonsters;
 
-//        logger.info("" + (totalHealth + aliveMonsters * 5 + hpLossFactor));
-        return totalHealth + aliveMonsters * 5 + hpLossFactor * 3;
+        if(aliveMonsters == 0){
+            aliveMonstersFactor = -100;
+        }
+
+        int strength = state.simplePlayer.strength;
+        int strengthA = totalHealth > 24 ? -5 : -1; // strength is less important if little dmg needs to be dealt
+        int strengthFactor = strength * strengthA;
+
+        int metallicize = state.simplePlayer.metallicize;
+        int metallicizeA = totalHealth > 30 ? -3 : -1;
+        int metallicizeFactor = metallicize * metallicizeA;
+
+        return totalHealth + aliveMonstersFactor + hpLossFactor + strengthFactor + metallicizeFactor;
     }
 
     // TODO
@@ -449,7 +254,6 @@ public abstract class AbstractCAI {
             firstTargetIndex = s.firstTargetIndex;
             simpleMonsters = new ArrayList<>();
             for(CombatUtils.SimpleMonster m : s.simpleMonsters){
-//                simpleMonsters.add(new CombatUtils.SimpleMonster(m));
                 simpleMonsters.add(m.copy());
             }
             simplePlayer = new CombatUtils.SimplePlayer(s.simplePlayer);
@@ -485,7 +289,7 @@ public abstract class AbstractCAI {
             }
 
             for(AbstractCard c : simplePlayer.hand){
-                if(c.type != AbstractCard.CardType.POWER){
+                if(c.type == AbstractCard.CardType.ATTACK || c.type == AbstractCard.CardType.SKILL){
                     for(CombatUtils.SimpleMonster m : aliveMonsters){
                         CardSequence pos = playCard(c, m);
                         if(pos != null){
@@ -537,20 +341,6 @@ public abstract class AbstractCAI {
             }
             return bestState;
         }
-
-//        /** Evaluation of the state (lower is better), ignoring damage dealt to player.
-//         * @return int Return a measure of how close the monsters are to dying. */
-//        public int ignorePlayerEval(){
-//            int aliveMonsters = 0;
-//            int totalHealth = 0;
-//            for(CombatUtils.SimpleMonster m : simpleMonsters){
-//                if(!m.isDead()){
-//                    aliveMonsters += 1;
-//                    totalHealth += m.health;
-//                }
-//            }
-//            return totalHealth + aliveMonsters * 5;
-//        }
 
         @Override
         public String toString() {
