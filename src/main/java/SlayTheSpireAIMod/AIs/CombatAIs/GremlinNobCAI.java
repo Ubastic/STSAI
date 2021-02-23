@@ -2,10 +2,12 @@ package SlayTheSpireAIMod.AIs.CombatAIs;
 
 import SlayTheSpireAIMod.util.CombatUtils;
 import SlayTheSpireAIMod.util.Move;
+import com.megacrit.cardcrawl.cards.AbstractCard;
 import com.megacrit.cardcrawl.dungeons.AbstractDungeon;
 import com.megacrit.cardcrawl.monsters.AbstractMonster;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 
 /** AI versus encounter "Gremlin Nob". */
 public class GremlinNobCAI extends AbstractCAI {
@@ -17,22 +19,35 @@ public class GremlinNobCAI extends AbstractCAI {
 
     @Override
     public Move pickMove() {
-        ArrayList<AbstractMonster> monsters = AbstractDungeon.getCurrRoom().monsters.monsters;
-        CombatUtils.MonsterAttack[] monsterAttacks = new CombatUtils.MonsterAttack[monsters.size()];
-        int aliveMonsters = 0;
-        for(int i = 0; i < monsters.size(); i++){
-            AbstractMonster m = monsters.get(i);
-            if(m.currentHealth > 0){
-                aliveMonsters++;
+        // first, remove cards that cannot be played
+        CardSequence start = new CardSequence();
+        ArrayList<AbstractCard> unplayable = new ArrayList<>();
+        for(AbstractCard c : start.simplePlayer.hand){
+            if(!c.canUse(AbstractDungeon.player, CombatUtils.getWeakestTarget())){
+                unplayable.add(c);
             }
-            monsterAttacks[i] = new CombatUtils.MonsterAttack(m);
+        }
+        for(AbstractCard c : unplayable){
+            start.simplePlayer.hand.remove(c);
         }
 
-        // if player can kill only alive monster, do it
-        if(aliveMonsters == 1){
-            Move tryKill = toKill(CombatUtils.getRandomTarget());
-            if(tryKill != null) return tryKill;
+        // never play skills vs Gremlin Nob
+        ArrayList<AbstractCard> skills = new ArrayList<>();
+        for(AbstractCard c : start.simplePlayer.hand){
+            if(c.type == AbstractCard.CardType.SKILL){
+                skills.add(c);
+            }
         }
-        return withFullBlockCard();
+        for(AbstractCard c : skills){
+            start.simplePlayer.hand.remove(c);
+        }
+
+        CardSequence bestState = start.getBestPossibility(x -> heuristic(x, 0));
+        if(bestState != start){
+            logger.info("Evaluated best state (from GremlinNobCAI): " + bestState.toString());
+            int bestIndex = AbstractDungeon.player.hand.group.indexOf(bestState.first);
+            return new Move(Move.TYPE.CARD, bestIndex, AbstractDungeon.getCurrRoom().monsters.monsters.get(bestState.firstTargetIndex));
+        }
+        return new Move(Move.TYPE.PASS);
     }
 }
