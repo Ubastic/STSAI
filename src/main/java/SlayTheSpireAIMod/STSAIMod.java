@@ -6,6 +6,7 @@ import SlayTheSpireAIMod.commands.*;
 import SlayTheSpireAIMod.communicationmod.ChoiceScreenUtils;
 import SlayTheSpireAIMod.communicationmod.GameStateListener;
 import SlayTheSpireAIMod.items.UseAIItem;
+import SlayTheSpireAIMod.util.CombatUtils;
 import basemod.*;
 import basemod.devcommands.ConsoleCommand;
 import basemod.interfaces.*;
@@ -19,6 +20,7 @@ import com.megacrit.cardcrawl.actions.GameActionManager;
 import com.megacrit.cardcrawl.core.Settings;
 import com.megacrit.cardcrawl.dungeons.AbstractDungeon;
 import com.megacrit.cardcrawl.helpers.FontHelper;
+import com.megacrit.cardcrawl.monsters.AbstractMonster;
 import com.megacrit.cardcrawl.rooms.AbstractRoom;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -36,7 +38,7 @@ public class STSAIMod implements PostInitializeSubscriber,
         OnStartBattleSubscriber,
         PostBattleSubscriber,
         PostDeathSubscriber,
-        StartGameSubscriber{
+        StartGameSubscriber {
     public static final Logger logger = LogManager.getLogger(STSAIMod.class.getName());
     private static String modID;
 
@@ -72,7 +74,9 @@ public class STSAIMod implements PostInitializeSubscriber,
     // =============== /INPUT TEXTURE LOCATION/ =================
 
     public static boolean inBattle = false;
-    public static boolean waitedOne = false;
+    public static boolean gameEnded = false;
+    public static int waitCounter = 0;
+    public static boolean stateChanged = false;
 
     // =============== SUBSCRIBE, INITIALIZE =================
     
@@ -316,8 +320,22 @@ public class STSAIMod implements PostInitializeSubscriber,
 
     @Override
     public void receivePostDungeonUpdate() {
-        if(!GameStateListener.checkForDungeonStateChange() && !waitedOne){
-            return;
+        if(gameEnded){
+            logger.info("Processing gameEnded");
+            if(!GameStateListener.checkForDungeonStateChange()){
+                return;
+            }
+        }else{
+            boolean change = GameStateListener.checkForDungeonStateChange();
+            if(change && stateChanged){
+                waitCounter = 0;
+            }
+            stateChanged = stateChanged || change;
+            if(waitCounter < 10){ // wait a few update cycles so that actions don't skip over effects
+                waitCounter += 1;
+                return;        }
+            waitCounter = 0;
+            stateChanged = false;
         }
 
         ChoiceScreenUtils.ChoiceType type = ChoiceScreenUtils.getCurrentChoiceType();
@@ -363,16 +381,21 @@ public class STSAIMod implements PostInitializeSubscriber,
                 break;
             case GAME_OVER:
             case COMPLETE:
-                ChoiceScreenUtils.pressConfirmButton();
+                if(ChoiceScreenUtils.isConfirmButtonAvailable())
+                    ChoiceScreenUtils.pressConfirmButton();
                 break;
             case NONE:
                 if(!autoCombat) return;
                 // at the start of combat, wait for intents to load in
                 // without this, first turn of combat for first card play has always has monster intent at 0
-                if(!waitedOne){
-                    waitedOne = true;
-                    return;
+                AbstractMonster m = CombatUtils.getWeakestTarget();
+                if(m != null){
+//                    logger.info("" + m.intent);
+                    if(m.intent == AbstractMonster.Intent.DEBUG){
+                        return;
+                    }
                 }
+
                 if(!AbstractDungeon.actionManager.turnHasEnded){
                     if (inBattle && AbstractDungeon.actionManager.phase.equals(GameActionManager.Phase.WAITING_ON_USER)
                             && AbstractDungeon.actionManager.cardQueue.isEmpty()
@@ -388,7 +411,6 @@ public class STSAIMod implements PostInitializeSubscriber,
     public void receiveOnBattleStart(AbstractRoom abstractRoom) {
         logger.info("Battle Start received");
         inBattle = true;
-        waitedOne = false;
     }
 
     @Override
@@ -396,20 +418,19 @@ public class STSAIMod implements PostInitializeSubscriber,
         // triggers only after not losing a combat
         logger.info("Post Battle received");
         inBattle = false;
-        waitedOne = false;
     }
 
     @Override
     public void receivePostDeath() {
         logger.info("Post Death received");
         inBattle = false;
-        waitedOne = false;
+        gameEnded = true;
     }
 
     @Override
     public void receiveStartGame() {
         logger.info("Start Game received");
         inBattle = false;
-        waitedOne = false;
+        gameEnded = false;
     }
 }
