@@ -25,11 +25,16 @@ public class EventAI {
         logger.info("Executing EventAI");
         if(ChoiceScreenUtils.getCurrentChoiceType() != ChoiceScreenUtils.ChoiceType.EVENT) return;
         ArrayList<String> choices = ChoiceScreenUtils.getCurrentChoiceList();
+        logger.info("Event choices: " + choices.toString());
         AbstractEvent event = AbstractDungeon.getCurrRoom().event;
 
         // Select the only option if there is only one, e.g. [Leave], [Continue]
         if(choices.size() == 1){
             ChoiceScreenUtils.makeEventChoice(0);
+            return;
+        }
+
+        if(choices.size() == 0){
             return;
         }
 
@@ -55,7 +60,7 @@ public class EventAI {
                 }else if(choices.contains("choose a card to obtain")){
                     choose("choose a card to obtain");
                 }else if(choices.contains("obtain a random rare card")){
-                    choose("obtain a random rare card");
+                    choose("obtain a random rare card"); // FIXME card is not obtained
                 }else if(choices.contains("transform a card")){
                     choose("transform a card");
                 }else if(choices.contains("obtain a random uncommon colorless card")){
@@ -189,7 +194,7 @@ public class EventAI {
             if(AbstractDungeon.player.gold < 100 || AbstractDungeon.player.currentHealth < 50){
                 choose("pay");
             }else{
-                choose("fight");
+                choose("fight!");
             }
         }else if(event instanceof GremlinMatchGame){
             // keep picking the first cards until the event ends
@@ -344,8 +349,13 @@ public class EventAI {
     /** Precondition: choice is valid.
      * @param choice The option to be chosen.*/
     public static void choose(String choice){
-        ArrayList<String> choices = ChoiceScreenUtils.getCurrentChoiceList();
-        ChoiceScreenUtils.makeEventChoice(choices.indexOf(choice));
+        try{
+            ArrayList<String> choices = ChoiceScreenUtils.getCurrentChoiceList();
+            ChoiceScreenUtils.makeEventChoice(choices.indexOf(choice));
+        }catch(Exception e){
+            logger.info("Failed to make choice: " + choice + ". Error: " + e.getMessage());
+        }
+
     }
 
     /** @return int Return the number of removable curses. */
