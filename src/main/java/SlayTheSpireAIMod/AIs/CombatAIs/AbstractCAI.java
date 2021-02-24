@@ -141,11 +141,11 @@ public abstract class AbstractCAI {
         }
 
         int strength = state.simplePlayer.strength;
-        int strengthA = totalHealth > 24 ? -5 : -1; // strength is less important if little dmg needs to be dealt
+        int strengthA = -5; // strength is less important if little dmg needs to be dealt
         int strengthFactor = strength * strengthA;
 
         int metallicize = state.simplePlayer.metallicize;
-        int metallicizeA = totalHealth > 30 ? -3 : -1;
+        int metallicizeA = -3;
         int metallicizeFactor = metallicize * metallicizeA;
 
         return totalHealth + aliveMonstersFactor + hpLossFactor + strengthFactor + metallicizeFactor;
