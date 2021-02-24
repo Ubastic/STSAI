@@ -429,7 +429,7 @@ public class CombatUtils {
                 energy -= toPlay.costForTurn;
             }
             if(toPlay.type == AbstractCard.CardType.ATTACK){
-                if(toPlay.cardID.equals("Whirlwind")){
+                if(toPlay.cardID.equals("Whirlwind") || toPlay.cardID.equals("Cleave")){
                     for(SimpleMonster m : monsters){
                         if(m.isAlive()){
                             m.takeAttack(this, toPlay);
