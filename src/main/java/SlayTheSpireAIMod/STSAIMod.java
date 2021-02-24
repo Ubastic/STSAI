@@ -331,7 +331,7 @@ public class STSAIMod implements PostInitializeSubscriber,
                 waitCounter = 0;
             }
             stateChanged = stateChanged || change;
-            if(waitCounter < 10){ // wait a few update cycles so that actions don't skip over effects
+            if(waitCounter < 2){ // wait a few update cycles so that actions don't skip over effects
                 waitCounter += 1;
                 return;        }
             waitCounter = 0;
