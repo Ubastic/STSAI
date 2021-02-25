@@ -258,6 +258,7 @@ public abstract class AbstractCAI {
 
         public CardSequence getBestPossibility(Heuristic h){
             HashSet<CardSequence> ended = getDistantPossibilities();
+            logger.info("Current State: " + this.toString());
             logger.info("Number of Distant Pos: " + ended.size());
             int bestEval = heuristic(this, 0);
             CardSequence bestState = this;
