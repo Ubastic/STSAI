@@ -97,7 +97,11 @@ public class GridSelectAI {
                 AbstractDungeon.gridSelectScreen.update();
             }
 //            ChoiceScreenUtils.pressConfirmButton();
-        }else{
+        }else if(tipMsg.equals("The Bell Tolls...")){
+            logger.info("Processing Toll of the Bell");
+            ChoiceScreenUtils.pressConfirmButton();
+        }
+        else{
             // TODO
             // possibilities: duplicator
 
