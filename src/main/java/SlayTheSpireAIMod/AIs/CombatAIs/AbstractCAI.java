@@ -260,7 +260,7 @@ public abstract class AbstractCAI {
             HashSet<CardSequence> ended = getDistantPossibilities();
             logger.info("Current State: " + this.toString());
             logger.info("Number of Distant Pos: " + ended.size());
-            int bestEval = heuristic(this, 0);
+            int bestEval = h.evaluation(this);
             CardSequence bestState = this;
             for(CardSequence state : ended){
                 int eval = h.evaluation(state);
