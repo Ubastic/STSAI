@@ -70,7 +70,7 @@ public abstract class AbstractCAI {
         freeCards.add("Rage");
         freeCards.add("Rage+");
         for(AbstractCard card : cards){
-            if(freeCards.contains(card.cardID)){
+            if(freeCards.contains(card.cardID) && card.costForTurn == 0){
                 return new Move(Move.TYPE.CARD, cards.indexOf(card), null);
             }
         }
