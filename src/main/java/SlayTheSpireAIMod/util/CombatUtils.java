@@ -100,12 +100,17 @@ public class CombatUtils {
     public static AbstractMonster getWeakestTarget(){
         int minHealth = 999;
         AbstractMonster weakest = null;
-        for(AbstractMonster m : AbstractDungeon.getCurrRoom().monsters.monsters){
-            if(m.currentHealth > 0 && m.currentHealth < minHealth){
-                minHealth = m.currentHealth;
-                weakest = m;
+        try{
+            for(AbstractMonster m : AbstractDungeon.getCurrRoom().monsters.monsters){
+                if(m.currentHealth > 0 && m.currentHealth < minHealth){
+                    minHealth = m.currentHealth;
+                    weakest = m;
+                }
             }
+        }catch(NullPointerException e){
+            return null;
         }
+
         return weakest;
     }
 
