@@ -122,11 +122,11 @@ public class Deck {
             }
         }
         for(AbstractCard c : cards){
-            if(!c.isStarterStrike() && !c.isStarterDefend() && !c.upgraded)
+            if(!c.isStarterStrike() && !c.isStarterDefend() && c.canUpgrade())
                 return c;
         }
         for(AbstractCard c : cards){
-            if(!c.upgraded)
+            if(c.canUpgrade())
                 return c;
         }
         return null;
