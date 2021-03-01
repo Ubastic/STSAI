@@ -472,6 +472,21 @@ public class CombatUtils {
             return weakened ? 0.75 : 1;
         }
 
+        /** @param ignoreBlock If true, deal all damage to health
+         * Update this player's health and block after taking damage. */
+        public void takeDamage(int amount, boolean ignoreBlock){
+            if(ignoreBlock){
+                health -= amount;
+            }else{
+                if(block >= amount){
+                    block -= amount;
+                }else{
+                    health -= amount - block;
+                    block = 0;
+                }
+            }
+        }
+
         @Override
         public String toString() {
             return "SimplePlayer{" +
