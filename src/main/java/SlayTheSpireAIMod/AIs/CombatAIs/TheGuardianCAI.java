@@ -5,6 +5,7 @@ import SlayTheSpireAIMod.util.Move;
 import com.megacrit.cardcrawl.cards.AbstractCard;
 import com.megacrit.cardcrawl.dungeons.AbstractDungeon;
 import com.megacrit.cardcrawl.monsters.exordium.TheGuardian;
+import com.megacrit.cardcrawl.powers.AbstractPower;
 
 import java.util.ArrayList;
 
@@ -56,24 +57,34 @@ public class TheGuardianCAI extends AbstractCAI{
 
     public static class TheGuardianMonster extends CombatUtils.SimpleMonster{
         private int modeShiftAmount;
+        private int sharpHideAmount;
 
         public TheGuardianMonster(TheGuardian m) {
             super(new CombatUtils.MonsterAttack(m), m.currentHealth, m.currentBlock, m.hasPower("Vulnerable"),
                     m.hasPower("Intangible"));
-            if(m.hasPower("Mode Shift")){
-                modeShiftAmount = m.getPower("Mode Shift").amount;
-            }else{
-                modeShiftAmount = 999;
-            }
+            AbstractPower modeShift = m.getPower("Mode Shift");
+            modeShiftAmount = modeShift == null ? 999 : modeShift.amount;
+            AbstractPower sharpHide = m.getPower("Sharp Hide");
+            sharpHideAmount = sharpHide == null ? 0 : sharpHide.amount;
         }
 
         public TheGuardianMonster(TheGuardianMonster m){
             super(m);
             modeShiftAmount = m.modeShiftAmount;
+            sharpHideAmount = m.sharpHideAmount;
         }
 
         public TheGuardianMonster copy(){
             return new TheGuardianMonster(this);
+        }
+
+        /** @param player The player who plays the attack.
+         * @param attack The attack played.
+         * Update monster values after player plays an attack on this monster. */
+        @Override
+        public void takeAttack(CombatUtils.SimplePlayer player, AbstractCard attack) {
+            super.takeAttack(player, attack);
+            player.takeDamage(sharpHideAmount, false);
         }
 
         @Override
