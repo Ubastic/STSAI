@@ -22,19 +22,30 @@ public class EventAI {
 
     /** Follow a basic strategy for the event. */
     public static void execute(){
-        logger.info("Executing EventAI");
-        if(ChoiceScreenUtils.getCurrentChoiceType() != ChoiceScreenUtils.ChoiceType.EVENT) return;
+        logger.info("(EventAI) Executing...");
+        if(ChoiceScreenUtils.getCurrentChoiceType() != ChoiceScreenUtils.ChoiceType.EVENT){
+            logger.info("(EventAI) End execute: choice type not suitable");
+            return;
+        }
         ArrayList<String> choices = ChoiceScreenUtils.getCurrentChoiceList();
-        logger.info("Event choices: " + choices.toString());
+        logger.info("(EventAI) Event choices: " + choices.toString());
         AbstractEvent event = AbstractDungeon.getCurrRoom().event;
 
-        // Select the only option if there is only one, e.g. [Leave], [Continue]
-        if(choices.size() == 1){
-            ChoiceScreenUtils.makeEventChoice(0);
+        if(choices.size() == 0){
+            logger.info("(EventAI) End execute: No valid choices");
             return;
         }
 
-        if(choices.size() == 0){
+        // Select the only option if there is only one, e.g. [Leave], [Continue]
+        if(choices.size() == 1){
+            choose(choices.get(0));
+            if(event instanceof NeowEvent){
+                if(choices.get(0).equals("leave")){
+                    STSAIMod.waitCounter -= 100; // various problems arise after neow rewards
+                                                 // e.g. random rare not obtained, upgrade card relics don't work
+                }
+            }
+            logger.info("(EventAI) End execute");
             return;
         }
 
@@ -47,6 +58,9 @@ public class EventAI {
             if(choices.size() == 2){
                 choose("max hp +8");
             }else{
+                // high priority only for testing purposes
+                if(choices.contains("transform a card"))
+                    choose("transform a card");
                 if(choices.contains("remove a card")){
                     choose("remove a card");
                 }else if(choices.contains("obtain a random common relic")){
@@ -59,24 +73,26 @@ public class EventAI {
                     choose("max hp +8");
                 }else if(choices.contains("choose a card to obtain")){
                     choose("choose a card to obtain");
-                }else if(choices.contains("obtain a random rare card")){
-                    choose("obtain a random rare card"); // FIXME card is not obtained
-                }else if(choices.contains("transform a card")){
-                    choose("transform a card");
+                }
+                else if(choices.contains("obtain a random rare card")){
+                    choose("obtain a random rare card");
+//                } else if(choices.contains("transform a card")){
+//                    choose("transform a card");
                 }else if(choices.contains("obtain a random uncommon colorless card")){
                     choose("obtain a random uncommon colorless card");
                 }else if(choices.contains("enemies in the next three combat will have one health")){
                     choose("enemies in the next three combat will have one health");
                 }else{
-                    ChoiceScreenUtils.makeEventChoice(0);
+                    choose(choices.get(0)); // choose one of the non-drawback ones
                 }
             }
+            logger.info("(EventAI) End execute");
             return;
         }
 
         if(event instanceof AccursedBlacksmith){
             // upgrade if possible, leave otherwise (never relic/curse)
-            int chosen = tryChoose("forge", "leave");
+            tryChoose("forge", "leave");
         }else if(event instanceof Addict){
             // pay for relic if possible, leave otherwise (never relic/curse)
             tryChoose("offer gold", "leave");
@@ -95,7 +111,7 @@ public class EventAI {
             }
         }else if(event instanceof Beggar){
             // pay to remove card if possible, leave otherwise
-            int chosen = tryChoose("offer gold", "leave");
+            tryChoose("offer gold", "leave");
         }else if(event instanceof BigFish){
             // gain 5 max HP unless current health is below 40 (never relic/curse)
             if(AbstractDungeon.player.currentHealth < 40){
@@ -245,7 +261,7 @@ public class EventAI {
             if(AbstractDungeon.player.currentHealth < 40){
                 tryChoose("heal", "leave");
             }else{
-                int chosen = tryChoose("purify", "leave");
+                tryChoose("purify", "leave");
             }
         }else if(event instanceof TheJoust){
             // always bet on the murderer
@@ -279,7 +295,7 @@ public class EventAI {
             choose("pray");
         }else if(event instanceof UpgradeShrine){
             // always upgrade a card if possible
-            int chosen = tryChoose("pray", "leave");
+            tryChoose("pray", "leave");
         }else if(event instanceof Vampires){
             // refuse bites unless you have blood vial
             if(choices.contains("lose blood vial")){
@@ -306,59 +322,68 @@ public class EventAI {
             }else{
                 choose("gather gold");
             }
+        }else{
+            logger.info("(EventAI) Unknown event: failed to make a choice");
         }
-        else{
-            ChoiceScreenUtils.makeEventChoice(0);
-        }
-
+        logger.info("(EventAI) End execute");
     }
 
-    /** If possible, choose the first option. Otherwise choose the second option.
-     * @return int Return the priority of the choice that was made. */
-    public static int tryChoose(String first, String second){
+    /**
+     * If possible, choose the first option. Otherwise choose the second option.
+     *
+     * @param first the preferred choice
+     * @param second the choice that is only chosen if first is not possible
+     * */
+    public static void tryChoose(String first, String second){
         ArrayList<String> choices = ChoiceScreenUtils.getCurrentChoiceList();
-//        DevConsole.log("First: " + first + ", Second: " + second + ", c:" + choices.toString());
-        int firstIndex = choices.indexOf(first);
-        if(firstIndex != -1){
-            ChoiceScreenUtils.makeEventChoice(firstIndex);
-            return 1;
+        if(choices.contains(first)){
+            choose(first);
+            return;
         }
-        ChoiceScreenUtils.makeEventChoice(choices.indexOf(second));
-        return 2;
+        choose(second);
     }
 
-    /** If possible, choose the first option. Otherwise if possible choose the second option.
+    /**
+     * If possible, choose the first option. Otherwise if possible choose the second option.
      * Otherwise choose the third option.
-     * @return int Return the priority of the choice that was made. */
-    public static int tryChoose(String first, String second, String third){
+     *
+     * @param first the preferred choice
+     * @param second the preferred choice if first is not possible
+     * @param third the choice that is only chosen if the first two are not possible
+     * */
+    public static void tryChoose(String first, String second, String third){
         ArrayList<String> choices = ChoiceScreenUtils.getCurrentChoiceList();
         int firstIndex = choices.indexOf(first);
         if(firstIndex != -1){
-            ChoiceScreenUtils.makeEventChoice(firstIndex);
-            return 1;
+            choose(first);
+            return;
         }
         int secondIndex = choices.indexOf(second);
         if(secondIndex != -1){
-            ChoiceScreenUtils.makeEventChoice(choices.indexOf(second));
-            return 2;
+            choose(second);
+            return;
         }
-        ChoiceScreenUtils.makeEventChoice(choices.indexOf(third));
-        return 3;
+        choose(third);
     }
 
-    /** Precondition: choice is valid.
-     * @param choice The option to be chosen.*/
+    /**
+     * Make the given event choice if it is valid.
+     *
+     * @param choice The string inside the brackets in-game of the option to be chosen.
+     * */
     public static void choose(String choice){
         try{
             ArrayList<String> choices = ChoiceScreenUtils.getCurrentChoiceList();
+            logger.info("(EventAI) making choice: " + choice);
             ChoiceScreenUtils.makeEventChoice(choices.indexOf(choice));
         }catch(Exception e){
-            logger.info("Failed to make choice: " + choice + ". Error: " + e.getMessage());
+            logger.info("(EventAI) failed to make choice: " + choice + ". Error: " + e.getMessage());
         }
-
     }
 
-    /** @return int Return the number of removable curses. */
+    /**
+     * @return the number of removable curses
+     * */
     public static int countRemovableCurses(){
         int count = 0;
         String[] permCurses = {"AscendersBane", "CurseOfTheBell", "Necronomicurse"};
@@ -372,6 +397,4 @@ public class EventAI {
         }
         return count;
     }
-
-
 }
