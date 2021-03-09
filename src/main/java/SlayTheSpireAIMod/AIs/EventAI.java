@@ -18,21 +18,21 @@ import java.util.*;
 
 /** Class which decides what to during an event. */
 public class EventAI {
-    public static final Logger logger = LogManager.getLogger(STSAIMod.class.getName());
+    public static final Logger logger = LogManager.getLogger(EventAI.class.getName());
 
     /** Follow a basic strategy for the event. */
     public static void execute(){
-        logger.info("(EventAI) Executing...");
+        logger.info("Executing...");
         if(ChoiceScreenUtils.getCurrentChoiceType() != ChoiceScreenUtils.ChoiceType.EVENT){
-            logger.info("(EventAI) End execute: choice type not suitable");
+            logger.info("End execute: choice type not suitable");
             return;
         }
         ArrayList<String> choices = ChoiceScreenUtils.getCurrentChoiceList();
-        logger.info("(EventAI) Event choices: " + choices.toString());
+        logger.info("Event choices: " + choices.toString());
         AbstractEvent event = AbstractDungeon.getCurrRoom().event;
 
         if(choices.size() == 0){
-            logger.info("(EventAI) End execute: No valid choices");
+            logger.info("End execute: No valid choices");
             return;
         }
 
@@ -45,7 +45,7 @@ public class EventAI {
                                                  // e.g. random rare not obtained, upgrade card relics don't work
                 }
             }
-            logger.info("(EventAI) End execute");
+            logger.info("End execute");
             return;
         }
 
@@ -86,7 +86,7 @@ public class EventAI {
                     choose(choices.get(0)); // choose one of the non-drawback ones
                 }
             }
-            logger.info("(EventAI) End execute");
+            logger.info("End execute");
             return;
         }
 
@@ -323,9 +323,9 @@ public class EventAI {
                 choose("gather gold");
             }
         }else{
-            logger.info("(EventAI) Unknown event: failed to make a choice");
+            logger.info("Failed to make a choice: unknown event");
         }
-        logger.info("(EventAI) End execute");
+        logger.info("End execute");
     }
 
     /**
@@ -374,10 +374,10 @@ public class EventAI {
     public static void choose(String choice){
         try{
             ArrayList<String> choices = ChoiceScreenUtils.getCurrentChoiceList();
-            logger.info("(EventAI) making choice: " + choice);
+            logger.info("Making choice: " + choice);
             ChoiceScreenUtils.makeEventChoice(choices.indexOf(choice));
         }catch(Exception e){
-            logger.info("(EventAI) failed to make choice: " + choice + ". Error: " + e.getMessage());
+            logger.info("Failed to make choice: " + choice + ". Error: " + e.getMessage());
         }
     }
 
