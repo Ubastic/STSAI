@@ -4,10 +4,14 @@ import SlayTheSpireAIMod.util.CombatUtils;
 import SlayTheSpireAIMod.util.Move;
 import com.megacrit.cardcrawl.cards.AbstractCard;
 import com.megacrit.cardcrawl.dungeons.AbstractDungeon;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
 
 public class SentriesCAI extends AbstractCAI {
+    public static final Logger logger = LogManager.getLogger(SentriesCAI.class.getName());
+
     @Override
     public String getCombat() {
         return "3 Sentries";
@@ -34,7 +38,7 @@ public class SentriesCAI extends AbstractCAI {
         CardSequence bestState = start.getBestPossibility(x -> heuristic(x, 0));
 
         if(bestState != start){
-            logger.info("Evaluated best state (from SentriesCAI: " + bestState.toString());
+            logger.info("Evaluated best state: " + bestState.toString());
             int bestIndex = AbstractDungeon.player.hand.group.indexOf(bestState.first);
             return new Move(Move.TYPE.CARD, bestIndex,
                     AbstractDungeon.getCurrRoom().monsters.monsters.get(bestState.firstTargetIndex));

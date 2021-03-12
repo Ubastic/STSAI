@@ -6,11 +6,15 @@ import com.megacrit.cardcrawl.cards.AbstractCard;
 import com.megacrit.cardcrawl.dungeons.AbstractDungeon;
 import com.megacrit.cardcrawl.monsters.exordium.TheGuardian;
 import com.megacrit.cardcrawl.powers.AbstractPower;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
 
 /** AI versus encounter "TheGuardian". */
 public class TheGuardianCAI extends AbstractCAI{
+    public static final Logger logger = LogManager.getLogger(TheGuardianCAI.class.getName());
+
     @Override
     public String getCombat() {
         return "The Guardian";
@@ -41,7 +45,7 @@ public class TheGuardianCAI extends AbstractCAI{
         CardSequence bestState = start.getBestPossibility(x -> heuristic(x, 0));
 
         if(bestState != start){
-            logger.info("Evaluated best state (from TheGuardianCAI): " + bestState.toString());
+            logger.info("Evaluated best state: " + bestState.toString());
             int bestIndex = AbstractDungeon.player.hand.group.indexOf(bestState.first);
             return new Move(Move.TYPE.CARD, bestIndex,
                     AbstractDungeon.getCurrRoom().monsters.monsters.get(bestState.firstTargetIndex));
@@ -57,7 +61,7 @@ public class TheGuardianCAI extends AbstractCAI{
 
     public static class TheGuardianMonster extends CombatUtils.SimpleMonster{
         private int modeShiftAmount;
-        private int sharpHideAmount;
+        private final int sharpHideAmount;
 
         public TheGuardianMonster(TheGuardian m) {
             super(new CombatUtils.MonsterAttack(m), m.currentHealth, m.currentBlock, m.hasPower("Vulnerable"),

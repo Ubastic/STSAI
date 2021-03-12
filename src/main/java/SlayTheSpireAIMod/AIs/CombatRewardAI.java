@@ -1,6 +1,5 @@
 package SlayTheSpireAIMod.AIs;
 
-import SlayTheSpireAIMod.STSAIMod;
 import SlayTheSpireAIMod.communicationmod.ChoiceScreenUtils;
 import com.megacrit.cardcrawl.dungeons.AbstractDungeon;
 import com.megacrit.cardcrawl.potions.AbstractPotion;
@@ -12,8 +11,9 @@ import java.util.ArrayList;
 
 /** Class which decides what to do given combat rewards. */
 public class CombatRewardAI {
-    public static final Logger logger = LogManager.getLogger(STSAIMod.class.getName());
+    public static final Logger logger = LogManager.getLogger(CombatRewardAI.class.getName());
     // TODO multiple card rewards
+    // FIXME Tiny House
     /** Execute the following strategy:
      *  - Take potions if slots are not full
      *  - Take gold
@@ -21,10 +21,14 @@ public class CombatRewardAI {
      *  - Take relics
      *  - Take keys */
     public static void execute(){
-        logger.info("Executing CombatRewardAI");
+        logger.info("Executing...");
         try{
-            if(ChoiceScreenUtils.getCurrentChoiceType() != ChoiceScreenUtils.ChoiceType.COMBAT_REWARD) return;
+            if(ChoiceScreenUtils.getCurrentChoiceType() != ChoiceScreenUtils.ChoiceType.COMBAT_REWARD){
+                logger.info("Done: choice type not suitable");
+                return;
+            }
             ArrayList<String> choices = ChoiceScreenUtils.getCurrentChoiceList();
+            logger.info("Choosing between: " + choices.toString());
             for(int i = 0; i < choices.size(); i++){
                 String choice = choices.get(i);
                 switch(choice){
@@ -59,8 +63,9 @@ public class CombatRewardAI {
                 }
             }
             ChoiceScreenUtils.pressConfirmButton();
+            logger.info("Done");
         }catch(Exception e){
-            logger.info(e.toString());
+            logger.info("An error occurred:" + e.toString());
         }
 
 

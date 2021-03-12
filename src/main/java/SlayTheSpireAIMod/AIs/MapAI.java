@@ -1,6 +1,5 @@
 package SlayTheSpireAIMod.AIs;
 
-import SlayTheSpireAIMod.STSAIMod;
 import SlayTheSpireAIMod.communicationmod.ChoiceScreenUtils;
 import SlayTheSpireAIMod.util.MapUtils;
 import basemod.ReflectionHacks;
@@ -17,20 +16,22 @@ import java.util.HashSet;
 
 /** Class which decides what room to travel to. */
 public class MapAI {
-    public static final Logger logger = LogManager.getLogger(STSAIMod.class.getName());
+    public static final Logger logger = LogManager.getLogger(MapAI.class.getName());
 
     /** Travel the leftmost node. */
     public static void execute(){
-        logger.info("Executing MapAI");
+        logger.info("Executing...");
         if(ChoiceScreenUtils.getCurrentChoiceType() != ChoiceScreenUtils.ChoiceType.MAP) return;
         ArrayList<String> choices = ChoiceScreenUtils.getCurrentChoiceList();
-        logger.info("Map Choices: " + choices.toString());
+        logger.info("Choosing between: " + choices.toString());
         if(choices.size() == 0){
+            logger.info("Done: no choices");
             return;
         }
         if(choices.size() == 1){
             // will handle when there is only one child, like final rest -> boss
-            ChoiceScreenUtils.makeMapChoice(0);
+            choose(choices.get(0));
+            logger.info("Done");
             return;
         }
 
@@ -69,12 +70,23 @@ public class MapAI {
         Collections.sort(pathsList);
         Path bestPath = pathsList.get(pathsList.size() - 1);
 
-        logger.info("Number of paths found" + paths.size());
+        logger.info("Number of paths found: " + paths.size());
         logger.info("Best Path: " + bestPath.toString());
-        ChoiceScreenUtils.makeMapChoice(choices.indexOf("x=" + bestPath.towards.x));
+        choose("x=" + bestPath.towards.x);
+        logger.info("Done");
+//        ChoiceScreenUtils.makeMapChoice(choices.indexOf("x=" + bestPath.towards.x));
     }
 
-    // TODO
+    public static void choose(String choice){
+        try{
+            ArrayList<String> choices = ChoiceScreenUtils.getCurrentChoiceList();
+            logger.info("Making choice: " + choice);
+            ChoiceScreenUtils.makeMapChoice(choices.indexOf(choice));
+        }catch(Exception e){
+            logger.info("Failed to make choice: " + choice + ". Error: " + e.getMessage());
+        }
+    }
+
     /** Class which represents a possible path to the boss. */
     private static class Path implements Comparable<Path>{
         MapRoomNode end; // the node this path ends on

@@ -16,17 +16,22 @@ import java.util.ArrayList;
 
 /** Class which decides what to do at a grid choice. */
 public class GridSelectAI {
-    public static final Logger logger = LogManager.getLogger(STSAIMod.class.getName());
+    public static final Logger logger = LogManager.getLogger(GridSelectAI.class.getName());
 
     /** If a confirm screen is up, select confirm. Otherwise select and confirm an option. */
     public static void execute(){
-        logger.info("Executing GridSelectAI");
-        if(ChoiceScreenUtils.getCurrentChoiceType() != ChoiceScreenUtils.ChoiceType.GRID) return;
+        logger.info("Executing...");
+        if(ChoiceScreenUtils.getCurrentChoiceType() != ChoiceScreenUtils.ChoiceType.GRID){
+            logger.info("Done: choice type not suitable");
+            return;
+        }
         ArrayList<String> choices = ChoiceScreenUtils.getCurrentChoiceList();
-        logger.info(choices.toString());
+        logger.info("Choosing between: " + choices.toString());
         GridCardSelectScreen screen = AbstractDungeon.gridSelectScreen;
         if(screen.confirmScreenUp){
+            logger.info("Pressing confirm");
             ChoiceScreenUtils.pressConfirmButton();
+            logger.info("Done");
             return;
         }
 
@@ -104,7 +109,7 @@ public class GridSelectAI {
         else{
             // TODO
             // possibilities: duplicator
-
+            logger.info("Done: unknown grid selection");
         }
     }
 }

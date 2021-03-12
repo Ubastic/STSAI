@@ -1,6 +1,5 @@
 package SlayTheSpireAIMod.actions;
 
-import SlayTheSpireAIMod.STSAIMod;
 import SlayTheSpireAIMod.util.CombatUtils;
 import SlayTheSpireAIMod.util.Move;
 import com.megacrit.cardcrawl.actions.AbstractGameAction;
@@ -13,10 +12,10 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
 
-/** Action which executes the next move in combat (includes end turn).
+/** Action which executes the next move in combat.
  * Screen decisions from cards (select card from hand/pile) are handled by respective AIs. */
 public class FightAIAction extends AbstractGameAction {
-    public static final Logger logger = LogManager.getLogger(STSAIMod.class.getName());
+    public static final Logger logger = LogManager.getLogger(FightAIAction.class.getName());
 
     @Override
     public void update() {
@@ -47,6 +46,7 @@ public class FightAIAction extends AbstractGameAction {
                 break;
             case PASS:
                 isDone = true;
+                logger.info("Ending turn");
                 AbstractDungeon.overlayMenu.endTurnButton.disable(true);
                 break;
         }

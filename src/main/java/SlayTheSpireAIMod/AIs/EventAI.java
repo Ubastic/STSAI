@@ -24,7 +24,7 @@ public class EventAI {
     public static void execute(){
         logger.info("Executing...");
         if(ChoiceScreenUtils.getCurrentChoiceType() != ChoiceScreenUtils.ChoiceType.EVENT){
-            logger.info("End execute: choice type not suitable");
+            logger.info("Done: choice type not suitable");
             return;
         }
         ArrayList<String> choices = ChoiceScreenUtils.getCurrentChoiceList();
@@ -32,7 +32,7 @@ public class EventAI {
         AbstractEvent event = AbstractDungeon.getCurrRoom().event;
 
         if(choices.size() == 0){
-            logger.info("End execute: No valid choices");
+            logger.info("Done: No valid choices");
             return;
         }
 
@@ -45,7 +45,7 @@ public class EventAI {
                                                  // e.g. random rare not obtained, upgrade card relics don't work
                 }
             }
-            logger.info("End execute");
+            logger.info("Done");
             return;
         }
 
@@ -86,7 +86,7 @@ public class EventAI {
                     choose(choices.get(0)); // choose one of the non-drawback ones
                 }
             }
-            logger.info("End execute");
+            logger.info("Done");
             return;
         }
 
@@ -325,7 +325,7 @@ public class EventAI {
         }else{
             logger.info("Failed to make a choice: unknown event");
         }
-        logger.info("End execute");
+        logger.info("Done");
     }
 
     /**

@@ -11,13 +11,16 @@ import org.apache.logging.log4j.Logger;
 
 /** Class which decides what to do at a chest. */
 public class ChestAI {
-    public static final Logger logger = LogManager.getLogger(STSAIMod.class.getName());
+    public static final Logger logger = LogManager.getLogger(ChestAI.class.getName());
 
     /** Always open the chest, and let the appropriate AI decide what to take. */
     public static void execute(){
-        logger.info("Executing ChestAI");
+        logger.info("Executing...");
         // TODO
-        if(ChoiceScreenUtils.getCurrentChoiceType() != ChoiceScreenUtils.ChoiceType.CHEST) return;
+        if(ChoiceScreenUtils.getCurrentChoiceType() != ChoiceScreenUtils.ChoiceType.CHEST){
+            logger.info("Done: choice type not suitable");
+            return;
+        }
         AbstractChest chest = null;
         if (AbstractDungeon.getCurrRoom() instanceof TreasureRoomBoss) {
             chest = ((TreasureRoomBoss) AbstractDungeon.getCurrRoom()).chest;
@@ -31,8 +34,10 @@ public class ChestAI {
                 ChoiceScreenUtils.pressConfirmButton();
             }
         }else{
+            logger.info("Opening chest");
             ChoiceScreenUtils.makeChestRoomChoice(0); //open the chest
         }
+        logger.info("Done");
 
 
     }

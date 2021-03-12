@@ -1,6 +1,5 @@
 package SlayTheSpireAIMod.AIs.CombatAIs;
 
-import SlayTheSpireAIMod.STSAIMod;
 import SlayTheSpireAIMod.util.CombatUtils;
 import SlayTheSpireAIMod.util.Move;
 import com.megacrit.cardcrawl.cards.AbstractCard;
@@ -15,7 +14,7 @@ import java.util.Objects;
 
 /** Class which evaluates Moves to execute when in combat, based on the specific combat. */
 public abstract class AbstractCAI {
-    public static final Logger logger = LogManager.getLogger(STSAIMod.class.getName());
+    public static final Logger logger = LogManager.getLogger(AbstractCAI.class.getName());
     public abstract String getCombat(); // name of the combat
 
     /** Precondition: player is in combat getCombat().
@@ -101,7 +100,7 @@ public abstract class AbstractCAI {
         CardSequence bestState = start.getBestPossibility(x -> heuristic(x, 0));
 
         if(bestState != start){
-            logger.info("Evaluated best state (from newGenericMove): " + bestState.toString());
+            logger.info("Evaluated best state: " + bestState.toString());
             int bestIndex = AbstractDungeon.player.hand.group.indexOf(bestState.first);
             return new Move(Move.TYPE.CARD, bestIndex,
                     AbstractDungeon.getCurrRoom().monsters.monsters.get(bestState.firstTargetIndex));
