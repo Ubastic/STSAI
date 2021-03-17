@@ -10,8 +10,6 @@ import SlayTheSpireAIMod.util.CombatUtils;
 import basemod.*;
 import basemod.devcommands.ConsoleCommand;
 import basemod.interfaces.*;
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Texture;
 import com.evacipated.cardcrawl.modthespire.lib.SpireConfig;
 import com.evacipated.cardcrawl.modthespire.lib.SpireInitializer;
@@ -20,7 +18,9 @@ import com.megacrit.cardcrawl.actions.GameActionManager;
 import com.megacrit.cardcrawl.core.Settings;
 import com.megacrit.cardcrawl.dungeons.AbstractDungeon;
 import com.megacrit.cardcrawl.helpers.FontHelper;
+import com.megacrit.cardcrawl.helpers.RelicLibrary;
 import com.megacrit.cardcrawl.monsters.AbstractMonster;
+import com.megacrit.cardcrawl.relics.*;
 import com.megacrit.cardcrawl.rooms.AbstractRoom;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -30,6 +30,7 @@ import SlayTheSpireAIMod.util.TextureLoader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Properties;
 
 @SpireInitializer
@@ -42,8 +43,7 @@ public class STSAIMod implements PostInitializeSubscriber,
     public static final Logger logger = LogManager.getLogger(STSAIMod.class.getName());
     private static String modID;
 
-    // Mod-settings settings. This is if you want an on/off savable button
-    public static Properties theDefaultDefaultSettings = new Properties();
+    public static Properties STSAISettings = new Properties();
     public static final String ENABLE_AUTO_COMBAT = "enableAutoCombat";
     public static final String ENABLE_AUTO_MAP = "enableAutoMap";
     public static final String ENABLE_AUTO_EVENT = "enableAutoEvent";
@@ -60,10 +60,9 @@ public class STSAIMod implements PostInitializeSubscriber,
     public static boolean autoShop = true;
     public static boolean autoChest = true;
 
-
     //This is for the in-game mod settings panel.
     private static final String MODNAME = "SlayTheSpireAIMod";
-    private static final String AUTHOR = "Ryan Xu"; // And pretty soon - You!
+    private static final String AUTHOR = "Ryan Xu";
     private static final String DESCRIPTION = "A mod which has an AI play Slay the Spire.";
     
     // =============== INPUT TEXTURE LOCATION =================
@@ -73,10 +72,10 @@ public class STSAIMod implements PostInitializeSubscriber,
 
     // =============== /INPUT TEXTURE LOCATION/ =================
 
-    public static boolean inBattle = false;
-    public static boolean gameEnded = false;
-    public static int waitCounter = 0;
-    public static boolean stateChanged = false;
+    private static boolean inBattle = false;
+    private static boolean gameEnded = false;
+    private static int waitCounter = 0;
+    private static boolean stateChanged = false;
 
     // =============== SUBSCRIBE, INITIALIZE =================
     
@@ -89,18 +88,16 @@ public class STSAIMod implements PostInitializeSubscriber,
 
         logger.info("Done subscribing");
         logger.info("Adding mod settings");
-        // This loads the mod settings.
-        // The actual mod Button is added below in receivePostInitialize()
-        theDefaultDefaultSettings.setProperty(ENABLE_AUTO_COMBAT, "FALSE"); // This is the default setting. It's actually set...
-        theDefaultDefaultSettings.setProperty(ENABLE_AUTO_MAP, "FALSE");
-        theDefaultDefaultSettings.setProperty(ENABLE_AUTO_EVENT, "FALSE");
-        theDefaultDefaultSettings.setProperty(ENABLE_AUTO_REWARD, "FALSE");
-        theDefaultDefaultSettings.setProperty(ENABLE_AUTO_REST, "FALSE");
-        theDefaultDefaultSettings.setProperty(ENABLE_AUTO_SHOP, "FALSE");
-        theDefaultDefaultSettings.setProperty(ENABLE_AUTO_CHEST, "FALSE");
+        STSAISettings.setProperty(ENABLE_AUTO_COMBAT, "FALSE"); // This is the default setting. It's actually set...
+        STSAISettings.setProperty(ENABLE_AUTO_MAP, "FALSE");
+        STSAISettings.setProperty(ENABLE_AUTO_EVENT, "FALSE");
+        STSAISettings.setProperty(ENABLE_AUTO_REWARD, "FALSE");
+        STSAISettings.setProperty(ENABLE_AUTO_REST, "FALSE");
+        STSAISettings.setProperty(ENABLE_AUTO_SHOP, "FALSE");
+        STSAISettings.setProperty(ENABLE_AUTO_CHEST, "FALSE");
 
         try {
-            SpireConfig config = new SpireConfig("defaultMod", "theDefaultConfig", theDefaultDefaultSettings); // ...right here
+            SpireConfig config = new SpireConfig("defaultMod", "theDefaultConfig", STSAISettings); // ...right here
             // the "fileName" parameter is the name of the file MTS will create where it will save our setting.
             config.load(); // Load the setting and set the boolean to equal it
             autoCombat = config.getBool(ENABLE_AUTO_COMBAT);
@@ -141,23 +138,6 @@ public class STSAIMod implements PostInitializeSubscriber,
         return modID; // DOUBLE NO
     } // NU-UH
     
-    private static void pathCheck() { // ALSO NO
-        Gson coolG = new Gson(); // NOPE DON'T EDIT THIS
-        //   String IDjson = Gdx.files.internal("IDCheckStringsDONT-EDIT-AT-ALL.json").readString(String.valueOf(StandardCharsets.UTF_8)); // i still hate u btw Gdx.files
-        InputStream in = STSAIMod.class.getResourceAsStream("/IDCheckStringsDONT-EDIT-AT-ALL.json"); // DON'T EDIT THISSSSS
-        IDCheckDontTouchPls EXCEPTION_STRINGS = coolG.fromJson(new InputStreamReader(in, StandardCharsets.UTF_8), IDCheckDontTouchPls.class); // NAH, NO EDIT
-        String packageName = STSAIMod.class.getPackage().getName(); // STILL NO EDIT ZONE
-        FileHandle resourcePathExists = Gdx.files.internal(getModID() + "Resources"); // PLEASE DON'T EDIT THINGS HERE, THANKS
-        if (!modID.equals(EXCEPTION_STRINGS.DEVID)) { // LEAVE THIS EDIT-LESS
-            if (!packageName.equals(getModID())) { // NOT HERE ETHER
-                throw new RuntimeException(EXCEPTION_STRINGS.PACKAGE_EXCEPTION + getModID()); // THIS IS A NO-NO
-            } // WHY WOULD U EDIT THIS
-            if (!resourcePathExists.exists()) { // DON'T CHANGE THIS
-                throw new RuntimeException(EXCEPTION_STRINGS.RESOURCE_FOLDER_EXCEPTION + getModID() + "Resources"); // NOT THIS
-            }// NO
-        }// NO
-    }// NO
-    
     // ====== YOU CAN EDIT AGAIN ======
 
     public static void initialize() {
@@ -165,11 +145,47 @@ public class STSAIMod implements PostInitializeSubscriber,
         STSAIMod mod = new STSAIMod();
         logger.info("========================= /Default Mod Initialized. Hello World./ =========================");
     }
-    
+
     // ============== /SUBSCRIBE, INITIALIZE/ =================
 
     // =============== POST-INITIALIZE =================
-    
+
+    /**
+     * Remove all relics from boss pool except the given one.
+     * Precondition: player is Ironclad
+     *
+     * @param relicid String the sole relic kept in the boss pool
+     * */
+    public void focusBossRelic(String relicid){
+        ArrayList<String> relics = new ArrayList<>();
+        relics.add(Astrolabe.ID);
+        relics.add(BlackStar.ID);
+        relics.add(BustedCrown.ID);
+        relics.add(CallingBell.ID);
+        relics.add(CoffeeDripper.ID);
+        relics.add(CursedKey.ID);
+        relics.add(Ectoplasm.ID);
+        relics.add(EmptyCage.ID);
+        relics.add(FusionHammer.ID);
+        relics.add(PandorasBox.ID);
+        relics.add(PhilosopherStone.ID);
+        relics.add(RunicDome.ID);
+        relics.add(RunicPyramid.ID);
+        relics.add(SacredBark.ID);
+        relics.add(SlaversCollar.ID);
+        relics.add(SneckoEye.ID);
+        relics.add(Sozu.ID);
+        relics.add(TinyHouse.ID);
+        relics.add(VelvetChoker.ID);
+        relics.add(BlackBlood.ID);
+        relics.add(MarkOfPain.ID);
+        relics.add(RunicCube.ID);
+        relics.remove(relicid);
+        for(String relic : relics){
+            BaseMod.removeRelic(RelicLibrary.getRelic(relic));
+        }
+    }
+
     @Override
     public void receivePostInitialize() {
         logger.info("Loading badge image and mod options");
@@ -191,7 +207,7 @@ public class STSAIMod implements PostInitializeSubscriber,
             autoCombat = button.enabled; // The boolean true/false will be whether the button is enabled or not
             try {
                 // And based on that boolean, set the settings and save them
-                SpireConfig config = new SpireConfig("defaultMod", "theDefaultConfig", theDefaultDefaultSettings);
+                SpireConfig config = new SpireConfig("defaultMod", "theDefaultConfig", STSAISettings);
                 config.setBool(ENABLE_AUTO_COMBAT, autoCombat);
                 config.save();
             } catch (Exception e) {
@@ -206,7 +222,7 @@ public class STSAIMod implements PostInitializeSubscriber,
             autoMap = button.enabled;
             try {
                 // And based on that boolean, set the settings and save them
-                SpireConfig config = new SpireConfig("defaultMod", "theDefaultConfig", theDefaultDefaultSettings);
+                SpireConfig config = new SpireConfig("defaultMod", "theDefaultConfig", STSAISettings);
                 config.setBool(ENABLE_AUTO_MAP, autoMap);
                 config.save();
             } catch (Exception e) {
@@ -221,7 +237,7 @@ public class STSAIMod implements PostInitializeSubscriber,
             autoEvent = button.enabled;
             try {
                 // And based on that boolean, set the settings and save them
-                SpireConfig config = new SpireConfig("defaultMod", "theDefaultConfig", theDefaultDefaultSettings);
+                SpireConfig config = new SpireConfig("defaultMod", "theDefaultConfig", STSAISettings);
                 config.setBool(ENABLE_AUTO_EVENT, autoEvent);
                 config.save();
             } catch (Exception e) {
@@ -236,7 +252,7 @@ public class STSAIMod implements PostInitializeSubscriber,
             autoReward = button.enabled;
             try {
                 // And based on that boolean, set the settings and save them
-                SpireConfig config = new SpireConfig("defaultMod", "theDefaultConfig", theDefaultDefaultSettings);
+                SpireConfig config = new SpireConfig("defaultMod", "theDefaultConfig", STSAISettings);
                 config.setBool(ENABLE_AUTO_REWARD, autoReward);
                 config.save();
             } catch (Exception e) {
@@ -251,7 +267,7 @@ public class STSAIMod implements PostInitializeSubscriber,
             autoRest = button.enabled;
             try {
                 // And based on that boolean, set the settings and save them
-                SpireConfig config = new SpireConfig("defaultMod", "theDefaultConfig", theDefaultDefaultSettings);
+                SpireConfig config = new SpireConfig("defaultMod", "theDefaultConfig", STSAISettings);
                 config.setBool(ENABLE_AUTO_REST, autoRest);
                 config.save();
             } catch (Exception e) {
@@ -266,7 +282,7 @@ public class STSAIMod implements PostInitializeSubscriber,
             autoShop = button.enabled;
             try {
                 // And based on that boolean, set the settings and save them
-                SpireConfig config = new SpireConfig("defaultMod", "theDefaultConfig", theDefaultDefaultSettings);
+                SpireConfig config = new SpireConfig("defaultMod", "theDefaultConfig", STSAISettings);
                 config.setBool(ENABLE_AUTO_SHOP, autoShop);
                 config.save();
             } catch (Exception e) {
@@ -281,7 +297,7 @@ public class STSAIMod implements PostInitializeSubscriber,
             autoChest = button.enabled;
             try {
                 // And based on that boolean, set the settings and save them
-                SpireConfig config = new SpireConfig("defaultMod", "theDefaultConfig", theDefaultDefaultSettings);
+                SpireConfig config = new SpireConfig("defaultMod", "theDefaultConfig", STSAISettings);
                 config.setBool(ENABLE_AUTO_CHEST, autoChest);
                 config.save();
             } catch (Exception e) {
@@ -318,6 +334,10 @@ public class STSAIMod implements PostInitializeSubscriber,
     
     // =============== / POST-INITIALIZE/ =================
 
+    public static void delayAction(int amt){
+        waitCounter -= amt;
+    }
+
     @Override
     public void receivePostDungeonUpdate() {
         if(gameEnded){
@@ -328,9 +348,12 @@ public class STSAIMod implements PostInitializeSubscriber,
         }else{
             boolean change = GameStateListener.checkForDungeonStateChange();
             if(change && stateChanged){
-                waitCounter = 0;
+                waitCounter -= 2;
             }
             stateChanged = stateChanged || change;
+            if(!stateChanged && ChoiceScreenUtils.getCurrentChoiceType() != ChoiceScreenUtils.ChoiceType.NONE){
+                return;
+            }
             if(waitCounter < 2){ // wait a few update cycles so that actions don't skip over effects
                 waitCounter += 1;
                 return;        }
@@ -389,11 +412,8 @@ public class STSAIMod implements PostInitializeSubscriber,
                 // at the start of combat, wait for intents to load in
                 // without this, first turn of combat for first card play has always has monster intent at 0
                 AbstractMonster m = CombatUtils.getWeakestTarget();
-                if(m != null){
-//                    logger.info("" + m.intent);
-                    if(m.intent == AbstractMonster.Intent.DEBUG){
-                        return;
-                    }
+                if(m != null && m.intent == AbstractMonster.Intent.DEBUG){
+                    return;
                 }
 
                 if(!AbstractDungeon.actionManager.turnHasEnded){

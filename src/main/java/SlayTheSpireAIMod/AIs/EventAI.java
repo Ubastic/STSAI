@@ -41,8 +41,8 @@ public class EventAI {
             choose(choices.get(0));
             if(event instanceof NeowEvent){
                 if(choices.get(0).equals("leave")){
-                    STSAIMod.waitCounter -= 100; // various problems arise after neow rewards
-                                                 // e.g. random rare not obtained, upgrade card relics don't work
+                    STSAIMod.delayAction(100); // various problems arise after neow rewards
+                                                    // e.g. random rare not obtained, upgrade card relics don't work
                 }
             }
             logger.info("Done");
