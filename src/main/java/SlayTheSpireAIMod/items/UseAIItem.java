@@ -1,7 +1,6 @@
 package SlayTheSpireAIMod.items;
 
 import SlayTheSpireAIMod.AIs.*;
-import SlayTheSpireAIMod.STSAIMod;
 import SlayTheSpireAIMod.actions.FightAIAction;
 import SlayTheSpireAIMod.communicationmod.ChoiceScreenUtils;
 import basemod.TopPanelItem;
@@ -16,7 +15,7 @@ import java.util.ArrayList;
 
 /** Clickable panel item which has an AI execute the current decision. */
 public class UseAIItem extends TopPanelItem {
-    public static final Logger logger = LogManager.getLogger(STSAIMod.class.getName());
+    public static final Logger logger = LogManager.getLogger(UseAIItem.class.getName());
     private static final Texture IMG = new Texture("SlayTheSpireAIModResources/images/ui/robotimage-small.png");
     public static final String ID = "slaythespireai:UseAIItem";
 
@@ -33,7 +32,7 @@ public class UseAIItem extends TopPanelItem {
             ChoiceScreenUtils.ChoiceType type = ChoiceScreenUtils.getCurrentChoiceType();
             ArrayList<String> choices = ChoiceScreenUtils.getCurrentChoiceList();
 
-            logger.info("Choice type:" + type.toString());
+            logger.info("Choice type: " + type.toString());
             logger.info("Choices: " + choices.toString());
             switch(type){
                 case EVENT:
@@ -81,7 +80,6 @@ public class UseAIItem extends TopPanelItem {
             logger.info("Error occurred on click of item");
             logger.info(e.toString());
         }
-
     }
 
     @Override
