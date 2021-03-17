@@ -1,5 +1,6 @@
 package SlayTheSpireAIMod.AIs;
 
+import SlayTheSpireAIMod.STSAIMod;
 import SlayTheSpireAIMod.communicationmod.ChoiceScreenUtils;
 import SlayTheSpireAIMod.communicationmod.patches.GridCardSelectScreenPatch;
 import basemod.ReflectionHacks;
@@ -88,7 +89,6 @@ public class GridSelectAI {
             logger.info("Processing Bottled Tornado");
             choose(defaultChoice);
         }else if(tipMsg.equals("Choose 3 cards for Astrolabe.")){
-            // FIXME 3 cards removed but not added
             logger.info("Processing Astrolabe");
             CardGroup onGrid = AbstractDungeon.player.masterDeck.getPurgeableCards();
             for(AbstractCard selected : AbstractDungeon.gridSelectScreen.selectedCards){
@@ -100,6 +100,8 @@ public class GridSelectAI {
                 AbstractCard toTransform = deck.transformCard();
                 choose(toTransform);
             }
+
+            STSAIMod.delayAction(10);
         }else if(tipMsg.equals("The Bell Tolls...")){
             logger.info("Processing Toll of the Bell");
             logger.info("Pressing confirm");
