@@ -32,7 +32,7 @@ public class EventAI {
         AbstractEvent event = AbstractDungeon.getCurrRoom().event;
 
         if(choices.size() == 0){
-            logger.info("Done: No valid choices");
+            logger.info("Done: no valid choices");
             return;
         }
 
