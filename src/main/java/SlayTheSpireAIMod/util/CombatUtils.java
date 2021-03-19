@@ -17,57 +17,48 @@ import org.apache.logging.log4j.Logger;
 import java.util.*;
 
 public class CombatUtils {
-    public static final Logger logger = LogManager.getLogger(STSAIMod.class.getName());
-    /** @return int Return the amount of energy the player has left to use this turn. */
+    public static final Logger logger = LogManager.getLogger(CombatUtils.class.getName());
+
+    /**
+     * Returns the amount of energy the player has left to use this turn.
+     *
+     * @return the amount of energy the player has left to use this turn.
+     * */
     public static int usableEnergy(){
         return EnergyPanel.totalCount;
     }
 
-    /** Evaluate the combat state and return the best valid next move.
-     * @return Move Return the determined best next move.  */
+    /**
+     * Evaluates the combat state and returns the best valid next move.
+     *
+     * @return the determined best next move.
+     * */
     public static Move pickMove() {
         String combat = AbstractDungeon.lastCombatMetricKey;
         return AbstractCAI.pickMove(combat);
     }
 
-    /** @return Return the Move for playing the leftmost card possible at the leftmost monster. */
-    public static Move playLeft(){
-        ArrayList<AbstractMonster> monsters = AbstractDungeon.getCurrRoom().monsters.monsters;
-
-        // Use the first alive monster as the target
-        AbstractMonster target = null;
-        for (AbstractMonster m : monsters) {
-            if (!m.isDeadOrEscaped()) {
-                target = m;
-                break;
-            }
-        }
-
-        // Play the leftmost playable card
-        ArrayList<AbstractCard> cards = AbstractDungeon.player.hand.group;
-        AbstractCard toPlay = null;
-        for (AbstractCard c : cards) {
-            if (c.canUse(AbstractDungeon.player, target)) {
-                toPlay = c;
-                break;
-            }
-        }
-        if(toPlay == null){
-            return new Move(Move.TYPE.PASS);
-        }
-        return new Move(Move.TYPE.CARD, cards.indexOf(toPlay), target);
+    /**
+     * Returns whether the specified intent does not include an attack.
+     *
+     * @param in the intent to check the type of
+     * @return   whether the intent does not include an attack
+     * */
+    public static boolean isNotAttack(AbstractMonster.Intent in){
+        return in != AbstractMonster.Intent.ATTACK && in != AbstractMonster.Intent.ATTACK_BUFF
+                && in != AbstractMonster.Intent.ATTACK_DEBUFF && in != AbstractMonster.Intent.ATTACK_DEFEND;
     }
 
-    /** @return boolean Return true if the intent is one which includes an attack. */
-    public static boolean isAttack(AbstractMonster.Intent intent){
-        return intent == AbstractMonster.Intent.ATTACK || intent == AbstractMonster.Intent.ATTACK_BUFF
-                || intent == AbstractMonster.Intent.ATTACK_DEBUFF || intent == AbstractMonster.Intent.ATTACK_DEFEND;
-    }
-
-    /** For Whirlwind(+) returns damage dealt per strike.
-     * @return int Return how much damage would be dealt to target by playing card at it (if applicable). */
+    /**
+     * Returns how much damage would be dealt to a monster by playing a card at it.
+     * For Whirlwind(+) returns damage dealt per strike.
+     *
+     * @param card   the card to play
+     * @param target the monster to target by the card
+     * @return       how much damage would be dealt to target by playing card at it
+     * */
     public static int getDamage(AbstractCard card, AbstractMonster target){
-        if(card.type != AbstractCard.CardType.ATTACK){ //TODO maybe include a thousand cuts
+        if(card.type != AbstractCard.CardType.ATTACK){
             return 0;
         }
         int realBaseDamage = card.baseDamage;
@@ -77,28 +68,36 @@ public class CombatUtils {
         DamageInfo dinfo = new DamageInfo(AbstractDungeon.player, realBaseDamage, card.damageTypeForTurn);
         dinfo.applyPowers(AbstractDungeon.player, target);
 
-        int hits = getHits(card.name);
+        int hits = getHits(card);
         return dinfo.output * hits;
     }
 
-    /** @param attackName The name of the attack.
-     * @return int Return number of strikes in the given attack. */
-    public static int getHits(String attackName){
-        if(attackName.equals("Twin Strike")) return 2;
-        if(attackName.equals("Twin Strike+")) return 2;
-        if(attackName.equals("Pummel")) return 4;
-        if(attackName.equals("Pummel+")) return 5;
-        return 1;
+    /**
+     * Returns the number of hits performed by the specified card. Non-attack cards perform 0 hits.
+     *
+     * @param c the card to check the number of hits of
+     * @return  the number of hits performed by the specified card
+     * */
+    public static int getHits(AbstractCard c){
+        if(c.type != AbstractCard.CardType.ATTACK){
+            return 0;
+        }
+        switch(c.name){
+            case "Twin Strike":
+            case "Twin Strike+": return 2;
+            case "Pummel": return 4;
+            case "Pummel+": return 5;
+            default: return 1;
+        }
     }
 
-    /** @return AbstractMonster Return a random alive monster. */
-    public static AbstractMonster getRandomTarget(){
-        return AbstractDungeon.getRandomMonster();
-    }
-
-    /** @return AbstractMonster Return the alive monster with the lowest health left. */
+    /**
+     * Returns the alive monster with the lowest health left.
+     *
+     * @return the alive monster with the lowest health left, or null if none exists
+     * */
     public static AbstractMonster getWeakestTarget(){
-        int minHealth = 999;
+        int minHealth = 1000;
         AbstractMonster weakest = null;
         try{
             for(AbstractMonster m : AbstractDungeon.getCurrRoom().monsters.monsters){
@@ -110,19 +109,18 @@ public class CombatUtils {
         }catch(NullPointerException e){
             return null;
         }
-
         return weakest;
     }
 
     /** Represent an incoming attack by a monster. */
     public static class MonsterAttack{
         AbstractMonster monster; // attacking monster
-        int baseDmg; // amount of damage each strike deals, no modifiers
-        int damage; // amount of damage each strike deals
-        int hits; // number of times monster strikes in the attack
-        int strength; // + or - for strength of monster
-        boolean weakened; // true if monster is weakened
-        boolean vulnerable; // true if player is vulnerable
+        int baseDmg;             // amount of damage each strike deals, no modifiers
+        int damage;              // amount of damage each strike deals
+        int hits;                // number of times monster strikes in the attack
+        int strength;            // + or - for strength of monster
+        boolean weakened;        // true if monster is weakened
+        boolean vulnerable;      // true if player is vulnerable
 
         /** @param m the monster which is giving this attack. */
         public MonsterAttack(AbstractMonster m){
@@ -155,10 +153,6 @@ public class CombatUtils {
             vulnerable = a.vulnerable;
         }
 
-        public MonsterAttack copy(){
-            return new MonsterAttack(this);
-        }
-
         /** Update field values to represent the combat state. */
         public void update(){
             if(monster.isDeadOrEscaped()){
@@ -175,17 +169,25 @@ public class CombatUtils {
             vulnerable = AbstractDungeon.player.hasPower("Vulnerable");
         }
 
-        /** @return int Return amount of damage dealt from this attack. */
+        /**
+         * Returns the amount of damage dealt by this attack. Returns 0 if owner is not attacking.
+         *
+         * @return the amount of damage dealt by this attack.
+         * */
         public int getDamage(){
-            if(!isAttack(monster.intent)){
+            if(isNotAttack(monster.intent)){
                 return 0;
             }
             return damage;
         }
 
-        /** @return int Return the amount of damage that would be dealt after weakened is applied. */
+        /**
+         * Returns the amount of damage the would be dealt by this attack if weakened were applied.
+         *
+         * @return the amount of damage that would be dealt by this attack if weakened were applied
+         * */
         public int getWeakenedDamage(){
-            if(!isAttack(monster.intent)){
+            if(isNotAttack(monster.intent)){
                 return 0;
             }
             if(weakened){
@@ -199,14 +201,18 @@ public class CombatUtils {
             }
         }
 
-        /** @param strength The amount of strength to be applied to monster, + or -
-         * @return int Return the amount of damage that would be dealt after strength is applied. */
-        public int getStrengthDamage(int strength){
-            // TODO
-            return -1;
-        }
+//        /** @param strength The amount of strength to be applied to monster, + or -
+//         * @return int Return the amount of damage that would be dealt after strength is applied. */
+//        public int getStrengthDamage(int strength){
+//            // TODO
+//            return -1;
+//        }
 
-        /** @return double Return the factor of increased damage due to vulnerable. */
+        /**
+         * Returns the factor of increased damage due to player being vulnerable.
+         *
+         * @return the factor of increased damage due to player being vulnerable
+         * */
         public double getVulnerableFactor(){
             if(vulnerable){
                 return AbstractDungeon.player.hasRelic("Odd Mushroom") ? 1.25 : 1.5;
@@ -214,13 +220,17 @@ public class CombatUtils {
             return 1;
         }
 
-        /** TODO (very fringe, 1 relic)
-         * @return int Return the amount of damage that would be dealt if vulnerable was removed. */
-        public int getNonVulnerableDamage(){
-            return -1;
-        }
+//        /** TODO (very fringe, 1 relic)
+//         * @return int Return the amount of damage that would be dealt if vulnerable was removed. */
+//        public int getNonVulnerableDamage(){
+//            return -1;
+//        }
 
-        /** @return AbstractMonster Return the owner of this attack. */
+        /**
+         * Returns the owner of this attack.
+         *
+         * @return the owner of this attack.
+         * */
         public AbstractMonster getMonster(){
             return monster;
         }
@@ -287,9 +297,12 @@ public class CombatUtils {
         }
 
 
-        /** @param player The player who plays the attack.
-         * @param attack The attack played.
-         * Update monster values after player plays an attack on this monster. */
+        /**
+         * Updates after player plays an attack on this monster.
+         *
+         * @param player the player who plays the attack
+         * @param attack the attack played
+         * */
         public void takeAttack(SimplePlayer player, AbstractCard attack){
             if(attack.type != AbstractCard.CardType.ATTACK){
                 throw new IllegalArgumentException("tried to attack with non-attack card");
@@ -308,7 +321,7 @@ public class CombatUtils {
             if(intangible){
                 strikeDamage = Math.max(1, strikeDamage);
             }
-            int hits = getHits(attack.name);
+            int hits = getHits(attack);
             if(attack.cardID.equals("Whirlwind")){
                 hits = player.energy;
                 if(AbstractDungeon.player.hasRelic("Chemical X")){
@@ -323,8 +336,11 @@ public class CombatUtils {
             }
         }
 
-        /** @param ignoreBlock If true, deal all damage to health
-         * Update this monster's health and block after taking damage. */
+        /**
+         * Updates health and block after taking damage.
+         *
+         * @param ignoreBlock If true, deal all damage to health
+         * */
         public void takeDamage(int amount, boolean ignoreBlock){
             if(ignoreBlock){
                 health -= amount;
@@ -399,19 +415,6 @@ public class CombatUtils {
             intangible = p.hasPower("Intangible");
         }
 
-        public SimplePlayer(ArrayList<AbstractCard> hand, int energy, int health, int block, int strength,
-                            int metallicize, boolean weakened, boolean vulnerable, boolean intangible){
-            this.hand = hand;
-            this.energy = energy;
-            this.health = health;
-            this.block = block;
-            this.strength = strength;
-            this.metallicize = metallicize;
-            this.weakened = weakened;
-            this.vulnerable = vulnerable;
-            this.intangible = intangible;
-        }
-
         public SimplePlayer(SimplePlayer p){
             this.hand = new ArrayList<>();
             hand.addAll(p.hand);
@@ -425,9 +428,13 @@ public class CombatUtils {
             this.intangible = p.intangible;
         }
 
-        /** @param toPlay The card played.
-         * @param target The target of the card.
-         * Update player values after player plays an attack on a monster. */
+        /**
+         * Update after player plays an attack on a monster.
+         *
+         * @param toPlay   the card played
+         * @param target   the monster the card targets.
+         * @param monsters the monsters the player is fighting
+         * */
         public void playCard(AbstractCard toPlay, SimpleMonster target, ArrayList<SimpleMonster> monsters){
             hand.remove(toPlay);
             if(toPlay.costForTurn > 0){ // Whirlwind costs -1
@@ -462,26 +469,38 @@ public class CombatUtils {
             }
         }
 
-        /** @return double Return the factor of increased damage by the player due to vulnerable. */
+        /**
+         * Returns the factor of increased damage dealt due to monster vulnerable.
+         *
+         * @return the factor of increased damage dealt due to monster vulnerable.
+         * */
         public double getVulnerableDealFactor(){
             return AbstractDungeon.player.hasRelic("Paper Frog") ? 1.75 : 1.5;
         }
 
-        /** @return double Return the factor of decreased damage by the player due to weak. */
+        /**
+         * Returns the factor of decreased damage dealt due to weakened.
+         *
+         * @return the factor of decreased damage dealt due to weakened.
+         * */
         public double getWeakDealFactor(){
             return weakened ? 0.75 : 1;
         }
 
-        /** @param ignoreBlock If true, deal all damage to health
-         * Update this player's health and block after taking damage. */
-        public void takeDamage(int amount, boolean ignoreBlock){
+        /**
+         * Updates this player's health and block after taking damage.
+         *
+         * @param d           the amount of damage this player takes
+         * @param ignoreBlock whether all damage is dealt to health
+         * */
+        public void takeDamage(int d, boolean ignoreBlock){
             if(ignoreBlock){
-                health -= amount;
+                health -= d;
             }else{
-                if(block >= amount){
-                    block -= amount;
+                if(block >= d){
+                    block -= d;
                 }else{
-                    health -= amount - block;
+                    health -= d - block;
                     block = 0;
                 }
             }
@@ -517,7 +536,14 @@ public class CombatUtils {
 //                    hand.equals(that.hand);
         }
 
-        /** Check if two hands are effectively equal (e.g. 2 unupgraded strikes are the same) */
+        /**
+         * Returns whether two hands of cards contain the same multiset of cards.
+         * Cards are only different if they have different names.
+         *
+         * @param h1 the base list of cards
+         * @param h2 the list of cards to check equality with the base
+         * @return   whether the specified hands contain the same cards
+         * */
         public boolean handsEqual(ArrayList<AbstractCard> h1, ArrayList<AbstractCard> h2){
             ArrayList<String> names1 = new ArrayList<>();
             for(AbstractCard c : h1){
