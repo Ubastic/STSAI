@@ -108,4 +108,6 @@ fabric.properties
 # Project exclude paths
 /target/
 
-#.src/main/java/SlayTheSpireAIMod/commands/
+.idea/encodings.xml
+.idea/misc.xml
+.idea/vcs.xml
