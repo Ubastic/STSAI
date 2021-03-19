@@ -1,4 +1,5 @@
 C:\Users\ryanx\IdeaProjects\SlayTheSpireMods\SlayTheSpireAIMod\theDefault\src\main\java\SlayTheSpireAIMod\commands\BasicCommand.java
+C:\Users\ryanx\IdeaProjects\SlayTheSpireMods\SlayTheSpireAIMod\theDefault\src\main\java\SlayTheSpireAIMod\AIs\CombatAIs\Heuristic.java
 C:\Users\ryanx\IdeaProjects\SlayTheSpireMods\SlayTheSpireAIMod\theDefault\src\main\java\SlayTheSpireAIMod\communicationmod\GameStateListener.java
 C:\Users\ryanx\IdeaProjects\SlayTheSpireMods\SlayTheSpireAIMod\theDefault\src\main\java\SlayTheSpireAIMod\communicationmod\patches\CampfireSmithEffectPatch.java
 C:\Users\ryanx\IdeaProjects\SlayTheSpireMods\SlayTheSpireAIMod\theDefault\src\main\java\SlayTheSpireAIMod\communicationmod\DataWriter.java
@@ -7,12 +8,14 @@ C:\Users\ryanx\IdeaProjects\SlayTheSpireMods\SlayTheSpireAIMod\theDefault\src\ma
 C:\Users\ryanx\IdeaProjects\SlayTheSpireMods\SlayTheSpireAIMod\theDefault\src\main\java\SlayTheSpireAIMod\communicationmod\InvalidCommandException.java
 C:\Users\ryanx\IdeaProjects\SlayTheSpireMods\SlayTheSpireAIMod\theDefault\src\main\java\SlayTheSpireAIMod\communicationmod\patches\GremlinMatchGamePatch.java
 C:\Users\ryanx\IdeaProjects\SlayTheSpireMods\SlayTheSpireAIMod\theDefault\src\main\java\SlayTheSpireAIMod\util\CombatUtils.java
+C:\Users\ryanx\IdeaProjects\SlayTheSpireMods\SlayTheSpireAIMod\theDefault\src\main\java\SlayTheSpireAIMod\AIs\CombatAIs\TheGuardianCAI.java
 C:\Users\ryanx\IdeaProjects\SlayTheSpireMods\SlayTheSpireAIMod\theDefault\src\main\java\SlayTheSpireAIMod\AIs\GridSelectAI.java
 C:\Users\ryanx\IdeaProjects\SlayTheSpireMods\SlayTheSpireAIMod\theDefault\src\main\java\SlayTheSpireAIMod\AIs\BossRewardAI.java
 C:\Users\ryanx\IdeaProjects\SlayTheSpireMods\SlayTheSpireAIMod\theDefault\src\main\java\SlayTheSpireAIMod\communicationmod\patches\GridCardSelectScreenUpdatePatch.java
 C:\Users\ryanx\IdeaProjects\SlayTheSpireMods\SlayTheSpireAIMod\theDefault\src\main\java\SlayTheSpireAIMod\AIs\ShopAI.java
 C:\Users\ryanx\IdeaProjects\SlayTheSpireMods\SlayTheSpireAIMod\theDefault\src\main\java\SlayTheSpireAIMod\communicationmod\patches\CampfireLiftEffectPatch.java
 C:\Users\ryanx\IdeaProjects\SlayTheSpireMods\SlayTheSpireAIMod\theDefault\src\main\java\SlayTheSpireAIMod\AIs\EventAI.java
+C:\Users\ryanx\IdeaProjects\SlayTheSpireMods\SlayTheSpireAIMod\theDefault\src\main\java\SlayTheSpireAIMod\AIs\CombatAIs\HexaghostCAI.java
 C:\Users\ryanx\IdeaProjects\SlayTheSpireMods\SlayTheSpireAIMod\theDefault\src\main\java\SlayTheSpireAIMod\communicationmod\patches\UpdateBodyTextPatch.java
 C:\Users\ryanx\IdeaProjects\SlayTheSpireMods\SlayTheSpireAIMod\theDefault\src\main\java\SlayTheSpireAIMod\communicationmod\DataReader.java
 C:\Users\ryanx\IdeaProjects\SlayTheSpireMods\SlayTheSpireAIMod\theDefault\src\main\java\SlayTheSpireAIMod\communicationmod\patches\CampfireTokeEffectPatch.java
@@ -31,6 +34,7 @@ C:\Users\ryanx\IdeaProjects\SlayTheSpireMods\SlayTheSpireAIMod\theDefault\src\ma
 C:\Users\ryanx\IdeaProjects\SlayTheSpireMods\SlayTheSpireAIMod\theDefault\src\main\java\SlayTheSpireAIMod\communicationmod\patches\CardCrawlGamePatch.java
 C:\Users\ryanx\IdeaProjects\SlayTheSpireMods\SlayTheSpireAIMod\theDefault\src\main\java\SlayTheSpireAIMod\AIs\CombatAIs\SentriesCAI.java
 C:\Users\ryanx\IdeaProjects\SlayTheSpireMods\SlayTheSpireAIMod\theDefault\src\main\java\SlayTheSpireAIMod\communicationmod\patches\CampfireSleepEffectPatch.java
+C:\Users\ryanx\IdeaProjects\SlayTheSpireMods\SlayTheSpireAIMod\theDefault\src\main\java\SlayTheSpireAIMod\AIs\CombatAIs\LagavulinCAI.java
 C:\Users\ryanx\IdeaProjects\SlayTheSpireMods\SlayTheSpireAIMod\theDefault\src\main\java\SlayTheSpireAIMod\communicationmod\patches\CampfireDigEffectPatch.java
 C:\Users\ryanx\IdeaProjects\SlayTheSpireMods\SlayTheSpireAIMod\theDefault\src\main\java\SlayTheSpireAIMod\AIs\HandSelectAI.java
 C:\Users\ryanx\IdeaProjects\SlayTheSpireMods\SlayTheSpireAIMod\theDefault\src\main\java\SlayTheSpireAIMod\AIs\ChestAI.java
@@ -52,6 +56,7 @@ C:\Users\ryanx\IdeaProjects\SlayTheSpireMods\SlayTheSpireAIMod\theDefault\src\ma
 C:\Users\ryanx\IdeaProjects\SlayTheSpireMods\SlayTheSpireAIMod\theDefault\src\main\java\SlayTheSpireAIMod\util\MapUtils.java
 C:\Users\ryanx\IdeaProjects\SlayTheSpireMods\SlayTheSpireAIMod\theDefault\src\main\java\SlayTheSpireAIMod\communicationmod\patches\AbstractRoomEndTurnPatch.java
 C:\Users\ryanx\IdeaProjects\SlayTheSpireMods\SlayTheSpireAIMod\theDefault\src\main\java\SlayTheSpireAIMod\AIs\CombatRewardAI.java
+C:\Users\ryanx\IdeaProjects\SlayTheSpireMods\SlayTheSpireAIMod\theDefault\src\main\java\SlayTheSpireAIMod\AIs\CombatAIs\SlimeBossCAI.java
 C:\Users\ryanx\IdeaProjects\SlayTheSpireMods\SlayTheSpireAIMod\theDefault\src\main\java\SlayTheSpireAIMod\util\Move.java
 C:\Users\ryanx\IdeaProjects\SlayTheSpireMods\SlayTheSpireAIMod\theDefault\src\main\java\SlayTheSpireAIMod\communicationmod\patches\GridCardSelectScreenPatch.java
 C:\Users\ryanx\IdeaProjects\SlayTheSpireMods\SlayTheSpireAIMod\theDefault\src\main\java\SlayTheSpireAIMod\communicationmod\patches\MerchantPatch.java

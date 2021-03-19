@@ -5,6 +5,7 @@ import SlayTheSpireAIMod.util.Move;
 import com.megacrit.cardcrawl.cards.AbstractCard;
 import com.megacrit.cardcrawl.dungeons.AbstractDungeon;
 import com.megacrit.cardcrawl.monsters.AbstractMonster;
+import com.megacrit.cardcrawl.potions.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -37,7 +38,7 @@ public abstract class AbstractCAI {
     }
 
     /** @param combat name of current combat
-     * @return AbstractCAI Return appropriate AI based on combat, null if none exists. */
+     * @return        AbstractCAI Return appropriate AI based on combat, null if none exists. */
     public static AbstractCAI getAI(String combat){
         switch (combat){
             case "Gremlin Nob": return new GremlinNobCAI();
@@ -50,33 +51,12 @@ public abstract class AbstractCAI {
         }
     }
 
-    /** Determine if there are any "safe" cards to play.
-     * Ignores negative effects that trigger on playing a card.
-     * Ignores no-draw from Battle Trance(+).
-     * @return Move Return a Move which costs no energy which can only help the player, null if none exists. */
-    public static Move FreeCard(){
-        ArrayList<AbstractCard> cards = AbstractDungeon.player.hand.group;
-        HashSet<String> freeCards = new HashSet<>();
-        freeCards.add("Flex");
-        freeCards.add("Flex+");
-        freeCards.add("Havoc+");
-        freeCards.add("Warcry+");
-        freeCards.add("Battle Trance");
-        freeCards.add("Battle Trance+");
-        freeCards.add("Infernal Blade+");
-        freeCards.add("Intimidate");
-        freeCards.add("Intimidate+");
-        freeCards.add("Rage");
-        freeCards.add("Rage+");
-        for(AbstractCard card : cards){
-            if(freeCards.contains(card.cardID) && card.costForTurn == 0){
-                return new Move(Move.TYPE.CARD, cards.indexOf(card), null);
-            }
-        }
-        return null;
-    }
-
     public static Move newGenericPickMove(){
+        Move tryPotion = usePotion();
+        if(usePotion() != null){
+            return tryPotion;
+        }
+
         // if a no-negative card can be played, play it
         Move tryFree = FreeCard();
         if(tryFree != null){
@@ -106,6 +86,68 @@ public abstract class AbstractCAI {
                     AbstractDungeon.getCurrRoom().monsters.monsters.get(bestState.firstTargetIndex));
         }
         return new Move(Move.TYPE.PASS);
+    }
+
+    /**
+     * Returns the optimal Move which uses a potion. Returns null if none exists.
+     *
+     * @return the optimal Move which uses a potion. Null if none exists
+     * */
+    public static Move usePotion(){
+        ArrayList<AbstractPotion> potions = AbstractDungeon.player.potions;
+        int maxEval = 0;
+        AbstractPotion maxPotion = null;
+        for(AbstractPotion p : potions){
+            int eval = potionEval(p.ID);
+            if(eval > maxEval){
+                maxEval = eval;
+                maxPotion = p;
+            }
+        }
+        if(maxPotion == null){
+            return null;
+        }
+        return new Move(Move.TYPE.POTION, potions.indexOf(maxPotion), CombatUtils.getWeakestTarget());
+    }
+
+    /**
+     * Returns an evaluation of the usage of a potion.
+     *
+     * @param potion the ID of the potion to evaluate
+     * @return       the evaluation of how good it is to use a potion. The larger the better.
+     *               0 indicates not useful enough to use.
+     * */
+    public static int potionEval(String potion){
+        if (FruitJuice.POTION_ID.equals(potion)) {
+            return 10;
+        }
+        return -1;
+    }
+
+    /** Determine if there are any "safe" cards to play.
+     * Ignores negative effects that trigger on playing a card.
+     * Ignores no-draw from Battle Trance(+).
+     * @return Move Return a Move which costs no energy which can only help the player, null if none exists. */
+    public static Move FreeCard(){
+        ArrayList<AbstractCard> cards = AbstractDungeon.player.hand.group;
+        HashSet<String> freeCards = new HashSet<>();
+        freeCards.add("Flex");
+        freeCards.add("Flex+");
+        freeCards.add("Havoc+");
+        freeCards.add("Warcry+");
+        freeCards.add("Battle Trance");
+        freeCards.add("Battle Trance+");
+        freeCards.add("Infernal Blade+");
+        freeCards.add("Intimidate");
+        freeCards.add("Intimidate+");
+        freeCards.add("Rage");
+        freeCards.add("Rage+");
+        for(AbstractCard card : cards){
+            if(freeCards.contains(card.cardID) && card.costForTurn == 0){
+                return new Move(Move.TYPE.CARD, cards.indexOf(card), null);
+            }
+        }
+        return null;
     }
 
     /** @param state The state to be evaluated.

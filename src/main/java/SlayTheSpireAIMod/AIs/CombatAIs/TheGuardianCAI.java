@@ -5,6 +5,7 @@ import SlayTheSpireAIMod.util.Move;
 import com.megacrit.cardcrawl.cards.AbstractCard;
 import com.megacrit.cardcrawl.dungeons.AbstractDungeon;
 import com.megacrit.cardcrawl.monsters.exordium.TheGuardian;
+import com.megacrit.cardcrawl.potions.*;
 import com.megacrit.cardcrawl.powers.AbstractPower;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -22,6 +23,11 @@ public class TheGuardianCAI extends AbstractCAI{
 
     @Override
     public Move pickMove() {
+        Move tryPotion = usePotion();
+        if(usePotion() != null){
+            return tryPotion;
+        }
+
         // if a no-negative card can be played, play it
         Move tryFree = FreeCard();
         if(tryFree != null){
@@ -51,6 +57,76 @@ public class TheGuardianCAI extends AbstractCAI{
                     AbstractDungeon.getCurrRoom().monsters.monsters.get(bestState.firstTargetIndex));
         }
         return new Move(Move.TYPE.PASS);
+    }
+
+    /**
+     * Returns an evaluation of the usage of a potion.
+     *
+     * @param potion the ID of the potion to evaluate
+     * @return       the evaluation of how good it is to use a potion. The larger the better.
+     *               0 indicates not useful enough to use.
+     * */
+    public static int potionEval(String potion){
+        switch(potion){
+            case AncientPotion.POTION_ID:
+            case Elixir.POTION_ID:
+            case GamblersBrew.POTION_ID:
+            case PowerPotion.POTION_ID: // TODO
+            case SkillPotion.POTION_ID: // TODO
+            case SmokeBomb.POTION_ID:
+            case SneckoOil.POTION_ID:
+            case SpeedPotion.POTION_ID:
+            case SteroidPotion.POTION_ID:
+            case SwiftPotion.POTION_ID:
+                return 0;
+            case EntropicBrew.POTION_ID: return 1;
+            case AttackPotion.POTION_ID:
+            case BlessingOfTheForge.POTION_ID:
+            case BlockPotion.POTION_ID:
+            case DistilledChaosPotion.POTION_ID:
+            case DuplicationPotion.POTION_ID:
+            case EnergyPotion.POTION_ID:
+            case ExplosivePotion.POTION_ID:
+            case FearPotion.POTION_ID:
+            case FirePotion.POTION_ID:
+            case LiquidMemories.POTION_ID:
+            case RegenPotion.POTION_ID:
+            case WeakenPotion.POTION_ID:
+                return 5;
+            case BloodPotion.POTION_ID:
+            case ColorlessPotion.POTION_ID:
+            case CultistPotion.POTION_ID:
+            case DexterityPotion.POTION_ID:
+            case EssenceOfSteel.POTION_ID:
+            case FruitJuice.POTION_ID:
+            case HeartOfIron.POTION_ID:
+            case LiquidBronze.POTION_ID:
+            case StrengthPotion.POTION_ID:
+                return 10;
+            default: return 0;
+        }
+    }
+
+    /**
+     * Returns the optimal Move which uses a potion. Returns null if none exists.
+     *
+     * @return the optimal Move which uses a potion. Null if none exists
+     * */
+    public static Move usePotion(){
+        ArrayList<AbstractPotion> potions = AbstractDungeon.player.potions;
+        int maxEval = 0;
+        AbstractPotion maxPotion = null;
+        for(AbstractPotion p : potions){
+            int eval = potionEval(p.ID);
+            if(eval > maxEval){
+                maxEval = eval;
+                maxPotion = p;
+            }
+        }
+        if(maxPotion == null){
+            return null;
+        }
+        return new Move(Move.TYPE.POTION, potions.indexOf(maxPotion), CombatUtils.getWeakestTarget());
     }
 
     public ArrayList<CombatUtils.SimpleMonster> getMonsters(){
