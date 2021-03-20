@@ -29,12 +29,9 @@ public class BossRewardAI {
 //        for(AbstractRelic relic : AbstractDungeon.bossRelicScreen.relics) {
 //            man.add(relic.name);
 //        }
-        if(choices.contains("astrolabe")){ // for testing that astrolabe functions properly
-           ChoiceScreenUtils.makeBossRewardChoice(choices.indexOf("astrolabe"));
-        }else{
-            logger.info("Making choice: " + choices.get(0));
-            ChoiceScreenUtils.makeBossRewardChoice(0);
-        }
+        logger.info("Making choice: " + choices.get(0));
+        ChoiceScreenUtils.makeBossRewardChoice(0);
+
         logger.info("Done");
 
     }
