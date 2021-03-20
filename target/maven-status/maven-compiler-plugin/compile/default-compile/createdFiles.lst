@@ -74,13 +74,13 @@ SlayTheSpireAIMod\communicationmod\patches\UpdateBodyTextPatch.class
 SlayTheSpireAIMod\communicationmod\InvalidCommandException$1.class
 SlayTheSpireAIMod\communicationmod\patches\CombatRewardScreenPatch.class
 SlayTheSpireAIMod\communicationmod\patches\MerchantPatch$MerchantUpdatePatch$Locator.class
-SlayTheSpireAIMod\AIs\CombatAIs\SlimeBossCAI$BigSlime.class
 SlayTheSpireAIMod\AIs\CombatAIs\SlimeBossCAI.class
 SlayTheSpireAIMod\util\CombatUtils$MonsterAttack.class
 SlayTheSpireAIMod\communicationmod\patches\CombatRewardScreenPatch$Locator.class
 SlayTheSpireAIMod\communicationmod\patches\GremlinMatchGamePatch$RegisterFirstFlipPatch$Locator.class
 SlayTheSpireAIMod\actions\FightAIAction.class
 SlayTheSpireAIMod\AIs\CombatAIs\LagavulinCAI.class
+SlayTheSpireAIMod\AIs\CombatAIs\GenericCAI.class
 SlayTheSpireAIMod\communicationmod\ChoiceScreenUtils.class
 SlayTheSpireAIMod\util\CombatUtils$SimplePlayer.class
 SlayTheSpireAIMod\communicationmod\patches\DungeonMapPatch$Locator.class
