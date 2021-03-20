@@ -206,8 +206,9 @@ public abstract class AbstractCAI {
             simpleMonsters = new ArrayList<>();
             ArrayList<AbstractMonster> monsters = AbstractDungeon.getCurrRoom().monsters.monsters;
             for (AbstractMonster m : monsters) {
+                int vul = m.hasPower("Vulnerable") ? m.getPower("Vulnerable").amount : 0;
                 simpleMonsters.add(new CombatUtils.SimpleMonster(new CombatUtils.MonsterAttack(m), m.currentHealth,
-                        m.currentBlock, m.hasPower("Vulnerable"), m.hasPower("Intangible")));
+                        m.currentBlock, vul, m.hasPower("Intangible")));
             }
             simplePlayer = new CombatUtils.SimplePlayer();
         }

@@ -91,6 +91,26 @@ public class CombatUtils {
     }
 
     /**
+     * Returns the amount of vulnerable applied by the specified card.
+     *
+     * @param c the card to check the vulnerable applied of
+     * @return  the amount of vulnerable applied by the specified card
+     * */
+    public static int getVulnerable(AbstractCard c){
+        switch(c.name){
+            case "Bash+": return 3;
+            case "Bash":
+            case "Uppercut+":
+                return 2;
+            case "Thunderclap":
+            case "Uppercut":
+                return 1;
+            default:
+                return 0;
+        }
+    }
+
+    /**
      * Returns the alive monster with the lowest health left.
      *
      * @return the alive monster with the lowest health left, or null if none exists
@@ -279,12 +299,12 @@ public class CombatUtils {
         public MonsterAttack attack;
         public int health;
         public int block;
-        public boolean vulnerable; // true if monster is vulnerable TODO change to int
+        public int vulnerable;
         public boolean intangible;
         // TODO add Louse armor thing
         // TODO artifact
 
-        public SimpleMonster(MonsterAttack attack, int health, int block, boolean vulnerable, boolean intangible){
+        public SimpleMonster(MonsterAttack attack, int health, int block, int vulnerable, boolean intangible){
             this.attack = attack;
             this.health = health;
             this.block = block;
@@ -323,7 +343,7 @@ public class CombatUtils {
             }else if (attack.cardID.equals("Body Slam")){
                 realBaseDamage = player.block;
             }
-            double vFactor = vulnerable ? player.getVulnerableDealFactor() : 1;
+            double vFactor = vulnerable > 0 ? player.getVulnerableDealFactor() : 1;
             double wFactor = player.getWeakDealFactor();
             int strikeDamage = (int)Math.max(0, (realBaseDamage + player.strength) * wFactor * vFactor);
             if(intangible){
@@ -339,9 +359,7 @@ public class CombatUtils {
             // take damage from attack
             takeDamage(strikeDamage * hits, false);
             // apply vulnerable
-            if(attack.cardID.equals("Bash") || attack.cardID.equals("Thunderclap") || attack.cardID.equals("Uppercut")){
-                vulnerable = true;
-            }
+            vulnerable += getVulnerable(attack);
         }
 
         /**
