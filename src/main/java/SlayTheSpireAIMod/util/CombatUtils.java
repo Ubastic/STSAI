@@ -1,7 +1,6 @@
 package SlayTheSpireAIMod.util;
 
 import SlayTheSpireAIMod.AIs.CombatAIs.AbstractCAI;
-import SlayTheSpireAIMod.STSAIMod;
 import basemod.ReflectionHacks;
 import com.megacrit.cardcrawl.cards.AbstractCard;
 import com.megacrit.cardcrawl.cards.DamageInfo;
@@ -116,7 +115,7 @@ public class CombatUtils {
     public static class MonsterAttack{
         AbstractMonster monster; // attacking monster
         int baseDmg;             // amount of damage each strike deals, no modifiers
-        int damage;              // amount of damage each strike deals
+        int hitDamage;           // amount of damage each strike deals
         int hits;                // number of times monster strikes in the attack
         int strength;            // + or - for strength of monster
         boolean weakened;        // true if monster is weakened
@@ -132,7 +131,7 @@ public class CombatUtils {
             if(noDamage){
                 monster = m;
                 baseDmg = -1;
-                damage = 0;
+                hitDamage = 0;
                 hits = 0;
                 strength = 0;
                 weakened = false;
@@ -146,7 +145,7 @@ public class CombatUtils {
         public MonsterAttack(MonsterAttack a){
             monster = a.monster;
             baseDmg = a.baseDmg;
-            damage = a.damage;
+            hitDamage = a.hitDamage;
             hits = a.hits;
             strength = a.strength;
             weakened = a.weakened;
@@ -162,7 +161,7 @@ public class CombatUtils {
             // TODO reflect when you cannot see intents
             EnemyMoveInfo moveInfo = ReflectionHacks.getPrivate(monster, AbstractMonster.class, "move");
             baseDmg = moveInfo.baseDamage;
-            damage =  monster.getIntentDmg();
+            hitDamage = monster.getIntentDmg();
             hits = Math.max(1, moveInfo.multiplier);
             strength = monster.getPower("Strength") != null ? monster.getPower("Strength").amount : 0;
             weakened = monster.hasPower("Weakened");
@@ -170,19 +169,28 @@ public class CombatUtils {
         }
 
         /**
-         * Returns the amount of damage dealt by this attack. Returns 0 if owner is not attacking.
+         * Returns the amount of damage dealt by this attack per hit. Returns 0 if owner is not attacking.
          *
          * @return the amount of damage dealt by this attack.
          * */
-        public int getDamage(){
+        public int getHitDamage(){
             if(isNotAttack(monster.intent)){
                 return 0;
             }
-            return damage;
+            return hitDamage;
         }
 
         /**
-         * Returns the amount of damage the would be dealt by this attack if weakened were applied.
+         * Returns the number of hits in this attack.
+         *
+         * @return the number of hits in this attack
+         * */
+        public int getHits(){
+            return hits;
+        }
+
+        /**
+         * Returns the amount of damage the would be dealt by this attack per hit if weakened were applied.
          *
          * @return the amount of damage that would be dealt by this attack if weakened were applied
          * */
@@ -191,13 +199,13 @@ public class CombatUtils {
                 return 0;
             }
             if(weakened){
-                return getDamage();
+                return getHitDamage();
             }
             else{
                 double vFactor = getVulnerableFactor();
                 double wFactor = AbstractDungeon.player.hasRelic("Paper Crane") ? 0.6 : 0.75;
                 int wBase = Math.max(0, (int)Math.floor((baseDmg + strength) * wFactor)); // damage per hit if weakened
-                return (int)Math.floor(wBase * vFactor) * hits;
+                return (int)Math.floor(wBase * vFactor);
             }
         }
 
@@ -242,7 +250,7 @@ public class CombatUtils {
                     "Str: " + strength + ", " +
                     "Weak?: " + weakened + ", " +
                     "Intent: " + monster.getIntentDmg() + ", " +
-                    "dmg: " + getDamage() + ", " +
+                    "hitdmg: " + getHitDamage() + ", " +
                     "wDmg: " + getWeakenedDamage();
         }
 
@@ -252,7 +260,7 @@ public class CombatUtils {
             if (o == null || getClass() != o.getClass()) return false;
             MonsterAttack that = (MonsterAttack) o;
             return baseDmg == that.baseDmg &&
-                    damage == that.damage &&
+                    hitDamage == that.hitDamage &&
                     hits == that.hits &&
                     strength == that.strength &&
                     weakened == that.weakened &&
@@ -262,7 +270,7 @@ public class CombatUtils {
 
         @Override
         public int hashCode() {
-            return Objects.hash(monster, baseDmg, damage, hits, strength, weakened, vulnerable);
+            return Objects.hash(monster, baseDmg, hitDamage, hits, strength, weakened, vulnerable);
         }
     }
 

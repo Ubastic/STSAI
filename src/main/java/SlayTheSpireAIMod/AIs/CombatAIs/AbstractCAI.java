@@ -169,7 +169,7 @@ public abstract class AbstractCAI {
             if(m.isAlive()){
                 aliveMonsters += 1;
                 totalHealth += m.health;
-                incomingDmg += m.attack.getDamage();
+                incomingDmg += m.attack.getHitDamage() * m.attack.getHits();
             }
         }
 
