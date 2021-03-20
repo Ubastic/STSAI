@@ -1,6 +1,6 @@
 package SlayTheSpireAIMod.util;
 
-import SlayTheSpireAIMod.AIs.CombatAIs.AbstractCAI;
+import SlayTheSpireAIMod.AIs.CombatAIs.*;
 import basemod.ReflectionHacks;
 import com.megacrit.cardcrawl.cards.AbstractCard;
 import com.megacrit.cardcrawl.cards.DamageInfo;
@@ -10,7 +10,6 @@ import com.megacrit.cardcrawl.core.AbstractCreature;
 import com.megacrit.cardcrawl.dungeons.AbstractDungeon;
 import com.megacrit.cardcrawl.monsters.AbstractMonster;
 import com.megacrit.cardcrawl.monsters.EnemyMoveInfo;
-import com.megacrit.cardcrawl.powers.AbstractPower;
 import com.megacrit.cardcrawl.ui.panels.EnergyPanel;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -30,13 +29,39 @@ public class CombatUtils {
     }
 
     /**
-     * Evaluates the combat state and returns the best valid next move.
+     * Returns the best valid next move according to the appropriate Combat AI.
      *
      * @return the determined best next move.
      * */
     public static Move pickMove() {
         String combat = AbstractDungeon.lastCombatMetricKey;
-        return AbstractCAI.pickMove(combat);
+        return pickMove(combat);
+    }
+
+    /** @param combat name of current combat
+     * @return        AbstractCAI Return appropriate AI based on combat, null if none exists. */
+    public static AbstractCAI getAI(String combat){
+        switch (combat){
+            case "Gremlin Nob": return new GremlinNobCAI();
+            case "3 Sentries": return new SentriesCAI();
+            case "Lagavulin": return new LagavulinCAI();
+            case "Hexaghost": return new HexaghostCAI();
+            case "Slime Boss": return new SlimeBossCAI();
+            case "The Guardian": return new TheGuardianCAI();
+            default: return new GenericCAI();
+        }
+    }
+
+    /**
+     * Evaluate the combat state and return the best valid next move.
+     * Use a combat specific AI if possible.
+     *
+     * @param combat the name of current combat
+     * @return the determined best next move.
+     * */
+    public static Move pickMove(String combat){
+        AbstractCAI ai = AbstractCAI.getAI(combat);
+        return ai.pickMove();
     }
 
     /**

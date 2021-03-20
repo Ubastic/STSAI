@@ -19,27 +19,20 @@ public abstract class AbstractCAI {
     public static final Logger logger = LogManager.getLogger(AbstractCAI.class.getName());
     public abstract String getCombat(); // name of the combat
 
-    /** Precondition: player is in combat getCombat().
-     * Evaluate the combat state and return the best valid next move.
-     * Move types:
-     *  - Play card
-     *  - Use potion
-     *  - Pass
-     * @return Move Returns the determined best next move.  */
+    /**
+     * Precondition: player is in combat getCombat().
+     * Evaluates the combat state and returns the best valid next move.
+     *
+     * @return the determined best next move
+     * */
     public abstract Move pickMove();
 
-    /** Evaluate the combat state and return the best valid next move.
-     * Use an combat specific AI if possible.
-     * @param combat name of current combat
-     * @return Move Returns the determined best next move.  */
-    public static Move pickMove(String combat){
-        AbstractCAI ai = getAI(combat);
-        // if no AI for the combat exists, use generic AI
-        return ai == null ? newGenericPickMove() : ai.pickMove();
-    }
-
-    /** @param combat name of current combat
-     * @return        AbstractCAI Return appropriate AI based on combat, null if none exists. */
+    /**
+     * Returns a CAI corresponding to the specified combat.
+     * Returns a generic CAI if no specific CAI exists for the combat.
+     *
+     * @param combat the name of the combat
+     * @return       the CAI based on specified combat */
     public static AbstractCAI getAI(String combat){
         switch (combat){
             case "Gremlin Nob": return new GremlinNobCAI();
@@ -48,45 +41,8 @@ public abstract class AbstractCAI {
             case "Hexaghost": return new HexaghostCAI();
             case "Slime Boss": return new SlimeBossCAI();
             case "The Guardian": return new TheGuardianCAI();
-            default: return null;
+            default: return new GenericCAI();
         }
-    }
-
-    public static Move newGenericPickMove(){
-        Move tryPotion = usePotion();
-        if(usePotion() != null){
-            return tryPotion;
-        }
-
-        // if a no-negative card can be played, play it
-        Move tryFree = FreeCard();
-        if(tryFree != null){
-            return tryFree;
-        }
-
-        // play the card that leads to the best state
-        // first, remove cards that cannot be played
-        // looks only at monster health and damage player will take from attacks
-        CardSequence start = new CardSequence();
-        ArrayList<AbstractCard> unplayable = new ArrayList<>();
-        for(AbstractCard c : start.simplePlayer.hand){
-            if(!c.canUse(AbstractDungeon.player, CombatUtils.getWeakestTarget())){
-                unplayable.add(c);
-            }
-        }
-        for(AbstractCard c : unplayable){
-            start.simplePlayer.hand.remove(c);
-        }
-
-        CardSequence bestState = start.getBestPossibility(x -> heuristic(x, 0));
-
-        if(bestState != start){
-            logger.info("Evaluated best state: " + bestState.toString());
-            int bestIndex = AbstractDungeon.player.hand.group.indexOf(bestState.first);
-            return new Move(Move.TYPE.CARD, bestIndex,
-                    AbstractDungeon.getCurrRoom().monsters.monsters.get(bestState.firstTargetIndex));
-        }
-        return new Move(Move.TYPE.PASS);
     }
 
     /**
@@ -122,75 +78,7 @@ public abstract class AbstractCAI {
         if (FruitJuice.POTION_ID.equals(potion)) {
             return 10;
         }
-        return -1;
-    }
-
-    /** Determine if there are any "safe" cards to play.
-     * Ignores negative effects that trigger on playing a card.
-     * Ignores no-draw from Battle Trance(+).
-     * @return Move Return a Move which costs no energy which can only help the player, null if none exists. */
-    public static Move FreeCard(){
-        ArrayList<AbstractCard> cards = AbstractDungeon.player.hand.group;
-        HashSet<String> freeCards = new HashSet<>();
-        freeCards.add("Flex");
-        freeCards.add("Flex+");
-        freeCards.add("Havoc+");
-        freeCards.add("Warcry+");
-        freeCards.add("Battle Trance");
-        freeCards.add("Battle Trance+");
-        freeCards.add("Infernal Blade+");
-        freeCards.add("Intimidate");
-        freeCards.add("Intimidate+");
-        freeCards.add("Rage");
-        freeCards.add("Rage+");
-        for(AbstractCard card : cards){
-            if(freeCards.contains(card.cardID) && card.costForTurn == 0){
-                return new Move(Move.TYPE.CARD, cards.indexOf(card), null);
-            }
-        }
-        return null;
-    }
-
-    /** @param state The state to be evaluated.
-     * Evaluation of the given state (lower is better).
-     * @return int Return a measure of how good a state is. */
-    public static int heuristic(CardSequence state, int tolerance){
-        int aliveMonsters = 0;
-        int totalHealth = 0;
-        int incomingDmg = 0;
-
-        int extraBlock = 0;
-        extraBlock += state.simplePlayer.metallicize;
-
-        if(AbstractDungeon.player.hasPower("Plated Armor")){
-            extraBlock += AbstractDungeon.player.getPower("Plated Armor").amount;
-        }
-
-        for(CombatUtils.SimpleMonster m : state.simpleMonsters){
-            if(m.isAlive()){
-                aliveMonsters += 1;
-                totalHealth += m.health;
-                incomingDmg += m.attack.getHitDamage() * m.attack.getHits();
-            }
-        }
-
-        int willLoseHP = Math.max(0, incomingDmg - state.simplePlayer.block - extraBlock);
-        int hpLossFactor =  3 * Math.max(0, willLoseHP - tolerance);
-        int aliveMonstersFactor = 5 * aliveMonsters;
-
-        if(aliveMonsters == 0){
-            aliveMonstersFactor = -100;
-        }
-
-        int strength = state.simplePlayer.strength;
-        int strengthA = -5; // strength is less important if little dmg needs to be dealt
-        int strengthFactor = strength * strengthA;
-
-        int metallicize = state.simplePlayer.metallicize;
-        int metallicizeA = -3;
-        int metallicizeFactor = metallicize * metallicizeA;
-
-        return totalHealth + aliveMonstersFactor + hpLossFactor + strengthFactor + metallicizeFactor;
+        return 0;
     }
 
     /** Represent the state of the game after playing a sequence of cards. */
