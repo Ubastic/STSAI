@@ -46,9 +46,12 @@ public class SentriesCAI extends AbstractCAI {
         return new Move(Move.TYPE.PASS);
     }
 
-    /** @param state The state to be evaluated.
-     * Evaluation of the given state (lower is better).
-     * @return int Return a measure of how good a state is. */
+    /**
+     * Returns the evaluation of the given state. Lower is better.
+     *
+     * @param state the state to be evaluated.
+     * @return how good the state is
+     * */
     public static int heuristic(CardSequence state, int tolerance){
         int aliveMonsters = 0;
         int totalHealth = 0;
@@ -65,7 +68,7 @@ public class SentriesCAI extends AbstractCAI {
             if(m.isAlive()){
                 aliveMonsters += 1;
                 totalHealth += m.health;
-                incomingDmg += m.attack.getDamage();
+                incomingDmg += m.attack.getHitDamage(); // always only 1 hit
             }
         }
 
@@ -96,5 +99,4 @@ public class SentriesCAI extends AbstractCAI {
         return totalHealth + aliveMonstersFactor + hpLossFactor + strengthFactor + metallicizeFactor +
                 multiSentryFactor;
     }
-
 }
