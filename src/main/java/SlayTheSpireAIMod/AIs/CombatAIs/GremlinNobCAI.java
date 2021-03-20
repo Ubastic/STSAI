@@ -45,7 +45,7 @@ public class GremlinNobCAI extends AbstractCAI {
             start.simplePlayer.hand.remove(c);
         }
 
-        CardSequence bestState = start.getBestPossibility(x -> heuristic(x, 0));
+        CardSequence bestState = start.getBestPossibility(x -> GenericCAI.heuristic(x, 0));
         if(bestState != start){
             logger.info("Evaluated best state: " + bestState.toString());
             int bestIndex = AbstractDungeon.player.hand.group.indexOf(bestState.first);

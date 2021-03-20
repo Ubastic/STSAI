@@ -19,31 +19,7 @@ public class SentriesCAI extends AbstractCAI {
 
     @Override
     public Move pickMove() {
-        Move tryFree = FreeCard();
-        if(tryFree != null){
-            return tryFree;
-        }
-
-        CardSequence start = new CardSequence();
-        ArrayList<AbstractCard> unplayable = new ArrayList<>();
-        for(AbstractCard c : start.simplePlayer.hand){
-            if(!c.canUse(AbstractDungeon.player, CombatUtils.getWeakestTarget())){
-                unplayable.add(c);
-            }
-        }
-        for(AbstractCard c : unplayable){
-            start.simplePlayer.hand.remove(c);
-        }
-
-        CardSequence bestState = start.getBestPossibility(x -> heuristic(x, 0));
-
-        if(bestState != start){
-            logger.info("Evaluated best state: " + bestState.toString());
-            int bestIndex = AbstractDungeon.player.hand.group.indexOf(bestState.first);
-            return new Move(Move.TYPE.CARD, bestIndex,
-                    AbstractDungeon.getCurrRoom().monsters.monsters.get(bestState.firstTargetIndex));
-        }
-        return new Move(Move.TYPE.PASS);
+        return GenericCAI.pickMove(x -> heuristic(x, 0));
     }
 
     /**

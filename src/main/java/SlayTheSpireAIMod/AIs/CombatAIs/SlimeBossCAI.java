@@ -12,13 +12,13 @@ public class SlimeBossCAI extends AbstractCAI {
 
     @Override
     public Move pickMove() {
-        return newGenericPickMove();
+        return GenericCAI.pickMove(x -> GenericCAI.heuristic(x, 0));
     }
 
-    class BigSlime extends CombatUtils.SimpleMonster{
-
-        public BigSlime(CombatUtils.MonsterAttack attack, int health, int block, boolean vulnerable, boolean intangible) {
-            super(attack, health, block, vulnerable, intangible);
-        }
-    }
+//    class BigSlime extends CombatUtils.SimpleMonster{
+//
+//        public BigSlime(CombatUtils.MonsterAttack attack, int health, int block, boolean vulnerable, boolean intangible) {
+//            super(attack, health, block, vulnerable, intangible);
+//        }
+//    }
 }

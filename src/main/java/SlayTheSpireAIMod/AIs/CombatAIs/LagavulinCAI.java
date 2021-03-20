@@ -21,31 +21,6 @@ public class LagavulinCAI extends AbstractCAI {
     // TODO play powers during dormant turns
     @Override
     public Move pickMove() {
-        // if a no-negative card can be played, play it
-        Move tryFree = FreeCard();
-        if(tryFree != null){
-            return tryFree;
-        }
-
-        CardSequence start = new CardSequence();
-        ArrayList<AbstractCard> unplayable = new ArrayList<>();
-        for(AbstractCard c : start.simplePlayer.hand){
-            if(!c.canUse(AbstractDungeon.player, CombatUtils.getWeakestTarget())){
-                unplayable.add(c);
-            }
-        }
-        for(AbstractCard c : unplayable){
-            start.simplePlayer.hand.remove(c);
-        }
-
-        CardSequence bestState = start.getBestPossibility(x -> heuristic(x, 13));
-
-        if(bestState != start){
-            logger.info("Evaluated best state (from LagavulinCAI): " + bestState.toString());
-            int bestIndex = AbstractDungeon.player.hand.group.indexOf(bestState.first);
-            return new Move(Move.TYPE.CARD, bestIndex,
-                    AbstractDungeon.getCurrRoom().monsters.monsters.get(bestState.firstTargetIndex));
-        }
-        return new Move(Move.TYPE.PASS);
+        return GenericCAI.pickMove(x -> GenericCAI.heuristic(x, 13));
     }
 }

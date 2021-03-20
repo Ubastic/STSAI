@@ -30,7 +30,7 @@ public class TheGuardianCAI extends AbstractCAI{
         }
 
         // if a no-negative card can be played, play it
-        Move tryFree = FreeCard();
+        Move tryFree = GenericCAI.FreeCard();
         if(tryFree != null){
             return tryFree;
         }
@@ -49,7 +49,7 @@ public class TheGuardianCAI extends AbstractCAI{
             start.simplePlayer.hand.remove(c);
         }
 
-        CardSequence bestState = start.getBestPossibility(x -> heuristic(x, 0));
+        CardSequence bestState = start.getBestPossibility(x -> GenericCAI.heuristic(x, 0));
 
         if(bestState != start){
             logger.info("Evaluated best state: " + bestState.toString());

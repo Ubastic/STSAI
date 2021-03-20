@@ -11,6 +11,6 @@ public class HexaghostCAI extends AbstractCAI {
 
     @Override
     public Move pickMove() {
-        return newGenericPickMove();
+        return GenericCAI.pickMove(x -> GenericCAI.heuristic(x, 0));
     }
 }
