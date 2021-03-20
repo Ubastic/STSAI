@@ -27,7 +27,7 @@ public class FightAIAction extends AbstractGameAction {
             return;
         }
         ArrayList<AbstractCard> cards = AbstractDungeon.player.hand.group;
-        Move toMake = CombatUtils.pickMove(); // There is no check for validity of non-card moves
+        Move toMake = CombatUtils.pickMove();
         logger.info("Making Move: " + toMake);
         switch (toMake.type){
             case CARD:
