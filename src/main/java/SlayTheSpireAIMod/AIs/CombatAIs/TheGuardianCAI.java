@@ -7,6 +7,7 @@ import com.megacrit.cardcrawl.dungeons.AbstractDungeon;
 import com.megacrit.cardcrawl.monsters.exordium.TheGuardian;
 import com.megacrit.cardcrawl.potions.*;
 import com.megacrit.cardcrawl.powers.AbstractPower;
+import com.megacrit.cardcrawl.powers.VulnerablePower;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -80,8 +81,8 @@ public class TheGuardianCAI extends AbstractCAI{
             case SwiftPotion.POTION_ID:
                 return 0;
             case EntropicBrew.POTION_ID: return 1;
+            case BlessingOfTheForge.POTION_ID: return 2;
             case AttackPotion.POTION_ID:
-            case BlessingOfTheForge.POTION_ID:
             case BlockPotion.POTION_ID:
             case DistilledChaosPotion.POTION_ID:
             case DuplicationPotion.POTION_ID:
@@ -140,7 +141,7 @@ public class TheGuardianCAI extends AbstractCAI{
         private final int sharpHideAmount;
 
         public TheGuardianMonster(TheGuardian m) {
-            super(new CombatUtils.MonsterAttack(m), m.currentHealth, m.currentBlock, m.hasPower("Vulnerable"),
+            super(new CombatUtils.MonsterAttack(m), m.currentHealth, m.currentBlock, CombatUtils.amountOfPower(m, VulnerablePower.POWER_ID),
                     m.hasPower("Intangible"));
             AbstractPower modeShift = m.getPower("Mode Shift");
             modeShiftAmount = modeShift == null ? 999 : modeShift.amount;

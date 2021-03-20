@@ -6,6 +6,7 @@ import com.megacrit.cardcrawl.cards.AbstractCard;
 import com.megacrit.cardcrawl.dungeons.AbstractDungeon;
 import com.megacrit.cardcrawl.monsters.AbstractMonster;
 import com.megacrit.cardcrawl.potions.*;
+import com.megacrit.cardcrawl.powers.VulnerablePower;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -206,9 +207,8 @@ public abstract class AbstractCAI {
             simpleMonsters = new ArrayList<>();
             ArrayList<AbstractMonster> monsters = AbstractDungeon.getCurrRoom().monsters.monsters;
             for (AbstractMonster m : monsters) {
-                int vul = m.hasPower("Vulnerable") ? m.getPower("Vulnerable").amount : 0;
                 simpleMonsters.add(new CombatUtils.SimpleMonster(new CombatUtils.MonsterAttack(m), m.currentHealth,
-                        m.currentBlock, vul, m.hasPower("Intangible")));
+                        m.currentBlock, CombatUtils.amountOfPower(m, VulnerablePower.POWER_ID), m.hasPower("Intangible")));
             }
             simplePlayer = new CombatUtils.SimplePlayer();
         }

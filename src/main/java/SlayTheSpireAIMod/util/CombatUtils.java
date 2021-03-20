@@ -6,9 +6,11 @@ import com.megacrit.cardcrawl.cards.AbstractCard;
 import com.megacrit.cardcrawl.cards.DamageInfo;
 import com.megacrit.cardcrawl.cards.red.PerfectedStrike;
 import com.megacrit.cardcrawl.characters.AbstractPlayer;
+import com.megacrit.cardcrawl.core.AbstractCreature;
 import com.megacrit.cardcrawl.dungeons.AbstractDungeon;
 import com.megacrit.cardcrawl.monsters.AbstractMonster;
 import com.megacrit.cardcrawl.monsters.EnemyMoveInfo;
+import com.megacrit.cardcrawl.powers.AbstractPower;
 import com.megacrit.cardcrawl.ui.panels.EnergyPanel;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -108,6 +110,18 @@ public class CombatUtils {
             default:
                 return 0;
         }
+    }
+
+    /**
+     * Returns the current amount of the specified power the specified creature.
+     * Returns 0 if the creature does not own the power.
+     *
+     * @param c the creature to check the power of
+     * @param p the ID of the power to check the amount of
+     * @return  the current amount of the specified power the specified creature
+     * */
+    public static int amountOfPower(AbstractCreature c, String p){
+        return c.hasPower(p) ? c.getPower(p).amount : 0;
     }
 
     /**
