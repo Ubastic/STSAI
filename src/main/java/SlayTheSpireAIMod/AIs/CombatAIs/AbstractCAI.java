@@ -45,7 +45,6 @@ public abstract class AbstractCAI {
         }
     }
 
-
     /**
      * Returns the optimal Move which uses a potion. Returns null if none exists.
      *
@@ -71,9 +70,9 @@ public abstract class AbstractCAI {
 
     /** Represent the state of the game after playing a sequence of cards. */
     public static class CardSequence{
-        AbstractCard first; // first card played in this sequence, null if none
-        int firstTargetIndex; // index in monster list of the target of first
-        ArrayList<CombatUtils.SimpleMonster> simpleMonsters; //
+        AbstractCard first;                                  // first card played in this sequence, null if none
+        int firstTargetIndex;                                // index in monster list of the target of first
+        ArrayList<CombatUtils.SimpleMonster> simpleMonsters;
         CombatUtils.SimplePlayer simplePlayer;
 
         /** Current game state. */
@@ -106,9 +105,13 @@ public abstract class AbstractCAI {
             simplePlayer = new CombatUtils.SimplePlayer(s.simplePlayer);
         }
 
-        /** Return a new CardSequence representing the state after playing a card.
-         * @param toPlay The card to be played.
-         * @return CardSequence Return the state of the game after playing a card, null if not allowed. */
+        /**
+         * Returns a new CardSequence representing the state after playing a card.
+         *
+         * @param toPlay the card to be played
+         * @param target the target of the card to be played
+         * @return       the state of the game after playing a card, null if not allowed
+         * */
         public CardSequence playCard(AbstractCard toPlay, CombatUtils.SimpleMonster target){
             if(toPlay.costForTurn > simplePlayer.energy){
                 return null;
@@ -122,7 +125,12 @@ public abstract class AbstractCAI {
             return toRet;
         }
 
-        /** Return a list of possible states after playing 1 card from this one, empty list if no cards can be played. */
+        /**
+         * Returns list of the possible states after playing 1 card from this one.
+         * Returns empty list if no cards can be played.
+         *
+         * @return list of the possible states after playing 1 card from this one
+         * */
         public ArrayList<CardSequence> getPossibilities(){
             ArrayList<CardSequence> possibilities = new ArrayList<>();
             ArrayList<CombatUtils.SimpleMonster> aliveMonsters = new ArrayList<>();
@@ -154,7 +162,12 @@ public abstract class AbstractCAI {
             return possibilities;
         }
 
-        /** Return a set of possible states 1 or more cards from this one, set has this state if no cards can be played. */
+        /**
+         * Returns a set of possible states 1 or more cards from this one.
+         * Returns set with only this state if no cards can be played.
+         *
+         * @return set of possible states 1 or more cards from this one
+         * */
         public HashSet<CardSequence> getDistantPossibilities(){
             HashSet<CardSequence> ongoing = new HashSet<>();
             ongoing.add(this);
@@ -174,6 +187,12 @@ public abstract class AbstractCAI {
             return ended;
         }
 
+        /**
+         * Returns the best possible state reachable from this one according to the specified heuristic.
+         *
+         * @param h the heuristic to evaluate states by
+         * @return  the best possible state reachable from this one according to the specified heuristic
+         * */
         public CardSequence getBestPossibility(Heuristic h){
             HashSet<CardSequence> ended = getDistantPossibilities();
             logger.info("Current State: " + this.toString());
@@ -215,5 +234,4 @@ public abstract class AbstractCAI {
             return Objects.hash(first, firstTargetIndex, simpleMonsters, simplePlayer);
         }
     }
-
 }
