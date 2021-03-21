@@ -4,6 +4,8 @@ import SlayTheSpireAIMod.util.CombatUtils;
 import SlayTheSpireAIMod.util.Move;
 import com.megacrit.cardcrawl.cards.AbstractCard;
 import com.megacrit.cardcrawl.dungeons.AbstractDungeon;
+import com.megacrit.cardcrawl.potions.AbstractPotion;
+import com.megacrit.cardcrawl.potions.FruitJuice;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -24,8 +26,8 @@ public class GenericCAI extends AbstractCAI{
     }
 
     public static Move pickMove(Heuristic h){
-        Move tryPotion = usePotion();
-        if(usePotion() != null){
+        Move tryPotion = usePotion(GenericCAI::potionEval);
+        if(tryPotion != null){
             return tryPotion;
         }
 
@@ -58,6 +60,20 @@ public class GenericCAI extends AbstractCAI{
                     AbstractDungeon.getCurrRoom().monsters.monsters.get(bestState.firstTargetIndex));
         }
         return new Move(Move.TYPE.PASS);
+    }
+
+    /**
+     * Returns an evaluation of the usage of a potion.
+     *
+     * @param p the potion to evaluate
+     * @return  the evaluation of how good it is to use a potion. The larger the better.
+     *          0 indicates not useful enough to use.
+     * */
+    public static int potionEval(AbstractPotion p){
+        if (p instanceof FruitJuice) {
+            return 10;
+        }
+        return 0;
     }
 
     /** @param state The state to be evaluated.

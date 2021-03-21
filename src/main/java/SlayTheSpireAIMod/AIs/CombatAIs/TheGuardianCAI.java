@@ -24,8 +24,8 @@ public class TheGuardianCAI extends AbstractCAI{
 
     @Override
     public Move pickMove() {
-        Move tryPotion = usePotion();
-        if(usePotion() != null){
+        Move tryPotion = usePotion(TheGuardianCAI::potionEval);
+        if(tryPotion != null){
             return tryPotion;
         }
 
@@ -63,17 +63,17 @@ public class TheGuardianCAI extends AbstractCAI{
     /**
      * Returns an evaluation of the usage of a potion.
      *
-     * @param potion the ID of the potion to evaluate
-     * @return       the evaluation of how good it is to use a potion. The larger the better.
-     *               0 indicates not useful enough to use.
+     * @param p the ID of the potion to evaluate
+     * @return  the evaluation of how good it is to use a potion. The larger the better.
+     *          0 indicates not useful enough to use.
      * */
-    public static int potionEval(String potion){
-        switch(potion){
+    public static int potionEval(AbstractPotion p){
+        switch(p.ID){
             case AncientPotion.POTION_ID:
             case Elixir.POTION_ID:
             case GamblersBrew.POTION_ID:
-            case PowerPotion.POTION_ID: // TODO
-            case SkillPotion.POTION_ID: // TODO
+            case PowerPotion.POTION_ID:
+            case SkillPotion.POTION_ID:
             case SmokeBomb.POTION_ID:
             case SneckoOil.POTION_ID:
             case SpeedPotion.POTION_ID:
@@ -106,28 +106,6 @@ public class TheGuardianCAI extends AbstractCAI{
                 return 10;
             default: return 0;
         }
-    }
-
-    /**
-     * Returns the optimal Move which uses a potion. Returns null if none exists.
-     *
-     * @return the optimal Move which uses a potion. Null if none exists
-     * */
-    public static Move usePotion(){
-        ArrayList<AbstractPotion> potions = AbstractDungeon.player.potions;
-        int maxEval = 0;
-        AbstractPotion maxPotion = null;
-        for(AbstractPotion p : potions){
-            int eval = potionEval(p.ID);
-            if(eval > maxEval){
-                maxEval = eval;
-                maxPotion = p;
-            }
-        }
-        if(maxPotion == null){
-            return null;
-        }
-        return new Move(Move.TYPE.POTION, potions.indexOf(maxPotion), CombatUtils.getWeakestTarget());
     }
 
     public ArrayList<CombatUtils.SimpleMonster> getMonsters(){

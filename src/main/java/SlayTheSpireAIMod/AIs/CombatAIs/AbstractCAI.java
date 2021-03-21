@@ -45,17 +45,19 @@ public abstract class AbstractCAI {
         }
     }
 
+
     /**
      * Returns the optimal Move which uses a potion. Returns null if none exists.
      *
-     * @return the optimal Move which uses a potion. Null if none exists
+     * @param pe the function to evaluate potions by
+     * @return   the optimal Move which uses a potion. Null if none exists
      * */
-    public static Move usePotion(){
+    public static Move usePotion(PotionEval pe){
         ArrayList<AbstractPotion> potions = AbstractDungeon.player.potions;
         int maxEval = 0;
         AbstractPotion maxPotion = null;
         for(AbstractPotion p : potions){
-            int eval = potionEval(p.ID);
+            int eval = pe.evaluation(p);
             if(eval > maxEval){
                 maxEval = eval;
                 maxPotion = p;
@@ -65,20 +67,6 @@ public abstract class AbstractCAI {
             return null;
         }
         return new Move(Move.TYPE.POTION, potions.indexOf(maxPotion), CombatUtils.getWeakestTarget());
-    }
-
-    /**
-     * Returns an evaluation of the usage of a potion.
-     *
-     * @param potion the ID of the potion to evaluate
-     * @return       the evaluation of how good it is to use a potion. The larger the better.
-     *               0 indicates not useful enough to use.
-     * */
-    public static int potionEval(String potion){
-        if (FruitJuice.POTION_ID.equals(potion)) {
-            return 10;
-        }
-        return 0;
     }
 
     /** Represent the state of the game after playing a sequence of cards. */

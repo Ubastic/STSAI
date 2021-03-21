@@ -96,6 +96,7 @@ SlayTheSpireAIMod\communicationmod\CommunicationMod.class
 SlayTheSpireAIMod\commands\InterestingCommand.class
 SlayTheSpireAIMod\communicationmod\patches\GenericEventDialogPatch.class
 SlayTheSpireAIMod\util\Move.class
+SlayTheSpireAIMod\AIs\CombatAIs\PotionEval.class
 SlayTheSpireAIMod\communicationmod\patches\MapRoomNodeHoverPatch$Locator.class
 SlayTheSpireAIMod\AIs\RestSiteAI.class
 SlayTheSpireAIMod\AIs\MapAI.class

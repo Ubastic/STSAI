@@ -50,6 +50,7 @@ C:\Users\ryanx\IdeaProjects\SlayTheSpireMods\SlayTheSpireAIMod\theDefault\src\ma
 C:\Users\ryanx\IdeaProjects\SlayTheSpireMods\SlayTheSpireAIMod\theDefault\src\main\java\SlayTheSpireAIMod\communicationmod\CommandExecutor.java
 C:\Users\ryanx\IdeaProjects\SlayTheSpireMods\SlayTheSpireAIMod\theDefault\src\main\java\SlayTheSpireAIMod\communicationmod\patches\HandCardSelectScreenPatch.java
 C:\Users\ryanx\IdeaProjects\SlayTheSpireMods\SlayTheSpireAIMod\theDefault\src\main\java\SlayTheSpireAIMod\AIs\MapAI.java
+C:\Users\ryanx\IdeaProjects\SlayTheSpireMods\SlayTheSpireAIMod\theDefault\src\main\java\SlayTheSpireAIMod\AIs\CombatAIs\PotionEval.java
 C:\Users\ryanx\IdeaProjects\SlayTheSpireMods\SlayTheSpireAIMod\theDefault\src\main\java\SlayTheSpireAIMod\communicationmod\patches\ShopScreenPatch.java
 C:\Users\ryanx\IdeaProjects\SlayTheSpireMods\SlayTheSpireAIMod\theDefault\src\main\java\SlayTheSpireAIMod\communicationmod\patches\GameActionManagerTopPatch.java
 C:\Users\ryanx\IdeaProjects\SlayTheSpireMods\SlayTheSpireAIMod\theDefault\src\main\java\SlayTheSpireAIMod\STSAIMod.java
