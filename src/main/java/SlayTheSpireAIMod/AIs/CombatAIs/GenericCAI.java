@@ -29,6 +29,14 @@ public class GenericCAI extends AbstractCAI{
         return pickMove(h, GenericCAI::potionEval);
     }
 
+    /**
+     * Returns the evaluated best next Move from the current state.
+     * Uses the specified state and potion evaluation functions.
+     *
+     * @param h  the heuristic to evaluate states
+     * @param pe the function to evaluate potions by
+     * @return   the evaluated best next Move from the current state
+     * */
     public static Move pickMove(Heuristic h, PotionEval pe){
         Move tryPotion = usePotion(pe);
         if(tryPotion != null){
@@ -80,9 +88,12 @@ public class GenericCAI extends AbstractCAI{
         return 0;
     }
 
-    /** @param state The state to be evaluated.
-     * Evaluation of the given state (lower is better).
-     * @return int Return a measure of how good a state is. */
+    /**
+     * Returns an evaluation of a state. Lower is better.
+     *
+     * @param state     the state to be evaluated
+     * @param tolerance the amount of health to ignore losing per turn
+     * @return          an evaluation of a state. Lower is better */
     public static int heuristic(CardSequence state, int tolerance){
         int aliveMonsters = 0;
         int totalHealth = 0;
@@ -122,10 +133,13 @@ public class GenericCAI extends AbstractCAI{
         return totalHealth + aliveMonstersFactor + hpLossFactor + strengthFactor + metallicizeFactor;
     }
 
-    /** Determine if there are any "safe" cards to play.
+    /**
+     * Returns a Move which plays a "safe" card. Returns null if none exists.
      * Ignores negative effects that trigger on playing a card.
      * Ignores no-draw from Battle Trance(+).
-     * @return Move Return a Move which costs no energy which can only help the player, null if none exists. */
+     *
+     * @return a Move which costs no energy which can only help the player. Null if none exists
+     * */
     public static Move FreeCard(){
         ArrayList<AbstractCard> cards = AbstractDungeon.player.hand.group;
         HashSet<String> freeCards = new HashSet<>();
