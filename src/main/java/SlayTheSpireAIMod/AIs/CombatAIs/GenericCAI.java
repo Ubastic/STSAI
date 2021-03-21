@@ -26,7 +26,11 @@ public class GenericCAI extends AbstractCAI{
     }
 
     public static Move pickMove(Heuristic h){
-        Move tryPotion = usePotion(GenericCAI::potionEval);
+        return pickMove(h, GenericCAI::potionEval);
+    }
+
+    public static Move pickMove(Heuristic h, PotionEval pe){
+        Move tryPotion = usePotion(pe);
         if(tryPotion != null){
             return tryPotion;
         }
