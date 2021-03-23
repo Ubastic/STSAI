@@ -13,7 +13,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
 
-/** AI versus encounter "TheGuardian". */
+/** AI versus encounter "The Guardian". */
 public class TheGuardianCAI extends AbstractCAI{
     public static final Logger logger = LogManager.getLogger(TheGuardianCAI.class.getName());
 
@@ -137,9 +137,6 @@ public class TheGuardianCAI extends AbstractCAI{
             return new TheGuardianMonster(this);
         }
 
-        /** @param player The player who plays the attack.
-         * @param attack The attack played.
-         * Update monster values after player plays an attack on this monster. */
         @Override
         public void takeAttack(CombatUtils.SimplePlayer player, AbstractCard attack) {
             super.takeAttack(player, attack);
@@ -161,6 +158,7 @@ public class TheGuardianCAI extends AbstractCAI{
         public String toString() {
             return "TheGuardianMonster{" +
                     "modeShiftAmount=" + modeShiftAmount +
+                    ", sharpHideAmount=" + sharpHideAmount +
                     ", attack=" + attack +
                     ", health=" + health +
                     ", block=" + block +
