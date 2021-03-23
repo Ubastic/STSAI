@@ -109,7 +109,11 @@ public class GenericCAI extends AbstractCAI{
         for(CombatUtils.SimpleMonster m : state.simpleMonsters){
             if(m.isAlive()){
                 aliveMonsters += 1;
-                totalHealth += m.health;
+                // health is effectively lower if monster will be vulnerable in the future
+                int effectiveHealth = m.health;
+                int futureVul = m.vulnerable - 1;
+                effectiveHealth = Math.max(1, effectiveHealth - futureVul * 4);
+                totalHealth += effectiveHealth;
                 incomingDmg += m.attack.getHitDamage() * m.attack.getHits();
             }
         }
