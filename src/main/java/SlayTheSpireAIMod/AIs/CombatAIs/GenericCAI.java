@@ -3,9 +3,12 @@ package SlayTheSpireAIMod.AIs.CombatAIs;
 import SlayTheSpireAIMod.util.CombatUtils;
 import SlayTheSpireAIMod.util.Move;
 import com.megacrit.cardcrawl.cards.AbstractCard;
+import com.megacrit.cardcrawl.cards.status.Burn;
+import com.megacrit.cardcrawl.cards.status.Slimed;
 import com.megacrit.cardcrawl.dungeons.AbstractDungeon;
 import com.megacrit.cardcrawl.potions.AbstractPotion;
 import com.megacrit.cardcrawl.potions.FruitJuice;
+import com.megacrit.cardcrawl.powers.PlatedArmorPower;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -93,7 +96,8 @@ public class GenericCAI extends AbstractCAI{
      *
      * @param state     the state to be evaluated
      * @param tolerance the amount of health to ignore losing per turn
-     * @return          an evaluation of a state. Lower is better */
+     * @return          an evaluation of a state. Lower is better
+     * */
     public static int heuristic(CardSequence state, int tolerance){
         int aliveMonsters = 0;
         int totalHealth = 0;
@@ -102,8 +106,8 @@ public class GenericCAI extends AbstractCAI{
         int extraBlock = 0;
         extraBlock += state.simplePlayer.metallicize;
 
-        if(AbstractDungeon.player.hasPower("Plated Armor")){
-            extraBlock += AbstractDungeon.player.getPower("Plated Armor").amount;
+        if(AbstractDungeon.player.hasPower(PlatedArmorPower.POWER_ID)){
+            extraBlock += AbstractDungeon.player.getPower(PlatedArmorPower.POWER_ID).amount;
         }
 
         for(CombatUtils.SimpleMonster m : state.simpleMonsters){
@@ -113,10 +117,25 @@ public class GenericCAI extends AbstractCAI{
                 int effectiveHealth = m.health;
                 int futureVul = m.vulnerable - 1;
                 effectiveHealth = Math.max(1, effectiveHealth - futureVul * 4);
+                // Potential issue: health at 1 not preferred to >1 and vulnerable
                 totalHealth += effectiveHealth;
                 incomingDmg += m.attack.getHitDamage() * m.attack.getHits();
             }
         }
+
+        // status cards which remain in deck are bad
+        // for now, Slimed only leaves the hand if played, so playing it is prioritized to doing nothing
+        int futureStatus = 0;
+        for(AbstractCard c : state.simplePlayer.hand){
+            if(c.cardID.equals(Slimed.ID)){
+                futureStatus += 1;
+            }
+            if(c.cardID.equals(Burn.ID)){
+                futureStatus += 1;
+                incomingDmg += c.magicNumber;
+            }
+        }
+        int statusFactor = futureStatus;
 
         int willLoseHP = Math.max(0, incomingDmg - state.simplePlayer.block - extraBlock);
         int hpLossFactor =  3 * Math.max(0, willLoseHP - tolerance);
@@ -134,7 +153,7 @@ public class GenericCAI extends AbstractCAI{
         int metallicizeA = -3;
         int metallicizeFactor = metallicize * metallicizeA;
 
-        return totalHealth + aliveMonstersFactor + hpLossFactor + strengthFactor + metallicizeFactor;
+        return totalHealth + aliveMonstersFactor + hpLossFactor + strengthFactor + metallicizeFactor + statusFactor;
     }
 
     /**
@@ -159,7 +178,7 @@ public class GenericCAI extends AbstractCAI{
         freeCards.add("Rage");
         freeCards.add("Rage+");
         for(AbstractCard card : cards){
-            if(freeCards.contains(card.cardID) && card.costForTurn == 0){
+            if(freeCards.contains(card.name) && card.costForTurn == 0){
                 return new Move(Move.TYPE.CARD, cards.indexOf(card), null);
             }
         }
