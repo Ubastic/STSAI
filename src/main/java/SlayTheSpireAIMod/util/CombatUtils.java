@@ -29,6 +29,16 @@ public class CombatUtils {
     }
 
     /**
+     * Returns whether the current game is at least at the specified level.
+     *
+     * @param l the ascension level to compare to
+     * @return  whether the current game is at least at the specified level
+     * */
+    public static boolean atLevel(int l){
+        return AbstractDungeon.ascensionLevel >= l;
+    }
+
+    /**
      * Returns the best valid next move according to the appropriate Combat AI.
      *
      * @return the determined best next move.
@@ -38,8 +48,14 @@ public class CombatUtils {
         return pickMove(combat);
     }
 
-    /** @param combat name of current combat
-     * @return        AbstractCAI Return appropriate AI based on combat, null if none exists. */
+
+    /**
+     * Returns a CAI corresponding to the specified combat.
+     * Returns a generic CAI if no specific CAI exists for the combat.
+     *
+     * @param combat the name of the combat
+     * @return       the CAI based on specified combat
+     * */
     public static AbstractCAI getAI(String combat){
         switch (combat){
             case "Gremlin Nob": return new GremlinNobCAI();
@@ -60,7 +76,7 @@ public class CombatUtils {
      * @return the determined best next move.
      * */
     public static Move pickMove(String combat){
-        AbstractCAI ai = AbstractCAI.getAI(combat);
+        AbstractCAI ai = getAI(combat);
         return ai.pickMove();
     }
 
