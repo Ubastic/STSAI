@@ -54,6 +54,7 @@ public class GenericCAI extends AbstractCAI{
 
         // play the card that leads to the best state
         // first, remove cards that cannot be played
+        // TODO address this for burns
         // looks only at monster health and damage player will take from attacks
         CardSequence start = new CardSequence();
         ArrayList<AbstractCard> unplayable = new ArrayList<>();
