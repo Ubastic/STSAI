@@ -4,12 +4,14 @@ import SlayTheSpireAIMod.AIs.CombatAIs.*;
 import basemod.ReflectionHacks;
 import com.megacrit.cardcrawl.cards.AbstractCard;
 import com.megacrit.cardcrawl.cards.DamageInfo;
-import com.megacrit.cardcrawl.cards.red.PerfectedStrike;
+import com.megacrit.cardcrawl.cards.red.*;
 import com.megacrit.cardcrawl.characters.AbstractPlayer;
 import com.megacrit.cardcrawl.core.AbstractCreature;
 import com.megacrit.cardcrawl.dungeons.AbstractDungeon;
 import com.megacrit.cardcrawl.monsters.AbstractMonster;
 import com.megacrit.cardcrawl.monsters.EnemyMoveInfo;
+import com.megacrit.cardcrawl.powers.*;
+import com.megacrit.cardcrawl.relics.*;
 import com.megacrit.cardcrawl.ui.panels.EnergyPanel;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -73,7 +75,7 @@ public class CombatUtils {
      * Use a combat specific AI if possible.
      *
      * @param combat the name of current combat
-     * @return the determined best next move.
+     * @return       the determined best next move.
      * */
     public static Move pickMove(String combat){
         AbstractCAI ai = getAI(combat);
@@ -157,12 +159,12 @@ public class CombatUtils {
      * Returns the current amount of the specified power the specified creature.
      * Returns 0 if the creature does not own the power.
      *
-     * @param c the creature to check the power of
-     * @param p the ID of the power to check the amount of
-     * @return  the current amount of the specified power the specified creature
+     * @param c  the creature to check the power of
+     * @param id the ID of the power to check the amount of
+     * @return   the current amount of the specified power the specified creature
      * */
-    public static int amountOfPower(AbstractCreature c, String p){
-        return c.hasPower(p) ? c.getPower(p).amount : 0;
+    public static int amountOfPower(AbstractCreature c, String id){
+        return c.hasPower(id) ? c.getPower(id).amount : 0;
     }
 
     /**
@@ -217,16 +219,6 @@ public class CombatUtils {
             }
         }
 
-        public MonsterAttack(MonsterAttack a){
-            monster = a.monster;
-            baseDmg = a.baseDmg;
-            hitDamage = a.hitDamage;
-            hits = a.hits;
-            strength = a.strength;
-            weakened = a.weakened;
-            vulnerable = a.vulnerable;
-        }
-
         /** Update field values to represent the combat state. */
         public void update(){
             if(monster.isDeadOrEscaped()){
@@ -238,9 +230,9 @@ public class CombatUtils {
             baseDmg = moveInfo.baseDamage;
             hitDamage = monster.getIntentDmg();
             hits = Math.max(1, moveInfo.multiplier);
-            strength = monster.getPower("Strength") != null ? monster.getPower("Strength").amount : 0;
-            weakened = monster.hasPower("Weakened");
-            vulnerable = AbstractDungeon.player.hasPower("Vulnerable");
+            strength = amountOfPower(monster, StrengthPower.POWER_ID);
+            weakened = monster.hasPower(WeakPower.POWER_ID);
+            vulnerable = AbstractDungeon.player.hasPower(VulnerablePower.POWER_ID);
         }
 
         /**
@@ -278,7 +270,7 @@ public class CombatUtils {
             }
             else{
                 double vFactor = getVulnerableFactor();
-                double wFactor = AbstractDungeon.player.hasRelic("Paper Crane") ? 0.6 : 0.75;
+                double wFactor = AbstractDungeon.player.hasRelic(PaperCrane.ID) ? 0.6 : 0.75;
                 int wBase = Math.max(0, (int)Math.floor((baseDmg + strength) * wFactor)); // damage per hit if weakened
                 return (int)Math.floor(wBase * vFactor);
             }
@@ -298,7 +290,7 @@ public class CombatUtils {
          * */
         public double getVulnerableFactor(){
             if(vulnerable){
-                return AbstractDungeon.player.hasRelic("Odd Mushroom") ? 1.25 : 1.5;
+                return AbstractDungeon.player.hasRelic(OddMushroom.ID) ? 1.25 : 1.5;
             }
             return 1;
         }
@@ -393,21 +385,21 @@ public class CombatUtils {
 
             // calculate damage dealt by attack
             int realBaseDamage = attack.baseDamage;
-            if(attack.cardID.equals("Perfected Strike")){
+            if(attack.cardID.equals(PerfectedStrike.ID)){
                 realBaseDamage += attack.magicNumber * PerfectedStrike.countCards();
-            }else if (attack.cardID.equals("Body Slam")){
+            }else if (attack.cardID.equals(BodySlam.ID)){
                 realBaseDamage = player.block;
             }
             double vFactor = vulnerable > 0 ? player.getVulnerableDealFactor() : 1;
             double wFactor = player.getWeakDealFactor();
             int strikeDamage = (int)Math.max(0, (realBaseDamage + player.strength) * wFactor * vFactor);
             if(intangible){
-                strikeDamage = Math.max(1, strikeDamage);
+                strikeDamage = Math.min(1, strikeDamage);
             }
             int hits = getHits(attack);
-            if(attack.cardID.equals("Whirlwind")){
+            if(attack.cardID.equals(Whirlwind.ID)){
                 hits = player.energy;
-                if(AbstractDungeon.player.hasRelic("Chemical X")){
+                if(AbstractDungeon.player.hasRelic(ChemicalX.ID)){
                     hits += 2;
                 }
             }
@@ -420,18 +412,16 @@ public class CombatUtils {
         /**
          * Updates health and block after taking damage.
          *
-         * @param ignoreBlock If true, deal all damage to health
+         * @param amount      the amount of damage to take
+         * @param ignoreBlock if true, deal all damage to health
          * */
         public void takeDamage(int amount, boolean ignoreBlock){
             if(ignoreBlock){
                 health -= amount;
             }else{
-                if(block >= amount){
-                    block -= amount;
-                }else{
-                    health -= amount - block;
-                    block = 0;
-                }
+                block -= amount;
+                health += Math.min(0, block);
+                block = Math.max(0, block);
             }
         }
 
@@ -489,11 +479,11 @@ public class CombatUtils {
             energy = usableEnergy();
             health = p.currentHealth;
             block = p.currentBlock;
-            strength = p.hasPower("Strength") ? p.getPower("Strength").amount : 0;
-            metallicize = p.hasPower("Metallicize") ? p.getPower("Metallicize").amount : 0;
-            weakened = p.hasPower("Weakened");
-            vulnerable = p.hasPower("Vulnerable");
-            intangible = p.hasPower("Intangible");
+            strength = amountOfPower(p, StrengthPower.POWER_ID);
+            metallicize = amountOfPower(p, MetallicizePower.POWER_ID);
+            weakened = p.hasPower(WeakPower.POWER_ID);
+            vulnerable = p.hasPower(VulnerablePower.POWER_ID);
+            intangible = p.hasPower(IntangiblePlayerPower.POWER_ID);
         }
 
         public SimplePlayer(SimplePlayer p){
@@ -522,14 +512,14 @@ public class CombatUtils {
                 energy -= toPlay.costForTurn;
             }
             if(toPlay.type == AbstractCard.CardType.ATTACK){
-                if(toPlay.cardID.equals("Whirlwind")){
+                if(toPlay.cardID.equals(Whirlwind.ID)){
                     for(SimpleMonster m : monsters){
                         if(m.isAlive()){
                             m.takeAttack(this, toPlay);
                         }
                     }
                     energy = 0;
-                }else if(toPlay.cardID.equals("Cleave")){
+                }else if(toPlay.cardID.equals(Cleave.ID) || toPlay.cardID.equals(Reaper.ID)){
                     for(SimpleMonster m : monsters){
                         if(m.isAlive()){
                             m.takeAttack(this, toPlay);
@@ -542,9 +532,9 @@ public class CombatUtils {
             }else if(toPlay.type == AbstractCard.CardType.SKILL){
                 block += toPlay.block;
             }else if(toPlay.type == AbstractCard.CardType.POWER){
-                if(toPlay.cardID.equals("Inflame")){
+                if(toPlay.cardID.equals(Inflame.ID)){
                     strength += toPlay.magicNumber;
-                }else if(toPlay.cardID.equals("Metallicize")){
+                }else if(toPlay.cardID.equals(Metallicize.ID)){
                     metallicize += toPlay.magicNumber;
                 }
             }
@@ -556,7 +546,7 @@ public class CombatUtils {
          * @return the factor of increased damage dealt due to monster vulnerable.
          * */
         public double getVulnerableDealFactor(){
-            return AbstractDungeon.player.hasRelic("Paper Frog") ? 1.75 : 1.5;
+            return AbstractDungeon.player.hasRelic(PaperFrog.ID) ? 1.75 : 1.5;
         }
 
         /**
@@ -571,19 +561,23 @@ public class CombatUtils {
         /**
          * Updates this player's health and block after taking damage.
          *
-         * @param d           the amount of damage this player takes
+         * @param amount      the amount of damage this player takes
          * @param ignoreBlock whether all damage is dealt to health
          * */
-        public void takeDamage(int d, boolean ignoreBlock){
+        public void takeDamage(int amount, boolean ignoreBlock){
             if(ignoreBlock){
-                health -= d;
+                health -= amount;
             }else{
-                if(block >= d){
-                    block -= d;
-                }else{
-                    health -= d - block;
-                    block = 0;
+                block -= amount;
+                int deltaHP = Math.min(0, block);
+                if(AbstractDungeon.player.hasRelic(Torii.ID) && -5 <= deltaHP && deltaHP < 0){
+                    deltaHP = -1;
                 }
+                if(AbstractDungeon.player.hasRelic(TungstenRod.ID) && deltaHP < 0){
+                    deltaHP += 1;
+                }
+                health += deltaHP;
+                block = Math.max(0, block);
             }
         }
 
