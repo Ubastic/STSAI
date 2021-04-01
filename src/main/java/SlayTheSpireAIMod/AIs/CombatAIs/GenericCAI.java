@@ -41,6 +41,19 @@ public class GenericCAI extends AbstractCAI{
      * @return   the evaluated best next Move from the current state
      * */
     public static Move pickMove(Heuristic h, PotionEval pe){
+        return pickMove(h, pe, new CardSequence());
+    }
+
+    /**
+     * Returns the evaluated best next Move from the specified state.
+     * Uses the specified state and potion evaluation functions.
+     *
+     * @param h     the heuristic to evaluate states
+     * @param pe    the function to evaluate potions by
+     * @param start the initial state to evaluate moves from
+     * @return      the evaluated best next Move from the current state
+     * */
+    public static Move pickMove(Heuristic h, PotionEval pe, CardSequence start){
         Move tryPotion = usePotion(pe);
         if(tryPotion != null){
             return tryPotion;
@@ -56,7 +69,6 @@ public class GenericCAI extends AbstractCAI{
         // first, remove cards that cannot be played
         // TODO address this for burns
         // looks only at monster health and damage player will take from attacks
-        CardSequence start = new CardSequence();
         ArrayList<AbstractCard> unplayable = new ArrayList<>();
         for(AbstractCard c : start.simplePlayer.hand){
             if(!c.canUse(AbstractDungeon.player, CombatUtils.getWeakestTarget())){
@@ -103,7 +115,7 @@ public class GenericCAI extends AbstractCAI{
         int aliveMonsters = 0;
         int totalHealth = 0;
         int incomingDmg = 0;
-
+        // TODO use player HP so that thorns is accounted for
         int extraBlock = 0;
         extraBlock += state.simplePlayer.metallicize;
 

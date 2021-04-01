@@ -19,36 +19,8 @@ public class SlimeBossCAI extends AbstractCAI {
 
     @Override
     public Move pickMove() {
-        Move tryPotion = usePotion(TheGuardianCAI::potionEval);
-        if(tryPotion != null){
-            return tryPotion;
-        }
-
-        Move tryFree = GenericCAI.FreeCard();
-        if(tryFree != null){
-            return tryFree;
-        }
-
-        CardSequence start = new CardSequence(getMonsters());
-        ArrayList<AbstractCard> unplayable = new ArrayList<>();
-        for(AbstractCard c : start.simplePlayer.hand){
-            if(!c.canUse(AbstractDungeon.player, CombatUtils.getWeakestTarget())){
-                unplayable.add(c);
-            }
-        }
-        for(AbstractCard c : unplayable){
-            start.simplePlayer.hand.remove(c);
-        }
-
-        CardSequence bestState = start.getBestPossibility(SlimeBossCAI::heuristic);
-
-        if(bestState != start){
-            logger.info("Evaluated best state: " + bestState.toString());
-            int bestIndex = AbstractDungeon.player.hand.group.indexOf(bestState.first);
-            return new Move(Move.TYPE.CARD, bestIndex,
-                    AbstractDungeon.getCurrRoom().monsters.monsters.get(bestState.firstTargetIndex));
-        }
-        return new Move(Move.TYPE.PASS);
+        return GenericCAI.pickMove(SlimeBossCAI::heuristic,
+                TheGuardianCAI::potionEval, new CardSequence(getMonsters()));
     }
 
     public ArrayList<CombatUtils.SimpleMonster> getMonsters(){
