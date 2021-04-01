@@ -40,7 +40,7 @@ public class SlimeBossCAI extends AbstractCAI {
     }
 
     public static int heuristic(CardSequence state){
-        int genericFactor = GenericCAI.heuristic(state, 0);
+        int genericFactor = GenericCAI.heuristic(state);
         int BossSplitFactor = 0; // boss at half health or slightly below is bad
 
         ArrayList<CombatUtils.SimpleMonster> monsters = state.simpleMonsters;

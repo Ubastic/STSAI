@@ -15,7 +15,7 @@ public class SentriesCAI extends AbstractCAI {
 
     @Override
     public Move pickMove() {
-        return GenericCAI.pickMove(x -> heuristic(x, 0));
+        return GenericCAI.pickMove(SentriesCAI::heuristic);
     }
 
     /**
@@ -24,8 +24,8 @@ public class SentriesCAI extends AbstractCAI {
      * @param state the state to be evaluated.
      * @return how good the state is
      * */
-    public static int heuristic(CardSequence state, int tolerance){
-        int genericFactor = GenericCAI.heuristic(state, tolerance);
+    public static int heuristic(CardSequence state){
+        int genericFactor = GenericCAI.heuristic(state);
         int aliveMonsters = 0;
         for(CombatUtils.SimpleMonster m : state.simpleMonsters){
             if(m.isAlive()){

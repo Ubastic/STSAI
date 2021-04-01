@@ -40,7 +40,7 @@ public class TheGuardianCAI extends AbstractCAI{
         // looks only at monster health and damage player will take from attacks
         CardSequence start = new CardSequence(getMonsters());
 
-        CardSequence bestState = start.getBestPossibility(x -> GenericCAI.heuristic(x, 0));
+        CardSequence bestState = start.getBestPossibility(x -> GenericCAI.heuristic(x));
 
         if(bestState != start){
             logger.info("Evaluated best state: " + bestState.toString());

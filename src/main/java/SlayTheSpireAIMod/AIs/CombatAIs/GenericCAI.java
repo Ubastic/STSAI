@@ -25,7 +25,7 @@ public class GenericCAI extends AbstractCAI{
 
     @Override
     public Move pickMove() {
-        return pickMove(x -> heuristic(x, 0));
+        return pickMove(x -> heuristic(x));
     }
 
     public static Move pickMove(Heuristic h){
@@ -94,67 +94,158 @@ public class GenericCAI extends AbstractCAI{
     /**
      * Returns an evaluation of a state. Lower is better.
      *
-     * @param state     the state to be evaluated
-     * @param tolerance the amount of health to ignore losing per turn
-     * @return          an evaluation of a state. Lower is better
+     * @param state the state to be evaluated
+     * @return      an evaluation of a state. Lower is better
      * */
-    public static int heuristic(CardSequence state, int tolerance){
+    public static int heuristic(CardSequence state){
+        int terms = 4;
+        // playerHP  : expected remaining HP at start of next turn
+        // monsterHP : total vulnerable-adjusted monster health plus multiple-monster factor
+        // power     : evaluation of player powers
+        // status    : number of status cards which are not exhausted
+        // [playerHP, monsterHP, power, status]
+        int[] values = new int[terms];
+        int[] weights = { -3, 1, 1, 1 };
+
         int aliveMonsters = 0;
-        int totalHealth = 0;
         int incomingDmg = 0;
-        // TODO use player HP so that thorns is accounted for
-        int extraBlock = 0;
-        extraBlock += state.simplePlayer.metallicize;
 
-        if(AbstractDungeon.player.hasPower(PlatedArmorPower.POWER_ID)){
-            extraBlock += AbstractDungeon.player.getPower(PlatedArmorPower.POWER_ID).amount;
-        }
-
+        int totalVAdjHealth = 0;
         for(CombatUtils.SimpleMonster m : state.simpleMonsters){
             if(m.isAlive()){
                 aliveMonsters += 1;
                 // health is effectively lower if monster will be vulnerable in the future
-                int effectiveHealth = m.health;
+                int vAdjHealth = m.health;
                 int futureVul = m.vulnerable - 1;
-                effectiveHealth = Math.max(1, effectiveHealth - futureVul * 4);
+                vAdjHealth = Math.max(1, vAdjHealth - futureVul * 4);
                 // Potential issue: health at 1 not preferred to >1 and vulnerable
-                totalHealth += effectiveHealth;
+                totalVAdjHealth += vAdjHealth;
                 incomingDmg += m.attack.getHitDamage() * m.attack.getHits();
             }
         }
 
-        // status cards which remain in deck are bad
-        // for now, Slimed only leaves the hand if played, so playing it is prioritized to doing nothing
-        int futureStatus = 0;
+        // PLAYERHP
+        int extraBlock = state.simplePlayer.metallicize;
+        if(AbstractDungeon.player.hasPower(PlatedArmorPower.POWER_ID)){
+            extraBlock += AbstractDungeon.player.getPower(PlatedArmorPower.POWER_ID).amount;
+        }
+        int willLoseHP = Math.max(0, incomingDmg - state.simplePlayer.block - extraBlock);
+        values[0] = state.simplePlayer.health - willLoseHP;
+
+        // MONSTERHP
+        if(aliveMonsters == 0){
+            values[1] = -100;
+        }else{
+            values[1] = totalVAdjHealth + 5 * aliveMonsters;
+        }
+
+        // POWER
+        int powerTerms = 2;
+        // [strength, metallicize]
+        int[] powerValues = new int[powerTerms];
+        int[] powerWeights = { -5, -3 };
+        powerValues[0] = state.simplePlayer.strength;
+        powerValues[1] = state.simplePlayer.metallicize;
+        for(int i = 0; i < powerTerms; i++){
+            values[2] += powerWeights[i] * powerValues[i];
+        }
+
+        // STATUS
         for(AbstractCard c : state.simplePlayer.hand){
             if(c.cardID.equals(Slimed.ID)){
-                futureStatus += 1;
+                values[3] += 1;
             }
             if(c.cardID.equals(Burn.ID)){
-                futureStatus += 1;
+                values[3] += 1;
                 incomingDmg += c.magicNumber;
             }
         }
-        int statusFactor = futureStatus;
 
-        int willLoseHP = Math.max(0, incomingDmg - state.simplePlayer.block - extraBlock);
-        int hpLossFactor =  3 * Math.max(0, willLoseHP - tolerance);
-        int aliveMonstersFactor = 5 * aliveMonsters;
-
-        if(aliveMonsters == 0){
-            aliveMonstersFactor = -100;
+        int evaluation = 0;
+        for(int i = 0; i < terms; i++){
+            evaluation += weights[i] * values[i];
         }
-
-        int strength = state.simplePlayer.strength;
-        int strengthA = -5; // strength is less important if little dmg needs to be dealt
-        int strengthFactor = strength * strengthA;
-
-        int metallicize = state.simplePlayer.metallicize;
-        int metallicizeA = -3;
-        int metallicizeFactor = metallicize * metallicizeA;
-
-        return totalHealth + aliveMonstersFactor + hpLossFactor + strengthFactor + metallicizeFactor + statusFactor;
+        return evaluation;
     }
+
+
+//    /**
+//     * Returns an evaluation of a state. Lower is better.
+//     *
+//     * @param state the state to be evaluated
+//     * @param dphp  the amount of monsterHP that must be dealt to be willing to lose 1 HP
+//     * @return      an evaluation of a state. Lower is better
+//     * */
+//    public static int heuristic(CardSequence state, int dphp){
+//        int terms = 4;
+//        // playerHP  : expected remaining HP at start of next turn
+//        // monsterHP : total vulnerable-adjusted monster health plus multiple-monster factor
+//        // power     : evaluation of player powers
+//        // status    : number of status cards which are not exhausted
+//        // [playerHP, monsterHP, power, status]
+//        int[] values = new int[terms];
+//        int[] weights = { -3, 1, 1, 1 };
+//
+//        int aliveMonsters = 0;
+//        int incomingDmg = 0;
+//
+//        int totalVAdjHealth = 0;
+//        for(CombatUtils.SimpleMonster m : state.simpleMonsters){
+//            if(m.isAlive()){
+//                aliveMonsters += 1;
+//                // health is effectively lower if monster will be vulnerable in the future
+//                int vAdjHealth = m.health;
+//                int futureVul = m.vulnerable - 1;
+//                vAdjHealth = Math.max(1, vAdjHealth - futureVul * 4);
+//                // Potential issue: health at 1 not preferred to >1 and vulnerable
+//                totalVAdjHealth += vAdjHealth;
+//                incomingDmg += m.attack.getHitDamage() * m.attack.getHits();
+//            }
+//        }
+//
+//        // PLAYERHP
+//        int extraBlock = state.simplePlayer.metallicize;
+//        if(AbstractDungeon.player.hasPower(PlatedArmorPower.POWER_ID)){
+//            extraBlock += AbstractDungeon.player.getPower(PlatedArmorPower.POWER_ID).amount;
+//        }
+//        int willLoseHP = Math.max(0, incomingDmg - state.simplePlayer.block - extraBlock);
+//        values[0] = state.simplePlayer.health - willLoseHP;
+//
+//        // MONSTERHP
+//        if(aliveMonsters == 0){
+//            values[1] = -100;
+//        }else{
+//            values[1] = totalVAdjHealth + 5 * aliveMonsters;
+//        }
+//
+//        // POWER
+//        int powerTerms = 2;
+//        // [strength, metallicize]
+//        int[] powerValues = new int[powerTerms];
+//        int[] powerWeights = { -5, -3 };
+//        powerValues[0] = state.simplePlayer.strength;
+//        powerValues[1] = state.simplePlayer.metallicize;
+//        for(int i = 0; i < powerTerms; i++){
+//            values[2] += powerWeights[i] * powerValues[i];
+//        }
+//
+//        // STATUS
+//        for(AbstractCard c : state.simplePlayer.hand){
+//            if(c.cardID.equals(Slimed.ID)){
+//                values[3] += 1;
+//            }
+//            if(c.cardID.equals(Burn.ID)){
+//                values[3] += 1;
+//                incomingDmg += c.magicNumber;
+//            }
+//        }
+//
+//        int evaluation = 0;
+//        for(int i = 0; i < terms; i++){
+//            evaluation += weights[i] * values[i];
+//        }
+//        return evaluation;
+//    }
 
     /**
      * Returns a Move which plays a "safe" card. Returns null if none exists.
