@@ -24,8 +24,8 @@ public class SentriesCAI extends AbstractCAI {
      * @param state the state to be evaluated.
      * @return how good the state is
      * */
-    public static int heuristic(CardSequence state){
-        int genericFactor = GenericCAI.heuristic(state);
+    public static double heuristic(CardSequence state){
+        double genericFactor = GenericCAI.heuristic(state);
         int aliveMonsters = 0;
         for(CombatUtils.SimpleMonster m : state.simpleMonsters){
             if(m.isAlive()){

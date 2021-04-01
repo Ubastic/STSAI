@@ -2,7 +2,6 @@ package SlayTheSpireAIMod.AIs.CombatAIs;
 
 import SlayTheSpireAIMod.util.CombatUtils;
 import SlayTheSpireAIMod.util.Move;
-import com.megacrit.cardcrawl.cards.AbstractCard;
 import com.megacrit.cardcrawl.dungeons.AbstractDungeon;
 import com.megacrit.cardcrawl.monsters.AbstractMonster;
 import com.megacrit.cardcrawl.monsters.exordium.SlimeBoss;
@@ -39,8 +38,8 @@ public class SlimeBossCAI extends AbstractCAI {
         return toRet;
     }
 
-    public static int heuristic(CardSequence state){
-        int genericFactor = GenericCAI.heuristic(state);
+    public static double heuristic(CardSequence state){
+        double genericFactor = GenericCAI.heuristic(state);
         int BossSplitFactor = 0; // boss at half health or slightly below is bad
 
         ArrayList<CombatUtils.SimpleMonster> monsters = state.simpleMonsters;
