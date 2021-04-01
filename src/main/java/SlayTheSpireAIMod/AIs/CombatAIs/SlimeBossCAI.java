@@ -51,13 +51,13 @@ public class SlimeBossCAI extends AbstractCAI {
                 int underHalf = halfHP - m.health;
                 // splitting at within 10 of half hp is bad
                 if(underHalf <= 10){
-                    BossSplitFactor += 120;
+                    BossSplitFactor += 40;
                 }else{
                     BossSplitFactor -= underHalf * 3;
                 }
             }
         }
-        return genericFactor + BossSplitFactor;
+        return genericFactor - BossSplitFactor;
     }
 
     static class SlimeBossMonster extends CombatUtils.SimpleMonster{

@@ -208,7 +208,7 @@ public abstract class AbstractCAI {
             CardSequence bestState = this;
             for(CardSequence state : ended){
                 double eval = h.evaluation(state);
-                if(eval < bestEval){
+                if(eval > bestEval){
                     bestEval = eval;
                     bestState = state;
                 }

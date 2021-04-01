@@ -19,13 +19,14 @@ public class SentriesCAI extends AbstractCAI {
     }
 
     /**
-     * Returns the evaluation of the given state. Lower is better.
+     * Returns an evaluation of the specified state. Greater is better.
      *
-     * @param state the state to be evaluated.
-     * @return how good the state is
+     * @param state the state to be evaluated
+     * @return      the evaluation of the state. Greater is better
      * */
     public static double heuristic(CardSequence state){
         double genericFactor = GenericCAI.heuristic(state);
+
         int aliveMonsters = 0;
         for(CombatUtils.SimpleMonster m : state.simpleMonsters){
             if(m.isAlive()){
@@ -40,6 +41,6 @@ public class SentriesCAI extends AbstractCAI {
             CombatUtils.SimpleMonster right = state.simpleMonsters.get(2);
             multiSentryFactor = Math.min(left.health, right.health);
         }
-        return genericFactor + multiSentryFactor;
+        return genericFactor - multiSentryFactor;
     }
 }

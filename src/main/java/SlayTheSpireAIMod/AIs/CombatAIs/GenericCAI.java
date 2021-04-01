@@ -92,21 +92,21 @@ public class GenericCAI extends AbstractCAI{
     }
 
     /**
-     * Returns an evaluation of a state. Lower is better.
+     * Returns an evaluation of the specified state. Greater is better.
      *
      * @param state the state to be evaluated
-     * @return      an evaluation of a state. Lower is better
+     * @return      the evaluation of the state. Greater is better
      * */
     public static double heuristic(CardSequence state){
-        return -1 * heuristic(state, 2.9999);
+        return heuristic(state, 2.9999);
     }
 
     /**
-     * Returns an evaluation of a state. Greater is better.
+     * Returns an evaluation of the specified state. Greater is better.
      *
      * @param state the state to be evaluated
      * @param dphp  the amount of monsterHP that must be dealt to be willing to lose 1 HP
-     * @return      an evaluation of a state. Greater is better
+     * @return      the evaluation of the state. Greater is better
      * */
     public static double heuristic(CardSequence state, double dphp){
         int terms = 4;
