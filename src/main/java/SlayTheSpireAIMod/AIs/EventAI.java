@@ -58,9 +58,6 @@ public class EventAI {
             if(choices.size() == 2){
                 choose("max hp +8");
             }else{
-                // high priority only for testing purposes
-                if(choices.contains("transform a card"))
-                    choose("transform a card");
                 if(choices.contains("remove a card")){
                     choose("remove a card");
                 }else if(choices.contains("obtain a random common relic")){
@@ -73,15 +70,14 @@ public class EventAI {
                     choose("max hp +8");
                 }else if(choices.contains("choose a card to obtain")){
                     choose("choose a card to obtain");
-                }
-                else if(choices.contains("obtain a random rare card")){
-                    choose("obtain a random rare card");
-//                } else if(choices.contains("transform a card")){
-//                    choose("transform a card");
-                }else if(choices.contains("obtain a random uncommon colorless card")){
-                    choose("obtain a random uncommon colorless card");
                 }else if(choices.contains("enemies in the next three combat will have one health")){
                     choose("enemies in the next three combat will have one health");
+                }else if(choices.contains("obtain a random rare card")){
+                    choose("obtain a random rare card");
+                }else if(choices.contains("transform a card")){
+                    choose("transform a card");
+                }else if(choices.contains("obtain a random uncommon colorless card")){
+                    choose("obtain a random uncommon colorless card");
                 }else{
                     choose(choices.get(0)); // choose one of the non-drawback ones
                 }
