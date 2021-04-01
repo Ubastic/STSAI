@@ -21,6 +21,6 @@ public class LagavulinCAI extends AbstractCAI {
     // TODO play powers during dormant turns
     @Override
     public Move pickMove() {
-        return GenericCAI.pickMove(x -> GenericCAI.heuristic(x));
+        return GenericCAI.pickMove(x -> GenericCAI.heuristic(x, 1));
     }
 }
