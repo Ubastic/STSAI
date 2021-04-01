@@ -66,19 +66,6 @@ public class GenericCAI extends AbstractCAI{
         }
 
         // play the card that leads to the best state
-        // first, remove cards that cannot be played
-        // TODO address this for burns
-        // looks only at monster health and damage player will take from attacks
-        ArrayList<AbstractCard> unplayable = new ArrayList<>();
-        for(AbstractCard c : start.simplePlayer.hand){
-            if(!c.canUse(AbstractDungeon.player, CombatUtils.getWeakestTarget())){
-                unplayable.add(c);
-            }
-        }
-        for(AbstractCard c : unplayable){
-            start.simplePlayer.hand.remove(c);
-        }
-
         CardSequence bestState = start.getBestPossibility(h);
 
         if(bestState != start){

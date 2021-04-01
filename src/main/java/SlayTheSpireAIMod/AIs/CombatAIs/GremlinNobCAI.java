@@ -24,15 +24,6 @@ public class GremlinNobCAI extends AbstractCAI {
     public Move pickMove() {
         // first, remove cards that cannot be played
         CardSequence start = new CardSequence();
-        ArrayList<AbstractCard> unplayable = new ArrayList<>();
-        for(AbstractCard c : start.simplePlayer.hand){
-            if(!c.canUse(AbstractDungeon.player, CombatUtils.getWeakestTarget())){
-                unplayable.add(c);
-            }
-        }
-        for(AbstractCard c : unplayable){
-            start.simplePlayer.hand.remove(c);
-        }
 
         // never play skills vs Gremlin Nob
         ArrayList<AbstractCard> skills = new ArrayList<>();

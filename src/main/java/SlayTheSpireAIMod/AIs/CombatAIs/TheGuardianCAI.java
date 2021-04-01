@@ -39,15 +39,6 @@ public class TheGuardianCAI extends AbstractCAI{
         // first, remove cards that cannot be played
         // looks only at monster health and damage player will take from attacks
         CardSequence start = new CardSequence(getMonsters());
-        ArrayList<AbstractCard> unplayable = new ArrayList<>();
-        for(AbstractCard c : start.simplePlayer.hand){
-            if(!c.canUse(AbstractDungeon.player, CombatUtils.getWeakestTarget())){
-                unplayable.add(c);
-            }
-        }
-        for(AbstractCard c : unplayable){
-            start.simplePlayer.hand.remove(c);
-        }
 
         CardSequence bestState = start.getBestPossibility(x -> GenericCAI.heuristic(x, 0));
 

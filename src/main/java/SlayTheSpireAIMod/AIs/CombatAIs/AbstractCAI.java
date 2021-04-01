@@ -106,7 +106,8 @@ public abstract class AbstractCAI {
         }
 
         /**
-         * Returns a new CardSequence representing the state after playing a card.
+         * Returns a new CardSequence representing the state after playing a card from this state.
+         * Returns null if the card cannot be played from this state.
          *
          * @param toPlay the card to be played
          * @param target the target of the card to be played
@@ -114,6 +115,12 @@ public abstract class AbstractCAI {
          * */
         public CardSequence playCard(AbstractCard toPlay, CombatUtils.SimpleMonster target){
             if(toPlay.costForTurn > simplePlayer.energy){
+                return null;
+            }
+            // unplayable cards like Burn will not be played, but cards like Clash
+            // (playability depends on current turn actions) will not be counted playable appropriately
+            // FIXME replace weakest target with actual target
+            if(!toPlay.canUse(AbstractDungeon.player, CombatUtils.getWeakestTarget())){
                 return null;
             }
             CardSequence toRet = new CardSequence(this);
