@@ -165,7 +165,7 @@ public class GenericCAI extends AbstractCAI{
         int willLoseHP = Math.max(0, incomingDmg - state.simplePlayer.block - extraBlock);
         values[0] = state.simplePlayer.health - willLoseHP;
 
-        int evaluation = 0;
+        double evaluation = 0;
         for(int i = 0; i < terms; i++){
             evaluation += weights[i] * values[i];
         }
