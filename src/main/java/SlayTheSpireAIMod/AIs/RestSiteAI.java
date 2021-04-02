@@ -1,5 +1,6 @@
 package SlayTheSpireAIMod.AIs;
 
+import SlayTheSpireAIMod.AIs.CombatAIs.HexaghostCAI;
 import SlayTheSpireAIMod.communicationmod.ChoiceScreenUtils;
 import com.megacrit.cardcrawl.dungeons.AbstractDungeon;
 import com.megacrit.cardcrawl.rooms.RestRoom;
@@ -31,9 +32,15 @@ public class RestSiteAI {
             return;
         }
 
+        int needRest = 59;
+        String bossKey = AbstractDungeon.bossKey;
+        if(bossKey.equals(HexaghostCAI.KEY)){
+            needRest = 49;
+        }
+
         // ignore options that are not rest/smith for now TODO
         int health = AbstractDungeon.player.currentHealth;
-        if(health < 60){
+        if(health <= needRest){
             if(choices.contains("rest")){
                 choose("rest");
                 return;
