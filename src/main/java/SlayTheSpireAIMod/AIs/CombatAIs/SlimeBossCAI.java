@@ -57,7 +57,11 @@ public class SlimeBossCAI extends AbstractCAI {
                 }
             }
         }
-        return genericFactor - BossSplitFactor;
+
+        int demonFormWeight = 20;
+        int demonFormFactor = demonFormWeight * state.simplePlayer.demonForm;
+
+        return genericFactor - BossSplitFactor + demonFormFactor;
     }
 
     static class SlimeBossMonster extends CombatUtils.SimpleMonster{

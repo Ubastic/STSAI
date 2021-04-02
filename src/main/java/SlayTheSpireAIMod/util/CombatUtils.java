@@ -371,7 +371,6 @@ public class CombatUtils {
             return new SimpleMonster(this);
         }
 
-
         /**
          * Updates after player plays an attack on this monster.
          *
@@ -467,6 +466,7 @@ public class CombatUtils {
         public int strength;
         // TODO add dexterity
         public int metallicize;
+        public int demonForm;
         boolean weakened;
         boolean vulnerable;
         boolean intangible;
@@ -481,6 +481,7 @@ public class CombatUtils {
             block = p.currentBlock;
             strength = amountOfPower(p, StrengthPower.POWER_ID);
             metallicize = amountOfPower(p, MetallicizePower.POWER_ID);
+            demonForm = amountOfPower(p, DemonFormPower.POWER_ID);
             weakened = p.hasPower(WeakPower.POWER_ID);
             vulnerable = p.hasPower(VulnerablePower.POWER_ID);
             intangible = p.hasPower(IntangiblePlayerPower.POWER_ID);
@@ -494,6 +495,7 @@ public class CombatUtils {
             this.block = p.block;
             this.strength = p.strength;
             this.metallicize = p.metallicize;
+            this.demonForm = p.demonForm;
             this.weakened = p.weakened;
             this.vulnerable = p.vulnerable;
             this.intangible = p.intangible;
@@ -532,10 +534,16 @@ public class CombatUtils {
             }else if(toPlay.type == AbstractCard.CardType.SKILL){
                 block += toPlay.block;
             }else if(toPlay.type == AbstractCard.CardType.POWER){
-                if(toPlay.cardID.equals(Inflame.ID)){
-                    strength += toPlay.magicNumber;
-                }else if(toPlay.cardID.equals(Metallicize.ID)){
-                    metallicize += toPlay.magicNumber;
+                switch (toPlay.cardID) {
+                    case Inflame.ID:
+                        strength += toPlay.magicNumber;
+                        break;
+                    case Metallicize.ID:
+                        metallicize += toPlay.magicNumber;
+                        break;
+                    case DemonForm.ID:
+                        demonForm += toPlay.magicNumber;
+                        break;
                 }
             }
         }
@@ -604,6 +612,8 @@ public class CombatUtils {
                     health == that.health &&
                     block == that.block &&
                     strength == that.strength &&
+                    metallicize == that.metallicize &&
+                    demonForm == that.demonForm &&
                     weakened == that.weakened &&
                     vulnerable == that.vulnerable &&
                     intangible == that.intangible &&

@@ -24,31 +24,17 @@ public class TheGuardianCAI extends AbstractCAI{
 
     @Override
     public Move pickMove() {
-        Move tryPotion = usePotion(TheGuardianCAI::potionEval);
-        if(tryPotion != null){
-            return tryPotion;
-        }
+        return GenericCAI.pickMove(TheGuardianCAI::heuristic,
+                TheGuardianCAI::potionEval, new CardSequence(getMonsters()));
+    }
 
-        // if a no-negative card can be played, play it
-        Move tryFree = GenericCAI.FreeCard();
-        if(tryFree != null){
-            return tryFree;
-        }
+    public static double heuristic(CardSequence state){
+        double genericFactor = GenericCAI.heuristic(state);
 
-        // play the card that leads to the best state
-        // first, remove cards that cannot be played
-        // looks only at monster health and damage player will take from attacks
-        CardSequence start = new CardSequence(getMonsters());
+        int demonFormWeight = 20;
+        int demonFormFactor = demonFormWeight * state.simplePlayer.demonForm;
 
-        CardSequence bestState = start.getBestPossibility(x -> GenericCAI.heuristic(x));
-
-        if(bestState != start){
-            logger.info("Evaluated best state: " + bestState.toString());
-            int bestIndex = AbstractDungeon.player.hand.group.indexOf(bestState.first);
-            return new Move(Move.TYPE.CARD, bestIndex,
-                    AbstractDungeon.getCurrRoom().monsters.monsters.get(bestState.firstTargetIndex));
-        }
-        return new Move(Move.TYPE.PASS);
+        return genericFactor + demonFormFactor;
     }
 
     /**
