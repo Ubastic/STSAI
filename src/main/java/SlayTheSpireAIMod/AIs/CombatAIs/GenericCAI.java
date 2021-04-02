@@ -121,27 +121,17 @@ public class GenericCAI extends AbstractCAI{
         int aliveMonsters = 0;
         int incomingDmg = 0;
 
-        int totalVAdjHealth = 0;
+        double totalVAdjHealth = 0;
         for(CombatUtils.SimpleMonster m : state.simpleMonsters){
             if(m.isAlive()){
                 aliveMonsters += 1;
                 // health is effectively lower if monster will be vulnerable in the future
-                int vAdjHealth = m.health;
                 int futureVul = m.vulnerable - 1;
-                vAdjHealth = Math.max(1, vAdjHealth - futureVul * 4);
-                // Potential issue: health at 1 not preferred to >1 and vulnerable
+                double vAdjHealth = Math.max((m.health - 0.99) / m.health, m.health - futureVul * 4);
                 totalVAdjHealth += vAdjHealth;
                 incomingDmg += m.attack.getHitDamage() * m.attack.getHits();
             }
         }
-
-        // PLAYERHP
-        int extraBlock = state.simplePlayer.metallicize;
-        if(AbstractDungeon.player.hasPower(PlatedArmorPower.POWER_ID)){
-            extraBlock += AbstractDungeon.player.getPower(PlatedArmorPower.POWER_ID).amount;
-        }
-        int willLoseHP = Math.max(0, incomingDmg - state.simplePlayer.block - extraBlock);
-        values[0] = state.simplePlayer.health - willLoseHP;
 
         // MONSTERHP
         if(aliveMonsters == 0){
@@ -171,6 +161,14 @@ public class GenericCAI extends AbstractCAI{
                 incomingDmg += c.magicNumber;
             }
         }
+
+        // PLAYERHP
+        int extraBlock = state.simplePlayer.metallicize;
+        if(AbstractDungeon.player.hasPower(PlatedArmorPower.POWER_ID)){
+            extraBlock += AbstractDungeon.player.getPower(PlatedArmorPower.POWER_ID).amount;
+        }
+        int willLoseHP = Math.max(0, incomingDmg - state.simplePlayer.block - extraBlock);
+        values[0] = state.simplePlayer.health - willLoseHP;
 
         int evaluation = 0;
         for(int i = 0; i < terms; i++){
