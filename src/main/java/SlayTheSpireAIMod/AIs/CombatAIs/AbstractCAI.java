@@ -5,6 +5,7 @@ import SlayTheSpireAIMod.util.Move;
 import com.megacrit.cardcrawl.cards.AbstractCard;
 import com.megacrit.cardcrawl.dungeons.AbstractDungeon;
 import com.megacrit.cardcrawl.monsters.AbstractMonster;
+import com.megacrit.cardcrawl.monsters.city.SphericGuardian;
 import com.megacrit.cardcrawl.potions.*;
 import com.megacrit.cardcrawl.powers.VulnerablePower;
 import org.apache.logging.log4j.LogManager;
@@ -81,8 +82,12 @@ public abstract class AbstractCAI {
             simpleMonsters = new ArrayList<>();
             ArrayList<AbstractMonster> monsters = AbstractDungeon.getCurrRoom().monsters.monsters;
             for (AbstractMonster m : monsters) {
-                simpleMonsters.add(new CombatUtils.SimpleMonster(new CombatUtils.MonsterAttack(m), m.currentHealth,
-                        m.currentBlock, CombatUtils.amountOfPower(m, VulnerablePower.POWER_ID), m.hasPower("Intangible")));
+                if(m instanceof SphericGuardian){
+                    simpleMonsters.add(new SphericGuardianMonster((SphericGuardian) m));
+                }else{
+                    simpleMonsters.add(new CombatUtils.SimpleMonster(new CombatUtils.MonsterAttack(m), m.currentHealth,
+                            m.currentBlock, CombatUtils.amountOfPower(m, VulnerablePower.POWER_ID), m.hasPower("Intangible")));
+                }
             }
             simplePlayer = new CombatUtils.SimplePlayer();
         }
