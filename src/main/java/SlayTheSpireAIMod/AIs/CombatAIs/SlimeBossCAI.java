@@ -11,10 +11,7 @@ import java.util.ArrayList;
 
 /** AI versus encounter "Slime Boss". */
 public class SlimeBossCAI extends AbstractCAI {
-    @Override
-    public String getCombat() {
-        return "Slime Boss";
-    }
+    public static final String KEY = "Slime Boss";
 
     @Override
     public Move pickMove() {

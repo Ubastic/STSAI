@@ -6,12 +6,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 public class SentriesCAI extends AbstractCAI {
+    public static final String KEY = "3 Sentries";
     public static final Logger logger = LogManager.getLogger(SentriesCAI.class.getName());
-
-    @Override
-    public String getCombat() {
-        return "3 Sentries";
-    }
 
     @Override
     public Move pickMove() {

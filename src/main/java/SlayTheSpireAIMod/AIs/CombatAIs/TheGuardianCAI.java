@@ -15,12 +15,8 @@ import java.util.ArrayList;
 
 /** AI versus encounter "The Guardian". */
 public class TheGuardianCAI extends AbstractCAI{
+    public static final String KEY = "The Guardian";
     public static final Logger logger = LogManager.getLogger(TheGuardianCAI.class.getName());
-
-    @Override
-    public String getCombat() {
-        return "The Guardian";
-    }
 
     @Override
     public Move pickMove() {

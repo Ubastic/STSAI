@@ -4,10 +4,7 @@ import SlayTheSpireAIMod.util.Move;
 
 /** AI versus encounter "Hexaghost". */
 public class HexaghostCAI extends AbstractCAI {
-    @Override
-    public String getCombat() {
-        return "Hexaghost";
-    }
+    public static final String KEY = "Hexaghost";
 
     @Override
     public Move pickMove() {

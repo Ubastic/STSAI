@@ -16,12 +16,8 @@ import java.util.ArrayList;
 
 /** AI versus encounter "Lagavulin". */
 public class LagavulinCAI extends AbstractCAI {
+    public static final String KEY = "Lagavulin";
     public static final Logger logger = LogManager.getLogger(LagavulinCAI.class.getName());
-
-    @Override
-    public String getCombat() {
-        return "Lagavulin";
-    }
 
     @Override
     public Move pickMove() {

@@ -19,11 +19,6 @@ public class GenericCAI extends AbstractCAI{
     public static final Logger logger = LogManager.getLogger(GenericCAI.class.getName());
 
     @Override
-    public String getCombat() {
-        return null;
-    }
-
-    @Override
     public Move pickMove() {
         return pickMove(GenericCAI::heuristic);
     }

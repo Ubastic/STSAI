@@ -17,7 +17,6 @@ import java.util.Objects;
 /** Class which evaluates Moves to execute when in combat, based on the specific combat. */
 public abstract class AbstractCAI {
     public static final Logger logger = LogManager.getLogger(AbstractCAI.class.getName());
-    public abstract String getCombat(); // name of the combat
 
     /**
      * Precondition: player is in combat getCombat().

@@ -60,12 +60,12 @@ public class CombatUtils {
      * */
     public static AbstractCAI getAI(String combat){
         switch (combat){
-            case "Gremlin Nob": return new GremlinNobCAI();
-            case "3 Sentries": return new SentriesCAI();
-            case "Lagavulin": return new LagavulinCAI();
-            case "Hexaghost": return new HexaghostCAI();
-            case "Slime Boss": return new SlimeBossCAI();
-            case "The Guardian": return new TheGuardianCAI();
+            case GremlinNobCAI.KEY: return new GremlinNobCAI();
+            case SentriesCAI.KEY: return new SentriesCAI();
+            case LagavulinCAI.KEY: return new LagavulinCAI();
+            case HexaghostCAI.KEY: return new HexaghostCAI();
+            case SlimeBossCAI.KEY: return new SlimeBossCAI();
+            case TheGuardianCAI.KEY: return new TheGuardianCAI();
             default: return new GenericCAI();
         }
     }
