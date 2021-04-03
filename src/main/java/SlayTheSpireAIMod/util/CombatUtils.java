@@ -50,7 +50,6 @@ public class CombatUtils {
         return pickMove(combat);
     }
 
-
     /**
      * Returns a CAI corresponding to the specified combat.
      * Returns a generic CAI if no specific CAI exists for the combat.
@@ -59,6 +58,7 @@ public class CombatUtils {
      * @return       the CAI based on specified combat
      * */
     public static AbstractCAI getAI(String combat){
+        // TODO add "Mind Bloom Boss Battle"
         switch (combat){
             case GremlinNobCAI.KEY: return new GremlinNobCAI();
             case SentriesCAI.KEY: return new SentriesCAI();
