@@ -20,8 +20,10 @@ public class ChestAI {
             logger.info("Done: choice type not suitable");
             return;
         }
+        boolean isBoss = false;
         AbstractChest chest = null;
         if (AbstractDungeon.getCurrRoom() instanceof TreasureRoomBoss) {
+            isBoss = true;
             chest = ((TreasureRoomBoss) AbstractDungeon.getCurrRoom()).chest;
         } else if (AbstractDungeon.getCurrRoom() instanceof TreasureRoom) {
             chest = ((TreasureRoom) AbstractDungeon.getCurrRoom()).chest;
@@ -37,7 +39,7 @@ public class ChestAI {
                 ChoiceScreenUtils.pressConfirmButton();
             }
         }else{
-            if(AbstractDungeon.player.hasRelic(CursedKey.ID)){
+            if(AbstractDungeon.player.hasRelic(CursedKey.ID) && !isBoss){
                 logger.info("Skipping Chest");
                 ChoiceScreenUtils.pressConfirmButton();
             }else{
