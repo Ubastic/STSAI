@@ -66,6 +66,9 @@ public class CombatUtils {
             case HexaghostCAI.KEY: return new HexaghostCAI();
             case SlimeBossCAI.KEY: return new SlimeBossCAI();
             case TheGuardianCAI.KEY: return new TheGuardianCAI();
+            case AutomatonCAI.KEY: return new AutomatonCAI();
+            case ChampCAI.KEY: return new ChampCAI();
+            case CollectorCAI.KEY: return new CollectorCAI();
             default: return new GenericCAI();
         }
     }
