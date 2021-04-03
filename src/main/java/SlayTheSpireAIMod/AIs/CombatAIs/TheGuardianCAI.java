@@ -7,6 +7,7 @@ import com.megacrit.cardcrawl.dungeons.AbstractDungeon;
 import com.megacrit.cardcrawl.monsters.exordium.TheGuardian;
 import com.megacrit.cardcrawl.potions.*;
 import com.megacrit.cardcrawl.powers.AbstractPower;
+import com.megacrit.cardcrawl.powers.ArtifactPower;
 import com.megacrit.cardcrawl.powers.VulnerablePower;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -43,6 +44,9 @@ public class TheGuardianCAI extends AbstractCAI{
     public static int potionEval(AbstractPotion p){
         switch(p.ID){
             case AncientPotion.POTION_ID:
+                if(CombatUtils.hasPotion(SteroidPotion.POTION_ID) || CombatUtils.hasPotion(SpeedPotion.POTION_ID)){
+                    return 100;
+                }
             case Elixir.POTION_ID:
             case GamblersBrew.POTION_ID:
             case PowerPotion.POTION_ID:
@@ -50,7 +54,13 @@ public class TheGuardianCAI extends AbstractCAI{
             case SmokeBomb.POTION_ID:
             case SneckoOil.POTION_ID:
             case SpeedPotion.POTION_ID:
+                if(AbstractDungeon.player.hasPower(ArtifactPower.POWER_ID)){
+                    return 50;
+                }
             case SteroidPotion.POTION_ID:
+                if(AbstractDungeon.player.hasPower(ArtifactPower.POWER_ID)){
+                    return 60;
+                }
             case SwiftPotion.POTION_ID:
                 return 0;
             case EntropicBrew.POTION_ID: return 1;
