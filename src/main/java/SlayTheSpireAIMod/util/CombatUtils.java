@@ -10,6 +10,7 @@ import com.megacrit.cardcrawl.core.AbstractCreature;
 import com.megacrit.cardcrawl.dungeons.AbstractDungeon;
 import com.megacrit.cardcrawl.monsters.AbstractMonster;
 import com.megacrit.cardcrawl.monsters.EnemyMoveInfo;
+import com.megacrit.cardcrawl.potions.AbstractPotion;
 import com.megacrit.cardcrawl.powers.*;
 import com.megacrit.cardcrawl.relics.*;
 import com.megacrit.cardcrawl.ui.panels.EnergyPanel;
@@ -189,6 +190,20 @@ public class CombatUtils {
             return null;
         }
         return weakest;
+    }
+
+    /**
+     * Returns whether the player has the specified potion.
+     *
+     * @param potionID the ID of the potion to check ownership of
+     * @return         whether the player has the specified potion
+     * */
+    public static boolean hasPotion(String potionID){
+        ArrayList<AbstractPotion> potions = AbstractDungeon.player.potions;
+        for(AbstractPotion potion : potions){
+            if(potion.ID.equals(potionID)){ return true; }
+        }
+        return false;
     }
 
     /** Represent an incoming attack by a monster. */
