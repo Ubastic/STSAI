@@ -2,6 +2,9 @@ package SlayTheSpireAIMod.AIs;
 
 import com.megacrit.cardcrawl.cards.AbstractCard;
 import com.megacrit.cardcrawl.cards.CardGroup;
+import com.megacrit.cardcrawl.cards.red.*;
+import com.megacrit.cardcrawl.dungeons.AbstractDungeon;
+import com.megacrit.cardcrawl.relics.SneckoEye;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -114,15 +117,22 @@ public class Deck {
 
     /** @return AbstractCard Return the best card to upgrade in the deck. */
     public AbstractCard getUpgrade(){
+        ArrayList<String> badUpgrades = new ArrayList<>();
+        if(AbstractDungeon.player.hasRelic(SneckoEye.ID)){
+            String[] costUpgrades = { BodySlam.ID, Havoc.ID, BloodForBlood.ID, DarkEmbrace.ID, Entrench.ID,
+                    InfernalBlade.ID, SeeingRed.ID, Barricade.ID, Corruption.ID, Exhume.ID};
+            badUpgrades.addAll(Arrays.asList(costUpgrades));
+        }
         String[] upgradeIDs = // cardIDs of cards to upgrade, best->worst
-                {"Body Slam", "Armaments", "Whirlwind", "Barricade", "Limit Break", "Demon Form", "Entrench"};
+                { BodySlam.ID, Whirlwind.ID, Barricade.ID, LimitBreak.ID, DemonForm.ID, Entrench.ID, Inflame.ID,
+                        Armaments.ID };
         for(String id : upgradeIDs){
-            if(containsUpgradable(id)){
+            if(containsUpgradable(id) && !badUpgrades.contains(id)){
                 return getCard(id);
             }
         }
         for(AbstractCard c : cards){
-            if(!c.isStarterStrike() && !c.isStarterDefend() && c.canUpgrade())
+            if(!c.isStarterStrike() && !c.isStarterDefend() && c.canUpgrade() && !badUpgrades.contains(c.cardID))
                 return c;
         }
         for(AbstractCard c : cards){
