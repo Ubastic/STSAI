@@ -436,6 +436,9 @@ public class CombatUtils {
                 }
             }else if(toPlay.type == AbstractCard.CardType.SKILL){
                 block += toPlay.block;
+                if(toPlay.cardID.equals(LimitBreak.ID)){
+                    strength *= 2;
+                }
             }else if(toPlay.type == AbstractCard.CardType.POWER){
                 switch (toPlay.cardID) {
                     case Inflame.ID:
