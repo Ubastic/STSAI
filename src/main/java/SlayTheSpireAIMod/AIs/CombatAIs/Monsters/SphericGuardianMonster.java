@@ -1,11 +1,11 @@
-package SlayTheSpireAIMod.AIs.CombatAIs;
+package SlayTheSpireAIMod.AIs.CombatAIs.Monsters;
 
 import SlayTheSpireAIMod.util.CombatUtils;
 import com.megacrit.cardcrawl.monsters.city.SphericGuardian;
 import com.megacrit.cardcrawl.powers.IntangiblePower;
 import com.megacrit.cardcrawl.powers.VulnerablePower;
 
-public class SphericGuardianMonster extends CombatUtils.SimpleMonster {
+public class SphericGuardianMonster extends SimpleMonster {
 
     public SphericGuardianMonster(SphericGuardian m){
         super(new CombatUtils.MonsterAttack(m), m.currentHealth+m.currentBlock, 0, CombatUtils.amountOfPower(m, VulnerablePower.POWER_ID),

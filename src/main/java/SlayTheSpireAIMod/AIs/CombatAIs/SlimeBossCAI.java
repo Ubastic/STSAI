@@ -1,5 +1,7 @@
 package SlayTheSpireAIMod.AIs.CombatAIs;
 
+import SlayTheSpireAIMod.AIs.CombatAIs.Monsters.SimpleMonster;
+import SlayTheSpireAIMod.AIs.CombatAIs.Monsters.SlimeBossMonster;
 import SlayTheSpireAIMod.util.CombatUtils;
 import SlayTheSpireAIMod.util.Move;
 import com.megacrit.cardcrawl.dungeons.AbstractDungeon;
@@ -19,8 +21,8 @@ public class SlimeBossCAI extends AbstractCAI {
                 TheGuardianCAI::potionEval, new CardSequence(getMonsters()));
     }
 
-    public ArrayList<CombatUtils.SimpleMonster> getMonsters(){
-        ArrayList<CombatUtils.SimpleMonster> toRet = new ArrayList<>();
+    public ArrayList<SimpleMonster> getMonsters(){
+        ArrayList<SimpleMonster> toRet = new ArrayList<>();
         ArrayList<AbstractMonster> monsters = AbstractDungeon.getCurrRoom().monsters.monsters;
         if(monsters.size() == 1){
             if(monsters.get(0) instanceof SlimeBoss){
@@ -29,7 +31,7 @@ public class SlimeBossCAI extends AbstractCAI {
             }
         }
         for (AbstractMonster m : monsters) {
-            toRet.add(new CombatUtils.SimpleMonster(new CombatUtils.MonsterAttack(m), m.currentHealth,
+            toRet.add(new SimpleMonster(new CombatUtils.MonsterAttack(m), m.currentHealth,
                     m.currentBlock, CombatUtils.amountOfPower(m, VulnerablePower.POWER_ID), m.hasPower("Intangible")));
         }
         return toRet;
@@ -39,11 +41,11 @@ public class SlimeBossCAI extends AbstractCAI {
         double genericFactor = GenericCAI.heuristic(state);
         int BossSplitFactor = 0; // boss at half health or slightly below is bad
 
-        ArrayList<CombatUtils.SimpleMonster> monsters = state.simpleMonsters;
+        ArrayList<SimpleMonster> monsters = state.simpleMonsters;
 
         if(monsters.size() > 0 && monsters.get(0) instanceof SlimeBossMonster){
             SlimeBossMonster m = (SlimeBossMonster)monsters.get(0);
-            int halfHP = m.maxHealth / 2;
+            int halfHP = m.getMaxHealth() / 2;
             if(m.health <= halfHP){
                 int underHalf = halfHP - m.health;
                 // splitting at within 10 of half hp is bad
@@ -61,28 +63,4 @@ public class SlimeBossCAI extends AbstractCAI {
         return genericFactor - BossSplitFactor + demonFormFactor;
     }
 
-    static class SlimeBossMonster extends CombatUtils.SimpleMonster{
-        final int maxHealth = CombatUtils.atLevel(9) ? 150 : 140;
-
-        public SlimeBossMonster(SlimeBoss m){
-            super(new CombatUtils.MonsterAttack(m), m.currentHealth, m.currentBlock, CombatUtils.amountOfPower(m, VulnerablePower.POWER_ID),
-                    m.hasPower("Intangible"));
-        }
-
-        public SlimeBossMonster(SlimeBossMonster m){
-            super(m);
-        }
-
-        public SlimeBossMonster copy(){
-            return new SlimeBossMonster(this);
-        }
-
-        @Override
-        public void takeDamage(int amount, boolean ignoreBlock) {
-            super.takeDamage(amount, ignoreBlock);
-            if(health <= maxHealth / 2){
-                attack = new CombatUtils.MonsterAttack(attack.getMonster(), true);
-            }
-        }
-    }
 }

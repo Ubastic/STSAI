@@ -1,6 +1,6 @@
 package SlayTheSpireAIMod.AIs.CombatAIs;
 
-import SlayTheSpireAIMod.util.CombatUtils;
+import SlayTheSpireAIMod.AIs.CombatAIs.Monsters.SimpleMonster;
 import SlayTheSpireAIMod.util.Move;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -24,7 +24,7 @@ public class SentriesCAI extends AbstractCAI {
         double genericFactor = GenericCAI.heuristic(state);
 
         int aliveMonsters = 0;
-        for(CombatUtils.SimpleMonster m : state.simpleMonsters){
+        for(SimpleMonster m : state.simpleMonsters){
             if(m.isAlive()){
                 aliveMonsters += 1;
             }
@@ -33,8 +33,8 @@ public class SentriesCAI extends AbstractCAI {
         // it is better to kill either the left or right sentry first
         int multiSentryFactor = 0;
         if(aliveMonsters == 3){
-            CombatUtils.SimpleMonster left = state.simpleMonsters.get(0);
-            CombatUtils.SimpleMonster right = state.simpleMonsters.get(2);
+            SimpleMonster left = state.simpleMonsters.get(0);
+            SimpleMonster right = state.simpleMonsters.get(2);
             multiSentryFactor = Math.min(left.health, right.health);
         }
         return genericFactor - multiSentryFactor;

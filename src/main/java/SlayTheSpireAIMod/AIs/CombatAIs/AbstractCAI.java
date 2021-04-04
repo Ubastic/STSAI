@@ -1,5 +1,7 @@
 package SlayTheSpireAIMod.AIs.CombatAIs;
 
+import SlayTheSpireAIMod.AIs.CombatAIs.Monsters.SimpleMonster;
+import SlayTheSpireAIMod.AIs.CombatAIs.Monsters.SphericGuardianMonster;
 import SlayTheSpireAIMod.util.CombatUtils;
 import SlayTheSpireAIMod.util.Move;
 import com.megacrit.cardcrawl.cards.AbstractCard;
@@ -72,7 +74,7 @@ public abstract class AbstractCAI {
     public static class CardSequence{
         AbstractCard first;                                  // first card played in this sequence, null if none
         int firstTargetIndex;                                // index in monster list of the target of first
-        ArrayList<CombatUtils.SimpleMonster> simpleMonsters;
+        ArrayList<SimpleMonster> simpleMonsters;
         CombatUtils.SimplePlayer simplePlayer;
 
         /** Current game state. */
@@ -85,14 +87,14 @@ public abstract class AbstractCAI {
                 if(m instanceof SphericGuardian){
                     simpleMonsters.add(new SphericGuardianMonster((SphericGuardian) m));
                 }else{
-                    simpleMonsters.add(new CombatUtils.SimpleMonster(new CombatUtils.MonsterAttack(m), m.currentHealth,
+                    simpleMonsters.add(new SimpleMonster(new CombatUtils.MonsterAttack(m), m.currentHealth,
                             m.currentBlock, CombatUtils.amountOfPower(m, VulnerablePower.POWER_ID), m.hasPower("Intangible")));
                 }
             }
             simplePlayer = new CombatUtils.SimplePlayer();
         }
 
-        public CardSequence(ArrayList<CombatUtils.SimpleMonster> simpleMonsters){
+        public CardSequence(ArrayList<SimpleMonster> simpleMonsters){
             first = null;
             firstTargetIndex = 0;
             this.simpleMonsters = simpleMonsters;
@@ -103,7 +105,7 @@ public abstract class AbstractCAI {
             first = s.first;
             firstTargetIndex = s.firstTargetIndex;
             simpleMonsters = new ArrayList<>();
-            for(CombatUtils.SimpleMonster m : s.simpleMonsters){
+            for(SimpleMonster m : s.simpleMonsters){
                 simpleMonsters.add(m.copy());
             }
             simplePlayer = new CombatUtils.SimplePlayer(s.simplePlayer);
@@ -117,7 +119,7 @@ public abstract class AbstractCAI {
          * @param target the target of the card to be played
          * @return       the state of the game after playing a card, null if not allowed
          * */
-        public CardSequence playCard(AbstractCard toPlay, CombatUtils.SimpleMonster target){
+        public CardSequence playCard(AbstractCard toPlay, SimpleMonster target){
             if(toPlay.costForTurn > simplePlayer.energy){
                 return null;
             }
@@ -144,8 +146,8 @@ public abstract class AbstractCAI {
          * */
         public ArrayList<CardSequence> getPossibilities(){
             ArrayList<CardSequence> possibilities = new ArrayList<>();
-            ArrayList<CombatUtils.SimpleMonster> aliveMonsters = new ArrayList<>();
-            for(CombatUtils.SimpleMonster m : simpleMonsters){
+            ArrayList<SimpleMonster> aliveMonsters = new ArrayList<>();
+            for(SimpleMonster m : simpleMonsters){
                 if(m.isAlive()){
                     aliveMonsters.add(m);
                 }
@@ -156,7 +158,7 @@ public abstract class AbstractCAI {
 
             for(AbstractCard c : simplePlayer.hand){
                 if(c.type == AbstractCard.CardType.ATTACK || c.type == AbstractCard.CardType.SKILL){
-                    for(CombatUtils.SimpleMonster m : aliveMonsters){
+                    for(SimpleMonster m : aliveMonsters){
                         CardSequence pos = playCard(c, m);
                         if(pos != null){
                             possibilities.add(pos);

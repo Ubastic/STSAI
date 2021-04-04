@@ -1,6 +1,6 @@
 package SlayTheSpireAIMod.AIs.CombatAIs;
 
-import SlayTheSpireAIMod.util.CombatUtils;
+import SlayTheSpireAIMod.AIs.CombatAIs.Monsters.SimpleMonster;
 import SlayTheSpireAIMod.util.Move;
 import com.megacrit.cardcrawl.cards.AbstractCard;
 import com.megacrit.cardcrawl.cards.status.Burn;
@@ -117,7 +117,7 @@ public class GenericCAI extends AbstractCAI{
         int incomingDmg = 0;
 
         double totalVAdjHealth = 0;
-        for(CombatUtils.SimpleMonster m : state.simpleMonsters){
+        for(SimpleMonster m : state.simpleMonsters){
             if(m.isAlive()){
                 aliveMonsters += 1;
                 // health is effectively lower if monster will be vulnerable in the future

@@ -1,14 +1,13 @@
 package SlayTheSpireAIMod.AIs.CombatAIs;
 
+import SlayTheSpireAIMod.AIs.CombatAIs.Monsters.SimpleMonster;
+import SlayTheSpireAIMod.AIs.CombatAIs.Monsters.TheGuardianMonster;
 import SlayTheSpireAIMod.util.CombatUtils;
 import SlayTheSpireAIMod.util.Move;
-import com.megacrit.cardcrawl.cards.AbstractCard;
 import com.megacrit.cardcrawl.dungeons.AbstractDungeon;
 import com.megacrit.cardcrawl.monsters.exordium.TheGuardian;
 import com.megacrit.cardcrawl.potions.*;
-import com.megacrit.cardcrawl.powers.AbstractPower;
 import com.megacrit.cardcrawl.powers.ArtifactPower;
-import com.megacrit.cardcrawl.powers.VulnerablePower;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -91,63 +90,10 @@ public class TheGuardianCAI extends AbstractCAI{
         }
     }
 
-    public ArrayList<CombatUtils.SimpleMonster> getMonsters(){
-        ArrayList<CombatUtils.SimpleMonster> toRet = new ArrayList<>();
+    public ArrayList<SimpleMonster> getMonsters(){
+        ArrayList<SimpleMonster> toRet = new ArrayList<>();
         toRet.add(new TheGuardianMonster((TheGuardian)AbstractDungeon.getCurrRoom().monsters.monsters.get(0)));
         return toRet;
     }
 
-    public static class TheGuardianMonster extends CombatUtils.SimpleMonster{
-        private int modeShiftAmount;
-        private final int sharpHideAmount;
-
-        public TheGuardianMonster(TheGuardian m) {
-            super(new CombatUtils.MonsterAttack(m), m.currentHealth, m.currentBlock, CombatUtils.amountOfPower(m, VulnerablePower.POWER_ID),
-                    m.hasPower("Intangible"));
-            AbstractPower modeShift = m.getPower("Mode Shift");
-            modeShiftAmount = modeShift == null ? 999 : modeShift.amount;
-            AbstractPower sharpHide = m.getPower("Sharp Hide");
-            sharpHideAmount = sharpHide == null ? 0 : sharpHide.amount;
-        }
-
-        public TheGuardianMonster(TheGuardianMonster m){
-            super(m);
-            modeShiftAmount = m.modeShiftAmount;
-            sharpHideAmount = m.sharpHideAmount;
-        }
-
-        public TheGuardianMonster copy(){
-            return new TheGuardianMonster(this);
-        }
-
-        @Override
-        public void takeAttack(CombatUtils.SimplePlayer player, AbstractCard attack) {
-            super.takeAttack(player, attack);
-            player.takeDamage(sharpHideAmount, false);
-        }
-
-        @Override
-        public void takeDamage(int amount, boolean ignoreBlock) {
-            int healthBefore = health;
-            super.takeDamage(amount, ignoreBlock);
-            int healthLost = healthBefore - health;
-            modeShiftAmount -= healthLost;
-            if(modeShiftAmount <= 0){
-                attack = new CombatUtils.MonsterAttack(attack.getMonster(), true);
-            }
-        }
-
-        @Override
-        public String toString() {
-            return "TheGuardianMonster{" +
-                    "modeShiftAmount=" + modeShiftAmount +
-                    ", sharpHideAmount=" + sharpHideAmount +
-                    ", attack=" + attack +
-                    ", health=" + health +
-                    ", block=" + block +
-                    ", vulnerable=" + vulnerable +
-                    ", intangible=" + intangible +
-                    '}';
-        }
-    }
 }
