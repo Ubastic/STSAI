@@ -70,8 +70,8 @@ public class EventAI {
                     choose("max hp +8");
                 }else if(choices.contains("choose a card to obtain")){
                     choose("choose a card to obtain");
-                }else if(choices.contains("enemies in the next three combat will have one health")){
-                    choose("enemies in the next three combat will have one health");
+                }else if(choices.contains("enemies in your next three combats have 1 hp")){
+                    choose("enemies in your next three combats have 1 hp");
                 }else if(choices.contains("obtain a random rare card")){
                     choose("obtain a random rare card");
                 }else if(choices.contains("transform a card")){
