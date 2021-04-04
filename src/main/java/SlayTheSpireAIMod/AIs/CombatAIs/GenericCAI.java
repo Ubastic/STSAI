@@ -93,7 +93,7 @@ public class GenericCAI extends AbstractCAI{
      * @return      the evaluation of the state. Greater is better
      * */
     public static double heuristic(CardSequence state){
-        return heuristic(state, 2.9999);
+        return heuristic(state, 3);
     }
 
     /**
@@ -111,7 +111,7 @@ public class GenericCAI extends AbstractCAI{
         // status    : number of status cards which are not exhausted
         // [playerHP, monsterHP, power, status]
         double[] values = new double[terms];
-        double[] weights = { 1, -1.0 / dphp, 1, -1 };
+        double[] weights = { 1, -1.0 / (dphp - 0.001), 1, -1 };
 
         int aliveMonsters = 0;
         int incomingDmg = 0;
@@ -136,12 +136,13 @@ public class GenericCAI extends AbstractCAI{
         }
 
         // POWER
-        int powerTerms = 2;
-        // [strength, metallicize]
+        int powerTerms = 3;
+        // [strength, metallicize, demon form]
         int[] powerValues = new int[powerTerms];
-        double[] powerWeights = { 5, 3 };
+        double[] powerWeights = { 5, 3, 7 };
         powerValues[0] = state.simplePlayer.strength;
         powerValues[1] = state.simplePlayer.metallicize;
+        powerValues[2] = state.simplePlayer.demonForm;
         for(int i = 0; i < powerTerms; i++){
             values[2] += powerWeights[i] * powerValues[i];
         }
