@@ -35,7 +35,7 @@ public class BossRewardAI {
                 EmptyCage.ID, PhilosopherStone.ID, CoffeeDripper.ID, FusionHammer.ID, SlaversCollar.ID, SneckoEye.ID,
                 MarkOfPain.ID, Sozu.ID,  CursedKey.ID, VelvetChoker.ID, Ectoplasm.ID, };
 
-        int bestIndex = 0;
+        int bestIndex = -1;
         AbstractRelic best = null;
         for(AbstractRelic choice : choices){
             int index = ArrayUtils.indexOf(bossRelics, choice.relicId);
@@ -44,7 +44,11 @@ public class BossRewardAI {
                 best = choice;
             }
         }
-        choose(best);
+        if(best == null){
+            logger.info("Skipping this boss reward");
+        }else{
+            choose(best);
+        }
         logger.info("Done");
     }
 
