@@ -6,6 +6,9 @@ import com.megacrit.cardcrawl.cards.red.BodySlam;
 import com.megacrit.cardcrawl.cards.red.PerfectedStrike;
 import com.megacrit.cardcrawl.cards.red.Whirlwind;
 import com.megacrit.cardcrawl.dungeons.AbstractDungeon;
+import com.megacrit.cardcrawl.monsters.AbstractMonster;
+import com.megacrit.cardcrawl.powers.IntangiblePower;
+import com.megacrit.cardcrawl.powers.VulnerablePower;
 import com.megacrit.cardcrawl.relics.ChemicalX;
 
 import java.util.Objects;
@@ -21,6 +24,14 @@ public class SimpleMonster {
     public boolean intangible;
     // TODO add Louse armor thing
     // TODO artifact
+
+    public SimpleMonster(AbstractMonster m){
+        this.attack = new CombatUtils.MonsterAttack(m);
+        this.health = m.escaped ? 0 : m.currentHealth;
+        this.block = m.currentBlock;
+        this.vulnerable = CombatUtils.amountOfPower(m, VulnerablePower.POWER_ID);
+        this.intangible = m.hasPower(IntangiblePower.POWER_ID);
+    }
 
     public SimpleMonster(CombatUtils.MonsterAttack attack, int health, int block, int vulnerable, boolean intangible) {
         this.attack = attack;

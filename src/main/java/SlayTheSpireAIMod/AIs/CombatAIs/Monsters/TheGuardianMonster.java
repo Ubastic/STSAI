@@ -4,15 +4,13 @@ import SlayTheSpireAIMod.util.CombatUtils;
 import com.megacrit.cardcrawl.cards.AbstractCard;
 import com.megacrit.cardcrawl.monsters.exordium.TheGuardian;
 import com.megacrit.cardcrawl.powers.AbstractPower;
-import com.megacrit.cardcrawl.powers.VulnerablePower;
 
 public class TheGuardianMonster extends SimpleMonster {
     private int modeShiftAmount;
     private final int sharpHideAmount;
 
     public TheGuardianMonster(TheGuardian m) {
-        super(new CombatUtils.MonsterAttack(m), m.currentHealth, m.currentBlock, CombatUtils.amountOfPower(m, VulnerablePower.POWER_ID),
-                m.hasPower("Intangible"));
+        super(m);
         AbstractPower modeShift = m.getPower("Mode Shift");
         modeShiftAmount = modeShift == null ? 999 : modeShift.amount;
         AbstractPower sharpHide = m.getPower("Sharp Hide");

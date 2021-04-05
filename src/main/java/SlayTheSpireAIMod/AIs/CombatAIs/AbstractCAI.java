@@ -87,8 +87,7 @@ public abstract class AbstractCAI {
                 if(m instanceof SphericGuardian){
                     simpleMonsters.add(new SphericGuardianMonster((SphericGuardian) m));
                 }else{
-                    simpleMonsters.add(new SimpleMonster(new CombatUtils.MonsterAttack(m), m.currentHealth,
-                            m.currentBlock, CombatUtils.amountOfPower(m, VulnerablePower.POWER_ID), m.hasPower("Intangible")));
+                    simpleMonsters.add(new SimpleMonster(m));
                 }
             }
             simplePlayer = new CombatUtils.SimplePlayer();

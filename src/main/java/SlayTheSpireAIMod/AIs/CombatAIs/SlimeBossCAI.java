@@ -31,8 +31,7 @@ public class SlimeBossCAI extends AbstractCAI {
             }
         }
         for (AbstractMonster m : monsters) {
-            toRet.add(new SimpleMonster(new CombatUtils.MonsterAttack(m), m.currentHealth,
-                    m.currentBlock, CombatUtils.amountOfPower(m, VulnerablePower.POWER_ID), m.hasPower("Intangible")));
+            toRet.add(new SimpleMonster(m));
         }
         return toRet;
     }
