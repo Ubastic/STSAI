@@ -48,8 +48,6 @@ public class TheGuardianCAI extends AbstractCAI{
                 }
             case Elixir.POTION_ID:
             case GamblersBrew.POTION_ID:
-            case PowerPotion.POTION_ID:
-            case SkillPotion.POTION_ID:
             case SmokeBomb.POTION_ID:
             case SneckoOil.POTION_ID:
             case SpeedPotion.POTION_ID:
@@ -73,7 +71,9 @@ public class TheGuardianCAI extends AbstractCAI{
             case FearPotion.POTION_ID:
             case FirePotion.POTION_ID:
             case LiquidMemories.POTION_ID:
+            case PowerPotion.POTION_ID:
             case RegenPotion.POTION_ID:
+            case SkillPotion.POTION_ID:
             case WeakenPotion.POTION_ID:
                 return 5;
             case BloodPotion.POTION_ID:
