@@ -438,6 +438,12 @@ public class CombatUtils {
                 block += toPlay.block;
                 if(toPlay.cardID.equals(LimitBreak.ID)){
                     strength *= 2;
+                }else if(toPlay.cardID.equals(Shockwave.ID)){
+                    for(SimpleMonster m : monsters){
+                        if(m.isAlive()){
+                            m.vulnerable += toPlay.magicNumber;
+                        }
+                    }
                 }
             }else if(toPlay.type == AbstractCard.CardType.POWER){
                 switch (toPlay.cardID) {
