@@ -39,7 +39,10 @@ public class CardSelectAI {
             }
         }else{
             Deck deck = new Deck(AbstractDungeon.player.masterDeck);
-            choice = deck.chooseCard(rewardCards).name.toLowerCase();
+            AbstractCard chosenCard = deck.chooseCard(rewardCards);
+            if(chosenCard != null){
+                choice = chosenCard.name.toLowerCase();
+            }
         }
 
         if(choice != null){
