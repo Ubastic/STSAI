@@ -21,6 +21,7 @@ public class RestSiteAI {
             return;
         }
         ArrayList<String> choices = ChoiceScreenUtils.getCurrentChoiceList();
+        logger.info("Choosing between: " + choices.toString());
         if(ChoiceScreenUtils.isConfirmButtonAvailable()){
             logger.info("Pressing confirm");
             ChoiceScreenUtils.pressConfirmButton();
@@ -48,6 +49,10 @@ public class RestSiteAI {
         }else{
            if(choices.contains("smith")){
                choose("smith");
+               return;
+           }
+           if(choices.contains("lift")){
+               choose("lift");
                return;
            }
         }
