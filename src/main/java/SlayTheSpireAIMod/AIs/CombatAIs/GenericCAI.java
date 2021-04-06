@@ -9,6 +9,7 @@ import com.megacrit.cardcrawl.dungeons.AbstractDungeon;
 import com.megacrit.cardcrawl.potions.AbstractPotion;
 import com.megacrit.cardcrawl.potions.FruitJuice;
 import com.megacrit.cardcrawl.powers.PlatedArmorPower;
+import com.megacrit.cardcrawl.relics.Orichalcum;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -162,6 +163,9 @@ public class GenericCAI extends AbstractCAI{
         int extraBlock = state.simplePlayer.metallicize;
         if(AbstractDungeon.player.hasPower(PlatedArmorPower.POWER_ID)){
             extraBlock += AbstractDungeon.player.getPower(PlatedArmorPower.POWER_ID).amount;
+        }
+        if(AbstractDungeon.player.hasRelic(Orichalcum.ID) && state.simplePlayer.block == 0){
+            extraBlock += 6;
         }
         int willLoseHP = Math.max(0, incomingDmg - state.simplePlayer.block - extraBlock);
         values[0] = state.simplePlayer.health - willLoseHP;
