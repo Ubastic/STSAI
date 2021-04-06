@@ -1,5 +1,6 @@
 package SlayTheSpireAIMod.AIs.CombatAIs;
 
+import SlayTheSpireAIMod.AIs.CombatAIs.Monsters.ByrdMonster;
 import SlayTheSpireAIMod.AIs.CombatAIs.Monsters.SimpleMonster;
 import SlayTheSpireAIMod.AIs.CombatAIs.Monsters.SphericGuardianMonster;
 import SlayTheSpireAIMod.util.CombatUtils;
@@ -7,9 +8,9 @@ import SlayTheSpireAIMod.util.Move;
 import com.megacrit.cardcrawl.cards.AbstractCard;
 import com.megacrit.cardcrawl.dungeons.AbstractDungeon;
 import com.megacrit.cardcrawl.monsters.AbstractMonster;
+import com.megacrit.cardcrawl.monsters.city.Byrd;
 import com.megacrit.cardcrawl.monsters.city.SphericGuardian;
 import com.megacrit.cardcrawl.potions.*;
-import com.megacrit.cardcrawl.powers.VulnerablePower;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -86,6 +87,8 @@ public abstract class AbstractCAI {
             for (AbstractMonster m : monsters) {
                 if(m instanceof SphericGuardian){
                     simpleMonsters.add(new SphericGuardianMonster((SphericGuardian) m));
+                }else if(m instanceof Byrd){
+                    simpleMonsters.add(new ByrdMonster((Byrd) m));
                 }else{
                     simpleMonsters.add(new SimpleMonster(m));
                 }
