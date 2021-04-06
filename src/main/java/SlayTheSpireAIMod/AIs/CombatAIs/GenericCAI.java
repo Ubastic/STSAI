@@ -2,12 +2,15 @@ package SlayTheSpireAIMod.AIs.CombatAIs;
 
 import SlayTheSpireAIMod.AIs.CombatAIs.Monsters.SimpleMonster;
 import SlayTheSpireAIMod.util.Move;
+import com.megacrit.cardcrawl.actions.GameActionManager;
 import com.megacrit.cardcrawl.cards.AbstractCard;
 import com.megacrit.cardcrawl.cards.status.Burn;
 import com.megacrit.cardcrawl.cards.status.Slimed;
 import com.megacrit.cardcrawl.dungeons.AbstractDungeon;
 import com.megacrit.cardcrawl.potions.AbstractPotion;
+import com.megacrit.cardcrawl.potions.BloodPotion;
 import com.megacrit.cardcrawl.potions.FruitJuice;
+import com.megacrit.cardcrawl.potions.RegenPotion;
 import com.megacrit.cardcrawl.powers.PlatedArmorPower;
 import com.megacrit.cardcrawl.relics.Orichalcum;
 import org.apache.logging.log4j.LogManager;
@@ -81,8 +84,12 @@ public class GenericCAI extends AbstractCAI{
      *          0 indicates not useful enough to use.
      * */
     public static int potionEval(AbstractPotion p){
-        if (p instanceof FruitJuice) {
+        if(p instanceof FruitJuice){
             return 10;
+        }else if(p instanceof BloodPotion || p instanceof RegenPotion){
+            if(GameActionManager.turn == 1 && AbstractDungeon.player.currentHealth < 50){
+                return 10;
+            }
         }
         return 0;
     }
