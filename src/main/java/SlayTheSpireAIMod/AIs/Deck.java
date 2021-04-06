@@ -43,68 +43,59 @@ public class Deck {
         hasDamage = newAttacks > 1;
     }
 
-    /** Choose what to do given a card reward.
-     * @param rewardOptions List of cards in a card reward.
-     * @return String Return lowercase name of chosen card or null if chosen skip. */
-    public String chooseCard(ArrayList<AbstractCard> rewardOptions){
-        ArrayList<String> rewardOptionNames = new ArrayList<>();
+    /**
+     * Returns the best card to add to deck from the specified options.
+     * Returns null if no card is worth adding.
+     *
+     * @param rewardOptions the potential cards to add
+     * @return              the best card to add, null if none are worth adding.
+     * */
+    public AbstractCard chooseCard(ArrayList<AbstractCard> rewardOptions){
+        int bestEval = 0;
+        AbstractCard best = null;
         for(AbstractCard c : rewardOptions){
-            rewardOptionNames.add(c.name.toLowerCase());
-        }
-        HashSet<String> rewardOptionNameSet = new HashSet<>(rewardOptionNames);
-
-        // first check for win conditions
-        if(!isBarricade && !isLimitBreak && !isDemonForm){
-            // TODO decide between multiple wincons better
-            String[] winConNames = // names of win condition cards
-                    {"barricade", "barricade+", "limit break", "limit break+", "demon form", "demon form+"};
-            for(String cardName : winConNames){
-                if(rewardOptionNameSet.contains(cardName)){
-                    return cardName;
-                }
+            int eval = chooseEval(c);
+            if(eval > bestEval){
+                bestEval = eval;
+                best = c;
             }
         }
+        return best;
+    }
 
-        // create set of all cards currently in the deck
-        HashSet<String> deckCardSet = new HashSet<>();
-        for(AbstractCard card : cards){
-            deckCardSet.add(card.cardID);
+    /**
+     * Returns a measure of how good it is to add the specified card to this deck.
+     *
+     * @param c the card to evaluate
+     * @return  how good it is to add the specified card to this deck
+     * */
+    private int chooseEval(AbstractCard c){
+        switch (c.cardID){
+            case Barricade.ID:
+                return isBarricade || isLimitBreak || isDemonForm ? 0 : 0; // TODO change when barricade is effective
+            case LimitBreak.ID:
+                return isBarricade || isLimitBreak || isDemonForm ? 0 : 900;
+            case DemonForm.ID:
+                return isBarricade || isLimitBreak || isDemonForm ? 0 : 1000;
+            case Inflame.ID: return 500;
+            case Metallicize.ID: return 50;
+            case Whirlwind.ID:
+                if(contains(c.cardID)){ return 0; }
+                return hasDamage ? 100 : 0;
+            case PommelStrike.ID: return hasDamage ? 99 : 0;
+            case Cleave.ID: return hasDamage ? 98 : 0;
+            case Headbutt.ID: return hasDamage ? 97 : 0;
+            case BodySlam.ID:
+                if(contains(c.cardID)){ return 0; }
+                return hasDamage ? 96 : 0;
+            case Rampage.ID: return hasDamage ? 95 : 0;
+            case IronWave.ID: return hasDamage ? 94 : 0;
+            case ShrugItOff.ID: return 70;
+            case BattleTrance.ID:
+                if(contains(c.cardID)){ return 0; }
+                return 60;
         }
-
-        // create set of cards deck cannot have multiple copies of
-        String[] maxOneCards = // cardIDs of cards the deck cannot have multiple copies of
-                {"Whirlwind", "Body Slam", "Searing Blow", "Armaments"};
-        HashSet<String> maxOneCardSet = new HashSet<>(Arrays.asList(maxOneCards));
-
-        // TODO add upgraded cards, replace with indexOf
-        // prioritize damageCards if deck lacks attacks
-        if(!hasDamage){
-            String[] damageNames = // names of takeable cards when the deck lacks damage, best->worst
-                    {"whirlwind", "pommel strike", "cleave", "headbutt", "body slam", "rampage", "iron wave"};
-            for(String cardName : damageNames){
-                if(rewardOptionNameSet.contains(cardName)){
-                    AbstractCard c = rewardOptions.get(rewardOptionNames.indexOf(cardName));
-                    if(!maxOneCardSet.contains(c.cardID) || !deckCardSet.contains(c.cardID)){
-                        return cardName;
-                    }
-                }
-            }
-        }
-
-        // take cards that are always good
-        String[] goodNames = // names of cards that are always good, best->worst
-                {"shrug it off", "metallicize", "battle trance", "inflame"};
-        for(String cardName : goodNames){
-            if(rewardOptionNameSet.contains(cardName)){
-                AbstractCard c = rewardOptions.get(rewardOptionNames.indexOf(cardName));
-                if(!maxOneCardSet.contains(c.cardID) || !deckCardSet.contains(c.cardID)){
-                    return cardName;
-                }
-            }
-        }
-
-        // otherwise don't take anything
-        return null;
+        return 0;
     }
 
     /** Remove and return the best card to upgrade.
