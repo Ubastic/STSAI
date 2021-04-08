@@ -68,6 +68,7 @@ public class CombatUtils {
             case HexaghostCAI.KEY: return new HexaghostCAI();
             case SlimeBossCAI.KEY: return new SlimeBossCAI();
             case TheGuardianCAI.KEY: return new TheGuardianCAI();
+            case GremlinLeaderCAI.KEY: return new GremlinLeaderCAI();
             case AutomatonCAI.KEY: return new AutomatonCAI();
             case ChampCAI.KEY: return new ChampCAI();
             case CollectorCAI.KEY: return new CollectorCAI();
@@ -413,39 +414,47 @@ public class CombatUtils {
          * */
         public void playCard(AbstractCard toPlay, SimpleMonster target, ArrayList<SimpleMonster> monsters){
             hand.remove(toPlay);
-            if(toPlay.costForTurn > 0){ // Whirlwind costs -1
+            if(toPlay.costForTurn > 0) { // Whirlwind costs -1
                 energy -= toPlay.costForTurn;
             }
-            if(toPlay.type == AbstractCard.CardType.ATTACK){
-                if(toPlay.cardID.equals(Whirlwind.ID)){
-                    for(SimpleMonster m : monsters){
-                        if(m.isAlive()){
-                            m.takeAttack(this, toPlay);
+            if(toPlay.type == AbstractCard.CardType.ATTACK) {
+                switch (toPlay.cardID) {
+                    case Whirlwind.ID:
+                        for (SimpleMonster m : monsters) {
+                            if (m.isAlive()) {
+                                m.takeAttack(this, toPlay);
+                            }
                         }
-                    }
-                    energy = 0;
-                }else if(toPlay.cardID.equals(Cleave.ID) || toPlay.cardID.equals(Reaper.ID)){
-                    for(SimpleMonster m : monsters){
-                        if(m.isAlive()){
-                            m.takeAttack(this, toPlay);
+                        energy = 0;
+                        break;
+                    case Cleave.ID:
+                    case Reaper.ID:
+                        for (SimpleMonster m : monsters) {
+                            if (m.isAlive()) {
+                                m.takeAttack(this, toPlay);
+                            }
                         }
-                    }
-                }else{
-                    target.takeAttack(this, toPlay);
-                    block += toPlay.block;
+                        break;
+                    case IronWave.ID:
+                        block += toPlay.block; // Iron Wave block blocks thorns
+                        target.takeAttack(this, toPlay);
+                        break;
+                    default:
+                        target.takeAttack(this, toPlay);
+                        break;
                 }
-            }else if(toPlay.type == AbstractCard.CardType.SKILL){
+            } else if(toPlay.type == AbstractCard.CardType.SKILL) {
                 block += toPlay.block;
-                if(toPlay.cardID.equals(LimitBreak.ID)){
+                if(toPlay.cardID.equals(LimitBreak.ID)) {
                     strength *= 2;
-                }else if(toPlay.cardID.equals(Shockwave.ID)){
-                    for(SimpleMonster m : monsters){
+                } else if(toPlay.cardID.equals(Shockwave.ID)) {
+                    for(SimpleMonster m : monsters) {
                         if(m.isAlive()){
                             m.vulnerable += toPlay.magicNumber;
                         }
                     }
                 }
-            }else if(toPlay.type == AbstractCard.CardType.POWER){
+            } else if(toPlay.type == AbstractCard.CardType.POWER) {
                 switch (toPlay.cardID) {
                     case Inflame.ID:
                         strength += toPlay.magicNumber;
