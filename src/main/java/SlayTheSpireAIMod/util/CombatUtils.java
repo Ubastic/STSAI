@@ -69,6 +69,7 @@ public class CombatUtils {
             case SlimeBossCAI.KEY: return new SlimeBossCAI();
             case TheGuardianCAI.KEY: return new TheGuardianCAI();
             case GremlinLeaderCAI.KEY: return new GremlinLeaderCAI();
+            case SlaversCAI.KEY: return new SlaversCAI();
             case AutomatonCAI.KEY: return new AutomatonCAI();
             case ChampCAI.KEY: return new ChampCAI();
             case CollectorCAI.KEY: return new CollectorCAI();
