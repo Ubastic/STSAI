@@ -3,6 +3,8 @@ package SlayTheSpireAIMod.AIs;
 import SlayTheSpireAIMod.communicationmod.ChoiceScreenUtils;
 import SlayTheSpireAIMod.communicationmod.patches.MerchantPatch;
 import com.megacrit.cardcrawl.cards.AbstractCard;
+import com.megacrit.cardcrawl.cards.red.DemonForm;
+import com.megacrit.cardcrawl.cards.red.Inflame;
 import com.megacrit.cardcrawl.dungeons.AbstractDungeon;
 import com.megacrit.cardcrawl.rooms.ShopRoom;
 import com.megacrit.cardcrawl.shop.Merchant;
@@ -21,14 +23,17 @@ public class ShopAI {
     public static void execute(){
         logger.info("Executing ShopAI");
         ChoiceScreenUtils.ChoiceType type = ChoiceScreenUtils.getCurrentChoiceType();
-        if(type != ChoiceScreenUtils.ChoiceType.SHOP_ROOM && type != ChoiceScreenUtils.ChoiceType.SHOP_SCREEN) return;
+        if(type != ChoiceScreenUtils.ChoiceType.SHOP_ROOM && type != ChoiceScreenUtils.ChoiceType.SHOP_SCREEN) {
+            logger.info("Done: choice type not suitable");
+            return;
+        }
         if(type == ChoiceScreenUtils.ChoiceType.SHOP_ROOM) {
             openShop();
         }
         ArrayList<String> choices = ChoiceScreenUtils.getCurrentChoiceList();
         logger.info("Choosing between: " + choices.toString());
         Object best = bestPurchase();
-        if(best != null){
+        if(best != null) {
             choose(best);
         } else {
             closeShop();
@@ -44,7 +49,7 @@ public class ShopAI {
      * @param price the price of the purge
      * @return      how good it would be to purchase purge at the price
      * */
-    public static double purgePurchaseRating(int price){
+    public static double purgePurchaseRating(int price) {
         return 1;
     }
 
@@ -56,8 +61,13 @@ public class ShopAI {
      * @param price the price of the card
      * @return      how good it would be to purchase the card at the price
      * */
-    public static double cardPurchaseRating(AbstractCard c, int price){
-        return 0;
+    public static double cardPurchaseRating(AbstractCard c, int price) {
+        Deck deck = new Deck(AbstractDungeon.player.masterDeck);
+        switch (c.cardID) {
+            case DemonForm.ID: return deck.isLimitBreak || deck.isDemonForm || deck.isBarricade ? 0 : 100;
+            case Inflame.ID: return deck.contains(Inflame.ID) ? 0 : 10;
+            default: return 0;
+        }
     }
 
     /**
@@ -68,7 +78,7 @@ public class ShopAI {
      * @param price the price of the relic
      * @return      how good it would be to purchase the relic at the price
      * */
-    public static double relicPurchaseRating(StoreRelic r, int price){
+    public static double relicPurchaseRating(StoreRelic r, int price) {
         return 0;
     }
 
@@ -80,7 +90,7 @@ public class ShopAI {
      * @param price the price of the potion
      * @return      how good it would be to purchase the potion at the price
      * */
-    public static double potionPurchaseRating(StorePotion p, int price){
+    public static double potionPurchaseRating(StorePotion p, int price) {
         return 0;
     }
 
@@ -94,7 +104,7 @@ public class ShopAI {
         Object best = null;
         if(AbstractDungeon.shopScreen.purgeAvailable && AbstractDungeon.player.gold >= ShopScreen.actualPurgeCost) {
             double rating = purgePurchaseRating(ShopScreen.actualPurgeCost);
-            if(rating > bestPurchaseRating){
+            if(rating > bestPurchaseRating) {
                 bestPurchaseRating = rating;
                 best = "purge";
             }
@@ -102,7 +112,7 @@ public class ShopAI {
         for(AbstractCard card : ChoiceScreenUtils.getShopScreenCards()) {
             if(card.price <= AbstractDungeon.player.gold) {
                 double rating = cardPurchaseRating(card, card.price);
-                if(rating > bestPurchaseRating){
+                if(rating > bestPurchaseRating) {
                     bestPurchaseRating = rating;
                     best = card;
                 }
@@ -111,7 +121,7 @@ public class ShopAI {
         for(StoreRelic relic : ChoiceScreenUtils.getShopScreenRelics()) {
             if(relic.price <= AbstractDungeon.player.gold) {
                 double rating = relicPurchaseRating(relic, relic.price);
-                if(rating > bestPurchaseRating){
+                if(rating > bestPurchaseRating) {
                     bestPurchaseRating = rating;
                     best = relic;
                 }
@@ -120,7 +130,7 @@ public class ShopAI {
         for(StorePotion potion : ChoiceScreenUtils.getShopScreenPotions()) {
             if(potion.price <= AbstractDungeon.player.gold) {
                 double rating = potionPurchaseRating(potion, potion.price);
-                if(rating > bestPurchaseRating){
+                if(rating > bestPurchaseRating) {
                     bestPurchaseRating = rating;
                     best = potion;
                 }
@@ -130,17 +140,17 @@ public class ShopAI {
     }
 
     /** Opens the shop screen if in the shop room. */
-    public static void openShop(){
+    public static void openShop() {
         logger.info("Opening shop");
         MerchantPatch.visitMerchant = true;
-        if(AbstractDungeon.currMapNode != null && AbstractDungeon.currMapNode.room instanceof ShopRoom){
+        if(AbstractDungeon.currMapNode != null && AbstractDungeon.currMapNode.room instanceof ShopRoom) {
             Merchant m = ((ShopRoom) AbstractDungeon.currMapNode.room).merchant;
             m.update();
         }
     }
 
     /** Closes the shop screen if it is open. */
-    public static void closeShop(){
+    public static void closeShop() {
         logger.info("Closing shop");
         AbstractDungeon.overlayMenu.cancelButton.hb.clicked = true;
         AbstractDungeon.overlayMenu.update();
@@ -152,7 +162,7 @@ public class ShopAI {
      * @param o the card/relic/potion to purchase ("purge" for purge purchase)
      * */
     public static void choose(Object o) {
-        try{
+        try {
             String choice = "";
             if(o.equals("purge")) {
                 choice = "purge";
