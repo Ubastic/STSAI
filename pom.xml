@@ -6,7 +6,7 @@
     <groupId>STSMod</groupId>
     <artifactId>SlayTheSpireAIMod</artifactId> <!--Keep a note of this one: this is the ID used in the "auto add cards" method-->
     <name>SlayTheSpireAIMod</name>
-    <version>0.1.3</version>
+    <version>0.1.4</version>
     <description>An AI which plays Slay the Spire.</description>
 
     <properties>
