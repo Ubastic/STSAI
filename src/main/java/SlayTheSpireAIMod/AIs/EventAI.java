@@ -62,8 +62,8 @@ public class EventAI {
             if (choices.size() == 2) {
                 choose("max hp +8");
             } else {
-                if (choices.contains("remove a card")) {
-                    choose("remove a card");
+                if (choices.contains("remove a card from your deck")) {
+                    choose("remove a card from your deck");
                 } else if (choices.contains("obtain a random common relic")) {
                     choose("obtain a random common relic");
                 } else if (choices.contains("obtain 100 gold")) {
